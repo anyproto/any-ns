@@ -2,13 +2,11 @@
 
 Please see original [ENS README file](ORIGINAL_ENS_README.md)!
 
-AnyNS, short for Anytype Naming Service, is a decentralized domain name system based on ENS and compatible with ENS.
+AnyNS, which stands for Anytype Naming Service, is an experimental decentralized domain name system based on ENS (Ethereum Name Service) and compatible with ENS.
 
-Current repository features "anytype" folders with custom Anytype contracts and code. Original ENS contracts and deployment files were intact. However, some of the Anytype contracts rely and use original ENS contracts: i.e. original ENSRegistry is used, it was not copied. So be careful if they change when you merge/update these contracts and interfaces from master.
+The current repository features "anytype" folders containing custom Anytype contracts and code. The original ENS contracts and deployment files remain intact. However, some of the Anytype contracts rely on and use the original ENS contracts. For example, the original ENSRegistry is used without being copied. Therefore, please exercise caution when merging or updating these contracts and interfaces from the master branch, as changes to the original ENS contracts may affect them.
 
-Please see "contracts/anytype" folder to see all custom Anytype contracts.
-Please see "deploy/anytype" folder to see and understand all dependencies.
-Please see "test/anytype" folder to see updated use cases and logics.
+To view all custom Anytype contracts, please refer to the **contracts/anytype** folder. For a comprehensive understanding of all dependencies, please consult the **deploy/anytype** folder. To explore updated use cases and logic, please review the contents of the **test/anytype** folder.
 
 ## What was changed
 
@@ -16,7 +14,20 @@ Please see "test/anytype" folder to see updated use cases and logics.
 - AnytypeRegistrarController - allows ERC20 (USDT, USDC, DAI, etc) stablecoins as payment. Ether is UNsupported as a payment option here
 - AnytypeRegistrarControllerPrivate - owner of this contract can register any name without a payment on behalf/for other users
 - AnytypeResolver - some unnecessary interfaces were removed, ISpaceResolver is added
-- AnytypePriceOracle - very simple price oracle, with basic functionality.
+- AnytypePriceOracle - very simple price oracle, with basic functionality
+- **anytype-frontend** - AnyNS NextJS/React frontend.
+
+# How to deploy
+
+1. Define a .env file with 3 variables:
+
+```
+PRIVATE_KEY=XXX
+DEPLOYER_KEY=XXX
+INFURA_API_KEY=YYY
+```
+
+2. Run ``
 
 # Howtos and links
 
