@@ -27,7 +27,7 @@ DEPLOYER_KEY=XXX
 INFURA_API_KEY=YYY
 ```
 
-2. Run ``
+2. Run `npx hardhat --network sepolia deploy`.
 
 # Howtos and links
 

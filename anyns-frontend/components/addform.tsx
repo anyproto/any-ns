@@ -12,6 +12,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 export default function AddForm({
   handlerVerify,
   // if null is specified -> no registration is possible
+  // if not null is specified -> admin mode
   handlerRegister,
 }) {
   const [isProcessing, setIsProcessing] = useState(false)
@@ -30,6 +31,15 @@ export default function AddForm({
 
   useEffect(() => {
     document.getElementById('prompt-name').focus()
+
+    const isAdminMode = handlerRegister !== null
+
+    // read router query (if passed)
+    const { name } = router.query
+    if (name) {
+      // @ts-ignore
+      setDomainName(name)
+    }
   }, [])
 
   useEffect(() => {
@@ -78,7 +88,22 @@ export default function AddForm({
 
   const onGoToAdmin = async (e) => {
     e.preventDefault()
-    router.push('/admin')
+
+    let regMe = domainName
+
+    // add .any suffix to the name if it is not there yet
+    // @ts-ignore
+    if (!domainName.endsWith(tld)) {
+      regMe = domainName + tld
+    }
+
+    if (isNameAvailable) {
+      // name available -> pass name to admin page (maybe he want to register it immediately)
+      // name not available -> do not pass
+      router.push('/admin?name=' + regMe)
+    } else {
+      router.push('/admin')
+    }
   }
 
   const onRegister = async (e) => {
