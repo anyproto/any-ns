@@ -13,6 +13,8 @@ const { ethers } = require('hardhat')
 const provider = ethers.provider
 const { namehash } = require('../test-utils/ens')
 const sha3 = require('web3-utils').sha3
+const utf8ToHex = require('web3-utils').utf8ToHex
+
 const {
   EMPTY_BYTES32: EMPTY_BYTES,
   EMPTY_ADDRESS: ZERO_ADDRESS,
@@ -268,6 +270,79 @@ contract('AnytypeRegistrarControllerPrivate', function () {
     )
     expect(await resolver['name(bytes32)'](nodehash)).to.equal('xxx')
     expect(await resolver['text'](nodehash, 'url')).to.equal('ethereum.com')
+    expect(await nameWrapper.ownerOf(nodehash)).to.equal(registrantAccount)
+  })
+
+  it('should permit new registrations with resolver and spaceid/contenthash', async () => {
+    const contentHash = utf8ToHex(
+      'QmR6EJCK4z8wJbqWGMbTA33wkvVLeVMkzwhmfe3mKCgYXu',
+    )
+
+    const callData2 = [
+      resolver.interface.encodeFunctionData('setSpaceId(bytes32,bytes)', [
+        namehash('newconfigname.any'),
+        '0xebec795c9c8bbd61ffc14a6662944748f299cacf',
+      ]),
+      resolver.interface.encodeFunctionData('setContenthash', [
+        namehash('newconfigname.any'),
+        contentHash,
+      ]),
+    ]
+
+    // signer
+    var commitment = await controller.makeCommitment(
+      'newconfigname',
+      registrantAccount,
+      REGISTRATION_TIME,
+      secret,
+      resolver.address,
+      // calldata is passed here
+      callData2,
+      false,
+      0,
+    )
+
+    var tx = await controller.commit(commitment)
+    expect(await controller.commitments(commitment)).to.equal(
+      (await web3.eth.getBlock(tx.blockNumber)).timestamp,
+    )
+
+    await evm.advanceTime((await controller.minCommitmentAge()).toNumber())
+    var balanceBefore = await web3.eth.getBalance(controller.address)
+
+    var tx = await controller.register(
+      'newconfigname',
+      registrantAccount,
+      REGISTRATION_TIME,
+      secret,
+      resolver.address,
+      callData2,
+      false,
+      0,
+    )
+
+    const block = await provider.getBlock(tx.blockNumber)
+
+    await expect(tx)
+      .to.emit(controller, 'NameRegistered')
+      .withArgs(
+        'newconfigname',
+        sha3('newconfigname'),
+        registrantAccount,
+        block.timestamp + REGISTRATION_TIME,
+      )
+
+    var nodehash = namehash('newconfigname.any')
+    expect(await ens.resolver(nodehash)).to.equal(resolver.address)
+    expect(await ens.owner(nodehash)).to.equal(nameWrapper.address)
+    expect(await baseRegistrar.ownerOf(sha3('newconfigname'))).to.equal(
+      nameWrapper.address,
+    )
+    expect(await resolver['spaceId(bytes32)'](nodehash)).to.equal(
+      '0xebec795c9c8bbd61ffc14a6662944748f299cacf',
+    )
+    expect(await resolver.contenthash(nodehash)).to.equal(contentHash)
+
     expect(await nameWrapper.ownerOf(nodehash)).to.equal(registrantAccount)
   })
 

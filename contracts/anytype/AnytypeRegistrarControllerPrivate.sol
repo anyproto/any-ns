@@ -31,7 +31,6 @@ error MaxCommitmentAgeTooHigh();
  *  .any TLD is used instead of .eth
  *
  *  Owner of this contract can register any name without a payment on behalf/for other users.
- *  This controller should be removed from the registrar once such logics is not needed anymore.
  */
 contract AnytypeRegistrarControllerPrivate is
     Ownable,
@@ -53,6 +52,7 @@ contract AnytypeRegistrarControllerPrivate is
     uint64 private constant MAX_EXPIRY = type(uint64).max;
     AnytypeRegistrarImplementation immutable base;
 
+    // in seconds
     uint256 public immutable minCommitmentAge;
     uint256 public immutable maxCommitmentAge;
     ReverseRegistrar public immutable reverseRegistrar;

@@ -1,19 +1,21 @@
-# TODOs
+# v2 TODOs
 
-## v1.1
+- Gas optimizations:
+  - ? Remove the StaticMetadataService
+  - ? Remove ERC721 NFTs???
+  - ? Remove NameWrapper
+  - ? Remove StaticMetadataService
 
-1. Update contracts
-2. Deploy contracts to Sepolia testnetwork
-   All needed ENS contracts
-   Treasury account
-   ! Update the StaticMetadataService
-3. Deploy test frontend
-4. Calculate gas fees
-5. ??? Remove ERC721 NFTs???
+# Gas usage
 
-## v1.2
+See table here - https://docs.google.com/spreadsheets/d/1eH4nuLWMvLMakTkcsc6lq6nj_1cR7fc1-L05XWxg0fI/edit?usp=sharing
 
----
+AnytypeRegistrarControllerPrivate::commit - 46358
+AnytypeRegistrarControllerPrivate::register - 305395
+
+Approve USDT/USDC - 46663
+AnytypeRegistrarController::commit - 44194
+AnytypeRegistrarController::register - 355580
 
 # Howtos
 

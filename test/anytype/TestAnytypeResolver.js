@@ -24,7 +24,7 @@ contract('AnytypeResolver', function (accounts) {
   beforeEach(async () => {
     signers = await ethers.getSigners()
     account = await signers[0].getAddress()
-    node = namehash.hash('eth')
+    node = namehash.hash('any')
     ens = await ENS.new()
     nameWrapper = await NameWrapper.new()
 
@@ -49,7 +49,7 @@ contract('AnytypeResolver', function (accounts) {
 
     await ReverseRegistrar.setDefaultResolver(resolver.address)
 
-    await ens.setSubnodeOwner('0x0', sha3('eth'), accounts[0], {
+    await ens.setSubnodeOwner('0x0', sha3('any'), accounts[0], {
       from: accounts[0],
     })
   })

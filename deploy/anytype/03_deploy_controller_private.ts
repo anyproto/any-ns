@@ -30,8 +30,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     args: [
       registrar.address,
       // standard values
-      60,
-      86400,
+      0, // 0 seconds
+      86400, // 24 hours
       reverseRegistrar.address,
       nameWrapper.address,
       registry.address,

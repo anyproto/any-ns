@@ -1,6 +1,8 @@
 //SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17 <0.9.0;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
+
 import "../registry/ENS.sol";
 
 import "../resolvers/profiles/ContentHashResolver.sol";
@@ -22,7 +24,6 @@ import {INameWrapper} from "../wrapper/INameWrapper.sol";
  *   - AddrResolver impl. is removed
  *   - ABIResolver impl. is removed
  *   - InterfaceResolver impl. is removed
- *
  *   - SpaceResolver is added
  *
  * Anytype uses CID as a content hash format.
