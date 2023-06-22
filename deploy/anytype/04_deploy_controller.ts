@@ -19,22 +19,19 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const registry = await ethers.getContract('ENSRegistry', owner)
 
   const registrar = await ethers.getContract(
-    'BaseRegistrarImplementation',
+    'AnytypeRegistrarImplementation',
     owner,
   )
-  const priceOracle = await ethers.getContract(
-    'ExponentialPremiumPriceOracle',
-    owner,
-  )
+  const priceOracle = await ethers.getContract('AnytypePriceOracle', owner)
   const reverseRegistrar = await ethers.getContract('ReverseRegistrar', owner)
-  const nameWrapper = await ethers.getContract('NameWrapper', owner)
-  const ethOwnedResolver = await ethers.getContract('OwnedResolver', owner)
+  const nameWrapper = await ethers.getContract('AnytypeNameWrapper', owner)
 
   const deployArgs = {
     from: deployer,
     args: [
       registrar.address,
       priceOracle.address,
+      // standard values
       60,
       86400,
       reverseRegistrar.address,
@@ -43,20 +40,25 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     ],
     log: true,
   }
-  const controller = await deploy('ETHRegistrarController', deployArgs)
+  const controller = await deploy('AnytypeRegistrarController', deployArgs)
   if (!controller.newlyDeployed) return
 
   if (owner !== deployer) {
-    const c = await ethers.getContract('ETHRegistrarController', deployer)
+    const c = await ethers.getContract('AnytypeRegistrarController', deployer)
     const tx = await c.transferOwnership(owner)
     console.log(
-      `Transferring ownership of ETHRegistrarController to ${owner} (tx: ${tx.hash})...`,
+      `Transferring ownership of AnytypeRegistrarController to ${owner} (tx: ${tx.hash})...`,
     )
     await tx.wait()
   }
 
   // Only attempt to make controller etc changes directly on testnets
   if (network.name === 'mainnet') return
+
+  // This is currently not used because the control is like this:
+  //   AnytypeRegistrarControllerPrivate -> NameWrapper -> AnytypeRegistrarImplementation
+  //
+  // await registrar.addController(controller.address)
 
   console.log(
     'WRAPPER OWNER',
@@ -74,47 +76,17 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     `Adding ETHRegistrarController as a controller of ReverseRegistrar (tx: ${tx2.hash})...`,
   )
   await tx2.wait()
-
-  const artifact = await deployments.getArtifact('IETHRegistrarController')
-  const interfaceId = computeInterfaceId(new Interface(artifact.abi))
-  const provider = new ethers.providers.StaticJsonRpcProvider(
-    ethers.provider.connection.url,
-    {
-      ...ethers.provider.network,
-      ensAddress: (await ethers.getContract('ENSRegistry')).address,
-    },
-  )
-  const resolver = await provider.getResolver('eth')
-  if (resolver === null) {
-    registrar.setResolver(ethOwnedResolver.address)
-    console.log(
-      `No resolver set for .eth; not setting interface ${interfaceId} for ETH Registrar Controller`,
-    )
-    return
-  }
-  const resolverContract = await ethers.getContractAt(
-    'PublicResolver',
-    resolver.address,
-  )
-  const tx3 = await resolverContract.setInterface(
-    ethers.utils.namehash('eth'),
-    interfaceId,
-    controller.address,
-  )
-  console.log(
-    `Setting ETHRegistrarController interface ID ${interfaceId} on .eth resolver (tx: ${tx3.hash})...`,
-  )
-  await tx3.wait()
 }
 
-func.tags = ['ethregistrar', 'ETHRegistrarController']
+func.id = 'anytype-controller'
+func.tags = ['anytype', 'AnytypeRegistrarController']
+
 func.dependencies = [
   'ENSRegistry',
-  'BaseRegistrarImplementation',
-  'ExponentialPremiumPriceOracle',
+  'AnytypeRegistrarImplementation',
   'ReverseRegistrar',
-  'NameWrapper',
-  'OwnedResolver',
+  'AnytypeNameWrapper',
+  'AnytypePriceOracle',
 ]
 
 export default func

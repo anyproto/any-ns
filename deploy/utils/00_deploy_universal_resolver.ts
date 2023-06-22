@@ -11,7 +11,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const batchGatewayURLs = JSON.parse(process.env.BATCH_GATEWAY_URLS || '[]')
 
   if (batchGatewayURLs.length === 0) {
-    throw new Error('UniversalResolver: No batch gateway URLs provided')
+    // npx hardhat node is not working without this line being commented out
+    //throw new Error('UniversalResolver: No batch gateway URLs provided')
+    return
   }
 
   await deploy('UniversalResolver', {
