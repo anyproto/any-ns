@@ -123,14 +123,12 @@ export default async function handler(req, res) {
       const spaceID = await getSpaceID(name)
       const realOwner = await getRealOwner(name)
 
-      res
-        .status(200)
-        .json({
-          name: name,
-          owner: realOwner,
-          contentID: contentID,
-          spaceID: spaceID,
-        })
+      res.status(200).json({
+        name: name,
+        owner: realOwner,
+        contentID: contentID,
+        spaceID: spaceID,
+      })
     }
   } else {
     res.status(500).json({})

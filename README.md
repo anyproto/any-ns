@@ -15,7 +15,7 @@ To view all custom Anytype contracts, please refer to the **contracts/anytype** 
 - AnytypeRegistrarControllerPrivate - owner of this contract can register any name without a payment on behalf/for other users
 - AnytypeResolver - some unnecessary interfaces were removed, ISpaceResolver is added
 - AnytypePriceOracle - very simple price oracle, with basic functionality
-- **anytype-frontend** - AnyNS NextJS/React frontend.
+- **[anytype-frontend](anytype-frontend)** - AnyNS NextJS/React frontend.
 
 # How to deploy
 
