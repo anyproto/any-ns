@@ -7,6 +7,9 @@ const name = 'AnyNS'
 export const siteTitle = 'Anytype Naming Service'
 export const siteDescription = 'Anytype Naming Service frontend'
 
+const anynsDesc =
+  'AnyNS, short for Anytype Naming Service, is a decentralized domain name system built on the EVM-compatible blockchain'
+
 export default function Layout({
   children,
   home,
@@ -50,6 +53,8 @@ export default function Layout({
           </>
         )}
       </header>
+
+      <p className="text-center text-xl opacity-60 m-6">{anynsDesc}</p>
 
       <main>{children}</main>
 

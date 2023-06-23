@@ -83,21 +83,17 @@ export default function AddForm({
             //        payload: e.target.value
             //    })}
             placeholder="Name"
-            className={`block w-full input-with-no-button flex-grow${
-              isProcessing ? ' rounded-md' : ' rounded-l-md'
-            }`}
+            className="block w-full input-with-no-button flex-grow"
             disabled={isProcessing}
             autoFocus
             //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
             //required
           />
-        </div>
 
-        <div className="text-center text-2xl font-bold m-2">
           <LoadingButton
             loading={isProcessing}
             variant="outlined"
-            className="my-button"
+            className="text-small inline-block p-3 flex-none my-button"
             type="submit"
             disabled={isProcessing || !debouncedLookup || isNameAvailable}
           >

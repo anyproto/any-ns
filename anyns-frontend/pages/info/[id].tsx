@@ -32,6 +32,7 @@ export default function NameInfoPage() {
       <div>
         <main className="container max-w-[700px] mx-auto p-2">
           <DataForm
+            account={null}
             domainNamePreselected={router.query.id}
             handleFetchNameInfo={fetchNameInfo}
             handlerRegister={null}

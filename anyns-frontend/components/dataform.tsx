@@ -12,6 +12,7 @@ import { concatenateWithTLD, removeTLD } from '../lib/anyns'
 const tld = process.env.NEXT_PUBLIC_TLD_SUFFIX
 
 export default function DataForm({
+  // can be null
   account,
   domainNamePreselected,
   handleFetchNameInfo,
@@ -70,6 +71,10 @@ export default function DataForm({
   }
 
   const isAccountAdmin = (address) => {
+    if (!address) {
+      return false
+    }
+
     return address === process.env.NEXT_PUBLIC_MAIN_ACCOUNT
   }
 
@@ -241,7 +246,7 @@ export default function DataForm({
               <LoadingButton
                 loading={isProcessing}
                 variant="outlined"
-                className="my-button"
+                className="text-small my-button"
                 type="submit"
                 disabled={
                   isProcessing ||

@@ -12,11 +12,11 @@ input {
 }
 
 .input-with-no-button {
-  @apply rounded-md;
+  /*@apply rounded-md;*/
 }
 
 .button-action {
-  @apply rounded-r-lg;
+  /*@apply rounded-r-lg;*/
 }
 
 .button-action:enabled,
