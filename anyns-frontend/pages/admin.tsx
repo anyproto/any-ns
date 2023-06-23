@@ -1,26 +1,25 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-
-import { CircularProgress } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
+import { useWeb3React } from '@web3-react/core'
 
-import { checkNameAvailability, removeTLD, namehash } from '../lib/anyns'
+import {
+  checkNameAvailability,
+  removeTLD,
+  namehash,
+  fetchNameInfo,
+} from '../lib/anyns'
 
+import { injected } from '../components/connectors'
 import ModalDlg from '../components/modal'
 import Layout from '../components/layout'
-import AddForm from '../components/addform'
-
-import 'bootstrap/dist/css/bootstrap.min.css'
-
-const ethers = require('ethers')
-import { useWeb3React } from '@web3-react/core'
-import { injected } from '../components/connectors'
-
-//
-const resolverAbi = require('../abi/AnytypeResolver.json')
-const privateRegistrarAbi = require('../abi/AnytypeRegistrarControllerPrivate.json')
+import DataForm from '../components/dataform'
 
 import Web3 from 'web3'
+const ethers = require('ethers')
+
+const resolverAbi = require('../abi/AnytypeResolver.json')
+const privateRegistrarAbi = require('../abi/AnytypeRegistrarControllerPrivate.json')
 
 // Access our wallet inside of our dapp
 const web3 = new Web3(Web3.givenProvider)
@@ -29,6 +28,10 @@ export default function Admin() {
   const router = useRouter()
   const { active, account, library, connector, activate, deactivate, chainId } =
     useWeb3React()
+
+  const [optionalDomainName, setOptionalDomainName] = useState(
+    router.query['name'],
+  )
 
   const [showModal, setShowModal] = useState(false)
   const [modalTitle, setModalTitle] = useState('Name availability')
@@ -78,6 +81,7 @@ export default function Admin() {
     }
   }
 
+  /*
   const onDebug = async (e) => {
     e.preventDefault()
 
@@ -125,6 +129,7 @@ export default function Admin() {
 
     setIsProcessing(false)
   }
+  */
 
   const verifyFullName = (nameFull) => {
     // 1 - split domain name and remove last part
@@ -248,7 +253,7 @@ export default function Admin() {
     )
 
     const DAY = 24 * 60 * 60
-    const REGISTRATION_TIME = 28 * DAY
+    const REGISTRATION_TIME = 365 * DAY
 
     // randomize secret
     const secret = web3.utils.randomHex(32)
@@ -369,27 +374,7 @@ export default function Admin() {
     router.replace(router.asPath)
   }
 
-  // check if name is available, just like handlerCheck, but don't show modal
-  // returns 'true' if name is available
-  // returns 'false' if name is not available
-  const handlerVerify = async (nameFull) => {
-    const name = removeTLD(nameFull)
-    if (!name || name.length < 3) {
-      return false
-    }
-
-    const [isErr, isAvail] = await checkNameAvailability(nameFull)
-
-    if (isErr) {
-      console.log('Can not check name availability!')
-      return false
-    }
-
-    // name is available
-    return isAvail
-  }
-
-  // this is called from the 'AdminForm' component
+  // this is called from the 'DataForm' component
   const handlerRegister = async (
     name,
     registrantAccount,
@@ -474,12 +459,11 @@ export default function Admin() {
           </div>
         )}
 
-        <main className="container max-w-[700px] mx-auto p-2">
-          <AddForm
-            handlerVerify={handlerVerify}
-            handlerRegister={handlerRegister}
-          />
-        </main>
+        <DataForm
+          domainNamePreselected={optionalDomainName}
+          handleFetchNameInfo={fetchNameInfo}
+          handlerRegister={handlerRegister}
+        />
 
         {/*
           <div className="text-center mx-auto w-full">

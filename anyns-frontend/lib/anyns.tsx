@@ -60,6 +60,10 @@ export function concatenateWithTLD(name) {
 export function removeTLD(name) {
   const tld = process.env.NEXT_PUBLIC_TLD_SUFFIX
 
+  if (!name) {
+    return ''
+  }
+
   // @ts-ignore
   if (name.endsWith(tld)) {
     return name.slice(0, -tld.length)
