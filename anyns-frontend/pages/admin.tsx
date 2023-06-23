@@ -14,6 +14,7 @@ import { injected } from '../components/connectors'
 import ModalDlg from '../components/modal'
 import Layout from '../components/layout'
 import DataForm from '../components/dataform'
+import WarningPanel from '../components/warning_panel'
 
 import Web3 from 'web3'
 const ethers = require('ethers')
@@ -66,6 +67,10 @@ export default function Admin() {
     }
     connectWalletOnPageLoad()
   }, [])
+
+  const isAccountAdmin = (address) => {
+    return address === process.env.NEXT_PUBLIC_MAIN_ACCOUNT
+  }
 
   const onModalClose = () => {
     setShowModal(false)
@@ -200,7 +205,9 @@ export default function Admin() {
     const accountMain = process.env.NEXT_PUBLIC_MAIN_ACCOUNT.toLowerCase()
 
     if (accountLower == accountMain) {
-      return '' + account + ' (main Anytype account)'
+      return '' + account
+    } else {
+      return '' + account + ' (Please switch to Admin account)'
     }
     return '' + account
   }
@@ -439,7 +446,7 @@ export default function Admin() {
           </form>
         )}
 
-        {active ? (
+        {active && isAccountAdmin(account) ? (
           <div>
             <div>
               <span>
@@ -459,7 +466,18 @@ export default function Admin() {
           </div>
         )}
 
+        {!isAccountAdmin(account) && (
+          <WarningPanel>
+            <span>🤔 </span>
+            <span>
+              Please switch to {process.env.NEXT_PUBLIC_MAIN_ACCOUNT}(Admin)
+              account
+            </span>
+          </WarningPanel>
+        )}
+
         <DataForm
+          account={account}
           domainNamePreselected={optionalDomainName}
           handleFetchNameInfo={fetchNameInfo}
           handlerRegister={handlerRegister}

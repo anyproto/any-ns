@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { LoadingButton } from '@mui/lab'
+
 import useDebounce from './debounce'
 
 // Access our wallet inside of our dapp
@@ -11,6 +12,7 @@ import { concatenateWithTLD, removeTLD } from '../lib/anyns'
 const tld = process.env.NEXT_PUBLIC_TLD_SUFFIX
 
 export default function DataForm({
+  account,
   domainNamePreselected,
   handleFetchNameInfo,
   // if null is specified -> do not show "register" button
@@ -65,6 +67,10 @@ export default function DataForm({
 
   const isAddressValid = (address) => {
     return address.length === 42 && address.startsWith('0x')
+  }
+
+  const isAccountAdmin = (address) => {
+    return address === process.env.NEXT_PUBLIC_MAIN_ACCOUNT
   }
 
   const onRegister = async (e) => {
@@ -229,26 +235,31 @@ export default function DataForm({
           </div>
         </div>
 
-        <div className="text-center text-2xl font-bold m-2">
-          <LoadingButton
-            loading={isProcessing}
-            variant="outlined"
-            className="my-button"
-            type="submit"
-            disabled={
-              isProcessing ||
-              !isNameValid(domainName) ||
-              !isAddressValid(userAddress) ||
-              !isNameAvailable
-            }
-          >
-            Register on behalf of user
-          </LoadingButton>
-        </div>
+        {handlerRegister && (
+          <div>
+            <div className="text-center text-2xl font-bold m-2">
+              <LoadingButton
+                loading={isProcessing}
+                variant="outlined"
+                className="my-button"
+                type="submit"
+                disabled={
+                  isProcessing ||
+                  !isAccountAdmin(account) ||
+                  !isNameValid(domainName) ||
+                  !isAddressValid(userAddress) ||
+                  !isNameAvailable
+                }
+              >
+                Register on behalf of user
+              </LoadingButton>
+            </div>
 
-        <div className="text-center text-m m-2">
-          <p>Domain will be registered for: 365 days</p>
-        </div>
+            <div className="text-center text-m m-2">
+              <p>Domain will be registered for: 365 days</p>
+            </div>
+          </div>
+        )}
       </form>
     </div>
   )
