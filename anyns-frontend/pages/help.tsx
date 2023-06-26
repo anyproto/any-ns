@@ -7,11 +7,11 @@ export default function Help() {
         <h2>Valid name examples: </h2>
         <p>
           {' '}
-          -<strong>hello.any</strong>
+          <strong>hello.any</strong>
         </p>
         <p>
           {' '}
-          -<strong>hello.space.any</strong> - can be only registered by{' '}
+          <strong>hello.space.any</strong> - can be only registered by{' '}
           <strong>space.any</strong> owner or Anytype
         </p>
       </div>
@@ -20,12 +20,12 @@ export default function Help() {
         <h2>Invalid name examples:</h2>
         <p>
           {' '}
-          -<strong>aa.any</strong> - can not register domains with less than 3
+          <strong>aa.any</strong> - can not register domains with less than 3
           letters
         </p>
         <p>
           {' '}
-          -<strong>aa</strong> - can not register top-level domain
+          <strong>aa</strong> - can not register top-level domain
         </p>
       </div>
     </Layout>

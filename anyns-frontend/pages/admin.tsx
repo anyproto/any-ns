@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { LoadingButton } from '@mui/lab'
 import { useWeb3React } from '@web3-react/core'
 
 import {
@@ -14,7 +13,8 @@ import { injected } from '../components/connectors'
 import ModalDlg from '../components/modal'
 import Layout from '../components/layout'
 import DataForm from '../components/dataform'
-import WarningPanel from '../components/warning_panel'
+import ConnectedPanel from '../components/connected_panel'
+import DebugPanel from '../components/debug_panel'
 
 import Web3 from 'web3'
 const ethers = require('ethers')
@@ -41,21 +41,8 @@ export default function Admin() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [error, setError] = useState(null)
 
-  const convertChainIDToString = (chainId) => {
-    switch (chainId) {
-      case 1:
-        return 'Mainnet (please switch to Sepolia)'
-
-      case 11155111:
-        return 'Sepolia'
-    }
-
-    return 'Unknown network (please switch to Sepolia)'
-  }
-
   useEffect(() => {
     const connectWalletOnPageLoad = async () => {
-      //if (localStorage?.getItem('isWalletConnected') === 'true') {
       try {
         await activate(injected)
 
@@ -63,78 +50,13 @@ export default function Admin() {
       } catch (ex) {
         console.log(ex)
       }
-      //}
     }
     connectWalletOnPageLoad()
   }, [])
 
-  const isAccountAdmin = (address) => {
-    return address === process.env.NEXT_PUBLIC_MAIN_ACCOUNT
-  }
-
   const onModalClose = () => {
     setShowModal(false)
   }
-
-  const onConnect = async (e) => {
-    e.preventDefault()
-
-    try {
-      await activate(injected)
-    } catch (ex) {
-      console.log(ex)
-    }
-  }
-
-  /*
-  const onDebug = async (e) => {
-    e.preventDefault()
-
-    const fullName = 'test8.any'
-
-    // convert string to hex
-    const contentHash = web3.utils.utf8ToHex(
-      'QmR6EJCK4z8wJbqWGMbTA33wkvVLeVMkzwhmfe3mKCgYXu',
-    )
-    console.log('Setting content hash: ' + contentHash)
-
-    //const contentHash = "0x0000000000000000000000000000000000000000000000000000000000000001";
-    //const contentHash = "bafybeibs62gqtignuckfqlcr7lhhihgzh2vorxtmc5afm6uxh4zdcmuwuu";
-
-    try {
-      const contractAddress = process.env.NEXT_PUBLIC_RESOLVER_CONTRACT_ADDRESS
-      const resolver = new web3.eth.Contract(resolverAbi.abi, contractAddress)
-
-      const node = namehash(fullName)
-      const gas = await resolver.methods
-        .setContenthash(node, contentHash)
-        .estimateGas({
-          from: account,
-        })
-
-      setIsProcessing(true)
-      const tx = await resolver.methods.setContenthash(node, contentHash).send({
-        from: account,
-        gas,
-      })
-
-      console.log('Transaction: ')
-      console.log(tx)
-    } catch (err) {
-      console.error('Can not set content hash!')
-      console.error(err)
-
-      setModalTitle('Something went wrong!')
-      setModalText('Can not set content hash...')
-      setShowModal(true)
-
-      setIsProcessing(false)
-      return
-    }
-
-    setIsProcessing(false)
-  }
-  */
 
   const verifyFullName = (nameFull) => {
     // 1 - split domain name and remove last part
@@ -197,19 +119,6 @@ export default function Admin() {
     }
 
     return callData
-  }
-
-  const getAccountStr = (account) => {
-    // lowercase compare account with 0x61d1eeE7FBF652482DEa98A1Df591C626bA09a60
-    const accountLower = account.toLowerCase()
-    const accountMain = process.env.NEXT_PUBLIC_MAIN_ACCOUNT.toLowerCase()
-
-    if (accountLower == accountMain) {
-      return '' + account
-    } else {
-      return '' + account + ' (Please switch to Admin account)'
-    }
-    return '' + account
   }
 
   // the name MUST be concatendted with .any suffix
@@ -412,69 +321,12 @@ export default function Admin() {
     <Layout>
       <div>
         {/*
-        <form onSubmit={onDebug} className="animate-in fade-in duration-700">
-          <div className="text-center text-2xl font-bold m-2">
-            <LoadingButton
-              //loading={isProcessing}
-              variant="outlined"
-              className="my-button"
-              type="submit"
-              disabled={isProcessing || !active}
-            >
-              Debug: set a content ID
-            </LoadingButton>
-          </div>
-        </form>
+        <DebugPanel 
+          id="1" 
+          setIsProcessing={setIsProcessing}/>
         */}
 
-        {!active && (
-          <form
-            onSubmit={onConnect}
-            className="animate-in fade-in duration-700"
-          >
-            <div className="text-center text-2xl font-bold m-2">
-              <LoadingButton
-                //loading={isProcessing}
-                variant="outlined"
-                className="my-button"
-                type="submit"
-                disabled={isProcessing || active}
-              >
-                Connect with Metamask
-              </LoadingButton>
-            </div>
-          </form>
-        )}
-
-        {active && isAccountAdmin(account) ? (
-          <div>
-            <div>
-              <span>
-                Connected with <strong>{getAccountStr(account)}</strong>
-              </span>
-            </div>
-
-            <div>
-              <span>
-                Chain ID: <strong>{convertChainIDToString(chainId)}</strong>
-              </span>
-            </div>
-          </div>
-        ) : (
-          <div>
-            <span></span>
-          </div>
-        )}
-
-        {!isAccountAdmin(account) && (
-          <WarningPanel>
-            <span>🤔 </span>
-            <span>
-              Please switch to {process.env.NEXT_PUBLIC_MAIN_ACCOUNT}(Admin)
-              account
-            </span>
-          </WarningPanel>
-        )}
+        <ConnectedPanel />
 
         <DataForm
           account={account}
