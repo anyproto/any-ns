@@ -104,7 +104,6 @@ contract AnytypeRegistrarController is
         if (_maxCommitmentAge <= _minCommitmentAge) {
             revert MaxCommitmentAgeTooLow();
         }
-
         if (_maxCommitmentAge > block.timestamp) {
             revert MaxCommitmentAgeTooHigh();
         }

@@ -25,7 +25,6 @@ import {INameWrapper} from "../wrapper/INameWrapper.sol";
  *   - ABIResolver impl. is removed
  *   - InterfaceResolver impl. is removed
  *   - SpaceResolver is added
- *
  * Anytype uses CID as a content hash format.
  * If Anytype user buys a single name, he can set a CID as a content hash.
  * Also, Anytype user can attach a space CID to the same name.

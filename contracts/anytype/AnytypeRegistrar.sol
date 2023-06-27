@@ -6,14 +6,14 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
- * Each registrar simply controls one top level domain, such as "eth"
+ * Each registrar simply controls one top level domain, such as ".any"
  */
 contract AnytypeRegistrarImplementation is ERC721, IAnytypeRegistrar, Ownable {
     // A map of expiry times
     mapping(uint256 => uint256) expiries;
     // The ENS registry
     ENS public ens;
-    // The namehash of the TLD this registrar owns (eg, .eth)
+    // The namehash of the TLD this registrar owns (eg, .any)
     bytes32 public baseNode;
     // A map of addresses that are authorised to register and renew names.
     mapping(address => bool) public controllers;

@@ -1,18 +1,11 @@
 const Web3 = require('web3')
 
-const AbiRegistry = require('abi/ENSRegistry.json')
-const AbiResolver = require('abi/AnytypeResolver.json')
-const AbiNameWrapper = require('abi/AnytypeNameWrapper.json')
+const RegistryJson = require('deployments/sepolia/ENSRegistry.json')
+const ABIResolver = require('deployments/sepolia/AnytypeResolver.json')
+const NameWrapperJson = require('deployments/sepolia/AnytypeNameWrapper.json')
 
 const web3 = new Web3()
 web3.setProvider(new Web3.providers.HttpProvider(process.env.INFURA_URL))
-
-// ENSRegistryWithFallback
-const registryContractAddr = process.env.REGISTRY_CONTRACT_ADDRESS
-const resolverContractAddress =
-  process.env.NEXT_PUBLIC_RESOLVER_CONTRACT_ADDRESS
-const namewrapperContractAddress =
-  process.env.NEXT_PUBLIC_NAMEWRAPPER_CONTRACT_ADDRESS
 
 function namehash(name) {
   let node =
@@ -27,8 +20,8 @@ function namehash(name) {
 
 async function getOwner(name) {
   const ensContract = new web3.eth.Contract(
-    AbiRegistry.abi,
-    registryContractAddr,
+    RegistryJson.abi,
+    RegistryJson.address,
   )
 
   try {
@@ -50,8 +43,8 @@ async function getOwner(name) {
 
 async function getContentID(name) {
   const resolverContract = new web3.eth.Contract(
-    AbiResolver.abi,
-    resolverContractAddress,
+    ABIResolver.abi,
+    ABIResolver.address,
   )
 
   try {
@@ -68,8 +61,8 @@ async function getContentID(name) {
 
 async function getSpaceID(name) {
   const resolverContract = new web3.eth.Contract(
-    AbiResolver.abi,
-    resolverContractAddress,
+    ABIResolver.abi,
+    ABIResolver.address,
   )
 
   try {
@@ -88,8 +81,8 @@ async function getSpaceID(name) {
 // so we need to get the real owner of the name from NameWrapper
 async function getRealOwner(name) {
   const nameWrapperContract = new web3.eth.Contract(
-    AbiNameWrapper.abi,
-    namewrapperContractAddress,
+    NameWrapperJson.abi,
+    NameWrapperJson.address,
   )
 
   try {

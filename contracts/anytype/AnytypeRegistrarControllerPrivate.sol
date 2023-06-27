@@ -29,7 +29,6 @@ error MaxCommitmentAgeTooHigh();
 /**
  * This is a fork/copy of the ENS registrar controller with the following changes:
  *  .any TLD is used instead of .eth
- *
  *  Owner of this contract can register any name without a payment on behalf/for other users.
  */
 contract AnytypeRegistrarControllerPrivate is

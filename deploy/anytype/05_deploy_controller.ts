@@ -43,6 +43,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const controller = await deploy('AnytypeRegistrarController', deployArgs)
   if (!controller.newlyDeployed) return
 
+  // set Fake USDC as a payment option
+  const fakeUSDC = await ethers.getContract('FakeUSDC', owner)
+  const usdcDecimals = 6 // like in a real USDC token
+
+  const c = await ethers.getContract('AnytypeRegistrarController', deployer)
+  await c.addERC20UsdPaymentOption(fakeUSDC.address, usdcDecimals)
+
   if (owner !== deployer) {
     const c = await ethers.getContract('AnytypeRegistrarController', deployer)
     const tx = await c.transferOwnership(owner)
@@ -56,7 +63,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   if (network.name === 'mainnet') return
 
   // This is currently not used because the control is like this:
-  //   AnytypeRegistrarControllerPrivate -> NameWrapper -> AnytypeRegistrarImplementation
+  //   AnytypeRegistrarController -> NameWrapper -> AnytypeRegistrarImplementation
   //
   // await registrar.addController(controller.address)
 
@@ -87,6 +94,7 @@ func.dependencies = [
   'ReverseRegistrar',
   'AnytypeNameWrapper',
   'AnytypePriceOracle',
+  'FakeUSDC',
 ]
 
 export default func

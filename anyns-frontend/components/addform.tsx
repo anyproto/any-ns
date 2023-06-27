@@ -7,7 +7,7 @@ import { concatenateWithTLD, removeTLD } from '../lib/anyns'
 
 const tld = process.env.NEXT_PUBLIC_TLD_SUFFIX
 
-export default function AddForm({
+export default function InfoForm({
   domainNamePreselected,
   handlerDomainChanged,
   handlerVerify,
@@ -58,14 +58,20 @@ export default function AddForm({
   const onShowInfo = async (e) => {
     e.preventDefault()
 
+    let fullName = domainName
+
     // add .any suffix to the name if it is not there yet
     // @ts-ignore
     if (!domainName.endsWith(tld)) {
-      router.push('/info/' + domainName + tld)
-      return
+      fullName = domainName + tld
     }
 
-    router.push('/info/' + domainName)
+    const isRegister = isNameAvailable
+    if (isRegister) {
+      router.push('/register/' + fullName)
+    } else {
+      router.push('/info/' + fullName)
+    }
   }
 
   return (
@@ -95,9 +101,9 @@ export default function AddForm({
             variant="outlined"
             className="text-small inline-block p-3 flex-none my-button"
             type="submit"
-            disabled={isProcessing || !debouncedLookup || isNameAvailable}
+            disabled={isProcessing || !debouncedLookup}
           >
-            Show info
+            {isNameAvailable ? 'Register' : 'Info'}
           </LoadingButton>
         </div>
       </form>

@@ -19,7 +19,14 @@ To view all custom Anytype contracts, please refer to the **contracts/anytype** 
 
 # How to deploy
 
-1. Define a .env file with 3 variables:
+1. Create a symbolic link from ../deployments to ./deployments
+   (this is needed because NextJS can not access ../ dir):
+
+```
+ln -s ../deployments ./deployments
+```
+
+2. Define a .env file with 3 variables:
 
 ```
 PRIVATE_KEY=XXX
@@ -27,7 +34,7 @@ DEPLOYER_KEY=XXX
 INFURA_API_KEY=YYY
 ```
 
-2. Run `npx hardhat --network sepolia deploy`.
+3. Run `npx hardhat --network sepolia deploy`.
 
 # Howtos and links
 

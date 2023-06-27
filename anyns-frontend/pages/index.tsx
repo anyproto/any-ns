@@ -4,7 +4,7 @@ import { checkNameAvailability, removeTLD } from '../lib/anyns'
 
 import ModalDlg from '../components/modal'
 import Layout from '../components/layout'
-import AddForm from '../components/addform'
+import InfoForm from '../components/addform'
 import Navigator from '../components/navigator'
 
 export default function Home() {
@@ -49,7 +49,7 @@ export default function Home() {
     <Layout>
       <div>
         <main className="container max-w-[700px] mx-auto p-2">
-          <AddForm
+          <InfoForm
             domainNamePreselected=""
             handlerDomainChanged={handlerDomainChanged}
             handlerVerify={handlerVerify}

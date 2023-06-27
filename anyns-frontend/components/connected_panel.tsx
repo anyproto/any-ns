@@ -1,12 +1,20 @@
 import { useWeb3React } from '@web3-react/core'
 import { LoadingButton } from '@mui/lab'
+import { useEffect, useState } from 'react'
 
 import { injected } from '../components/connectors'
 
 import WarningPanel from '../components/warning_panel'
 
-export default function ConnectedPanel() {
+export default function ConnectedPanel({ isAdminMode }) {
   const { active, account, activate, chainId } = useWeb3React()
+  const [amountUsdc, setAmountUsdc] = useState(10.0)
+
+  useEffect(() => {
+    const loadTokenBalanceAsync = async (account) => {}
+
+    loadTokenBalanceAsync(account)
+  }, [account])
 
   const isAccountAdmin = (address) => {
     return address === process.env.NEXT_PUBLIC_MAIN_ACCOUNT
@@ -17,7 +25,7 @@ export default function ConnectedPanel() {
     const accountLower = account.toLowerCase()
     const accountMain = process.env.NEXT_PUBLIC_MAIN_ACCOUNT.toLowerCase()
 
-    if (accountLower == accountMain) {
+    if (accountLower == accountMain || !isAdminMode) {
       return '' + account
     } else {
       return '' + account + ' (Please switch to Admin account)'
@@ -63,7 +71,7 @@ export default function ConnectedPanel() {
         </form>
       )}
 
-      {active && isAccountAdmin(account) ? (
+      {active && isAdminMode && isAccountAdmin(account) && (
         <div>
           <div>
             <span>
@@ -77,13 +85,25 @@ export default function ConnectedPanel() {
             </span>
           </div>
         </div>
-      ) : (
+      )}
+
+      {active && !isAdminMode && (
         <div>
-          <span></span>
+          <div>
+            <span>
+              Connected with <strong>{getAccountStr(account)}</strong>
+            </span>
+          </div>
+
+          <div>
+            <span>
+              Fake USDC tokens balance: <strong>{amountUsdc}</strong>
+            </span>
+          </div>
         </div>
       )}
 
-      {!isAccountAdmin(account) && (
+      {isAdminMode && !isAccountAdmin(account) && (
         <WarningPanel>
           <span>🤔 </span>
           <span>

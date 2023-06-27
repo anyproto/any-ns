@@ -24,3 +24,8 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# this folder is linked from the ../ folder (Next can not access it!)
+# so we make sure it won't go to the .git
+deployments
+

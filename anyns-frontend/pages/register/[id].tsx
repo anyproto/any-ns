@@ -4,11 +4,12 @@ import { useRouter } from 'next/router'
 import { CircularProgress } from '@mui/material'
 import ModalDlg from '../../components/modal'
 import Layout from '../../components/layout'
-import DataForm from '../../components/dataform'
+import RegisterForm from '../../components/registerform'
+import ConnectedPanel from '../../components/connected_panel'
 
 import { fetchNameInfo } from '../../lib/anyns'
 
-export default function NameInfoPage() {
+export default function RegisterPage() {
   const [showModal, setShowModal] = useState(false)
   const [modalTitle, setModalTitle] = useState('Name availability')
   const [modalText, setModalText] = useState('Name is available!')
@@ -25,14 +26,13 @@ export default function NameInfoPage() {
   return (
     <Layout>
       <div>
-        <main className="container max-w-[700px] mx-auto p-2">
-          <DataForm
-            account={null}
-            domainNamePreselected={router.query.id}
-            handleFetchNameInfo={fetchNameInfo}
-            handlerRegister={null}
-          />
-        </main>
+        <ConnectedPanel isAdminMode={false} />
+
+        <RegisterForm
+          domainNamePreselected={router.query.id}
+          handleFetchNameInfo={fetchNameInfo}
+          handlerRegister={null}
+        />
 
         {
           <div className="text-center mx-auto w-full">

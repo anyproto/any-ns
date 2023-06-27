@@ -5,7 +5,7 @@ import { LoadingButton } from '@mui/lab'
 // Access our wallet inside of our dapp
 const web3 = new Web3(Web3.givenProvider)
 
-const resolverAbi = require('../abi/AnytypeResolver.json')
+const resolverJson = require('../../deployments/sepolia/AnytypeResolver.json')
 
 import { namehash } from '../lib/anyns'
 
@@ -24,8 +24,8 @@ export default function DebugPanel({ id, setIsProcessing }) {
     console.log('Setting content hash: ' + contentHash)
 
     try {
-      const contractAddress = process.env.NEXT_PUBLIC_RESOLVER_CONTRACT_ADDRESS
-      const resolver = new web3.eth.Contract(resolverAbi.abi, contractAddress)
+      const contractAddress = resolverJson.address
+      const resolver = new web3.eth.Contract(resolverJson.abi, contractAddress)
 
       const node = namehash(fullName)
       const gas = await resolver.methods

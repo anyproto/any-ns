@@ -19,8 +19,8 @@ import DebugPanel from '../components/debug_panel'
 import Web3 from 'web3'
 const ethers = require('ethers')
 
-const resolverAbi = require('../abi/AnytypeResolver.json')
-const privateRegistrarAbi = require('../abi/AnytypeRegistrarControllerPrivate.json')
+const resolverJson = require('../deployments/sepolia/AnytypeResolver.json')
+const privateRegistrarJson = require('../deployments/sepolia/AnytypeRegistrarControllerPrivate.json')
 
 // Access our wallet inside of our dapp
 const web3 = new Web3(Web3.givenProvider)
@@ -83,13 +83,11 @@ export default function Admin() {
   }
 
   const prepareCallData = async (contentHash, spaceID, nameFull) => {
-    const contractAddress = process.env.NEXT_PUBLIC_RESOLVER_CONTRACT_ADDRESS
-
     // instantiate the contract using Ethers library
     const wallet = null
     const resolver = new ethers.Contract(
-      contractAddress,
-      resolverAbi.abi,
+      resolverJson.address,
+      resolverJson.abi,
       wallet,
     )
 
@@ -156,16 +154,15 @@ export default function Admin() {
       return
     }
 
-    // 2 - get only first part of the name
+    // get only first part of the name
     // (name should bear no .any suffix)
     const nameFirstPart = removeTLD(nameFull)
 
-    // 1 - now commit
+    // 2 - now commit
     // Contract address of the deployed smart contract
-    const contractAddress = process.env.NEXT_PUBLIC_REGISTRAR_CONTRACT_ADDRESS
     const registrarController = new web3.eth.Contract(
-      privateRegistrarAbi.abi,
-      contractAddress,
+      privateRegistrarJson.abi,
+      privateRegistrarJson.address,
     )
 
     const DAY = 24 * 60 * 60
@@ -175,7 +172,6 @@ export default function Admin() {
     const secret = web3.utils.randomHex(32)
     //const secret = "0x4123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
 
-    const resolverAddress = process.env.NEXT_PUBLIC_RESOLVER_CONTRACT_ADDRESS
     const isReverseRecord = true
     const ownerControlledFuses = 0
 
@@ -190,7 +186,7 @@ export default function Admin() {
         registrantAccount,
         REGISTRATION_TIME,
         secret,
-        resolverAddress,
+        resolverJson.address,
         callData,
         isReverseRecord,
         ownerControlledFuses,
@@ -215,7 +211,7 @@ export default function Admin() {
         gas,
       })
 
-      console.log('Transaction: ')
+      console.log('Commit Transaction: ')
       console.log(tx)
     } catch (err) {
       console.error('Can not commit!')
@@ -231,6 +227,8 @@ export default function Admin() {
     }
 
     // 2 - now register
+    console.log("Registering '" + nameFirstPart + "' to " + registrantAccount)
+
     try {
       // Get permission to access user funds to pay for gas fees
       const gas = await registrarController.methods
@@ -239,7 +237,7 @@ export default function Admin() {
           registrantAccount,
           REGISTRATION_TIME,
           secret,
-          resolverAddress,
+          resolverJson.address,
           callData,
           isReverseRecord,
           ownerControlledFuses,
@@ -256,7 +254,7 @@ export default function Admin() {
           registrantAccount,
           REGISTRATION_TIME,
           secret,
-          resolverAddress,
+          resolverJson.address,
           callData,
           isReverseRecord,
           ownerControlledFuses,
@@ -326,7 +324,7 @@ export default function Admin() {
           setIsProcessing={setIsProcessing}/>
         */}
 
-        <ConnectedPanel />
+        <ConnectedPanel isAdminMode={true} />
 
         <DataForm
           account={account}

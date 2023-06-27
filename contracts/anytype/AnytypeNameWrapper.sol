@@ -68,7 +68,6 @@ contract AnytypeNameWrapper is
         metadataService = _metadataService;
 
         /* Burn PARENT_CANNOT_CONTROL and CANNOT_UNWRAP fuses for ROOT_NODE and ANY_NODE and set expiry to max */
-
         _setData(
             uint256(ANY_NODE),
             address(0),
