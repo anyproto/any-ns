@@ -14,7 +14,6 @@ import ModalDlg from '../components/modal'
 import Layout from '../components/layout'
 import DataForm from '../components/dataform'
 import ConnectedPanel from '../components/connected_panel'
-import DebugPanel from '../components/debug_panel'
 
 import Web3 from 'web3'
 const ethers = require('ethers')

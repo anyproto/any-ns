@@ -179,7 +179,7 @@ export default function DataForm({
               className={`block w-full input-with-no-button flex-grow${
                 isProcessing ? ' rounded-md' : ' rounded-l-md'
               }`}
-              disabled={isProcessing}
+              disabled={isProcessing || !handlerRegister}
               //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
               //required
             />
@@ -206,7 +206,7 @@ export default function DataForm({
               className={`block w-full input-with-no-button flex-grow${
                 isProcessing ? ' rounded-md' : ' rounded-l-md'
               }`}
-              disabled={isProcessing}
+              disabled={isProcessing || !handlerRegister}
               //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
               //required
             />
@@ -233,7 +233,7 @@ export default function DataForm({
               className={`block w-full input-with-no-button flex-grow${
                 isProcessing ? ' rounded-md' : ' rounded-l-md'
               }`}
-              disabled={isProcessing}
+              disabled={isProcessing || !handlerRegister}
               //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
               //required
             />

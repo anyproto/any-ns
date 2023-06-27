@@ -1,4 +1,3 @@
-import { useWeb3React } from '@web3-react/core'
 import { useEffect, useState } from 'react'
 import { LoadingButton } from '@mui/lab'
 
@@ -16,9 +15,9 @@ export default function RegisterForm({
   domainNamePreselected,
   handleFetchNameInfo,
   handlerRegister,
+  handleMintUsdcs,
+  isProcessingMint,
 }) {
-  const { active, account } = useWeb3React()
-
   const [isProcessing, setIsProcessing] = useState(false)
   const [domainName, setDomainName] = useState(domainNamePreselected)
   const debouncedLookup = useDebounce(domainName, 1000)
@@ -121,7 +120,10 @@ export default function RegisterForm({
 
   return (
     <div>
-      <form onSubmit={onRegister} className="animate-in fade-in duration-700">
+      <form
+        onSubmit={handleMintUsdcs}
+        className="animate-in fade-in duration-700"
+      >
         <div className="singleDataLine">
           <div className="flex mt-1">
             <p>Name:</p>
@@ -207,7 +209,7 @@ export default function RegisterForm({
         <div>
           <div className="text-center text-2xl font-bold m-2">
             <LoadingButton
-              loading={isProcessing}
+              loading={isProcessing || isProcessingMint}
               variant="outlined"
               className="text-small my-button"
               type="submit"
@@ -217,7 +219,9 @@ export default function RegisterForm({
             </LoadingButton>
           </div>
         </div>
+      </form>
 
+      <form onSubmit={onRegister} className="animate-in fade-in duration-700">
         <div>
           <div className="text-center text-2xl font-bold m-2">
             <LoadingButton

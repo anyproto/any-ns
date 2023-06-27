@@ -4,16 +4,48 @@ import { useEffect, useState } from 'react'
 
 import { injected } from '../components/connectors'
 
+import Web3 from 'web3'
+const web3 = new Web3(Web3.givenProvider)
+
 import WarningPanel from '../components/warning_panel'
+
+const erc20Token = require('../../deployments/sepolia/FakeUSDC.json')
 
 export default function ConnectedPanel({ isAdminMode }) {
   const { active, account, activate, chainId } = useWeb3React()
-  const [amountUsdc, setAmountUsdc] = useState(10.0)
+  const [amountUsdc, setAmountUsdc] = useState(0.0)
+
+  // TODO: somehow it doesn't work when page is refreshed
+  useEffect(() => {
+    const connectWalletOnPageLoad = async () => {
+      try {
+        await activate(injected)
+      } catch (ex) {
+        console.log(ex)
+      }
+    }
+
+    console.log('Try to reconnect...')
+
+    connectWalletOnPageLoad()
+  }, [])
 
   useEffect(() => {
-    const loadTokenBalanceAsync = async (account) => {}
+    const loadTokenBalanceAsync = async (account) => {
+      const erc20Contract = new web3.eth.Contract(
+        erc20Token.abi,
+        erc20Token.address,
+      )
 
-    loadTokenBalanceAsync(account)
+      const balance = await erc20Contract.methods.balanceOf(account).call()
+      const balanceFloat = parseFloat(balance) / 10 ** 6
+
+      setAmountUsdc(balanceFloat)
+    }
+
+    if (account && typeof account != 'undefined') {
+      loadTokenBalanceAsync(account)
+    }
   }, [account])
 
   const isAccountAdmin = (address) => {

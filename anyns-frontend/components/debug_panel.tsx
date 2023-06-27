@@ -1,8 +1,7 @@
-import Web3 from 'web3'
 import { useWeb3React } from '@web3-react/core'
 import { LoadingButton } from '@mui/lab'
 
-// Access our wallet inside of our dapp
+import Web3 from 'web3'
 const web3 = new Web3(Web3.givenProvider)
 
 const resolverJson = require('../../deployments/sepolia/AnytypeResolver.json')
