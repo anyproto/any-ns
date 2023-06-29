@@ -43,6 +43,7 @@ const config: HardhatUserConfig = {
       saveDeployments: false,
       tags: ['test', 'legacy', 'use_root'],
       allowUnlimitedContractSize: false,
+      gasPrice: 25000000000,
     },
     localhost: {
       url: 'http://127.0.0.1:8545',
@@ -72,6 +73,7 @@ const config: HardhatUserConfig = {
       tags: ['test', 'legacy', 'use_root'],
       chainId: 11155111,
       accounts: real_accounts,
+      gasPrice: 35000000000,
     },
     mainnet: {
       url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
