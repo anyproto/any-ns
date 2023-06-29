@@ -26,13 +26,18 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const reverseRegistrar = await ethers.getContract('ReverseRegistrar', owner)
   const nameWrapper = await ethers.getContract('AnytypeNameWrapper', owner)
 
+  // if network is not mainnet, use a mock price oracle
+  let minCommitmentAge = 60
+  if (network.name === 'sepolia') {
+    minCommitmentAge = 0
+  }
+
   const deployArgs = {
     from: deployer,
     args: [
       registrar.address,
       priceOracle.address,
-      // standard values
-      60,
+      minCommitmentAge,
       86400,
       reverseRegistrar.address,
       nameWrapper.address,

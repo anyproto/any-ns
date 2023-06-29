@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { LoadingButton } from '@mui/lab'
+import { useWeb3React } from '@web3-react/core'
 
 import useDebounce from './debounce'
 
@@ -18,11 +19,12 @@ export default function RegisterForm({
   handleMintUsdcs,
   isProcessingMint,
 }) {
+  const { account } = useWeb3React()
+
   const [isProcessing, setIsProcessing] = useState(false)
   const [domainName, setDomainName] = useState(domainNamePreselected)
   const debouncedLookup = useDebounce(domainName, 1000)
 
-  const [userAddress, setUserAddress] = useState('')
   const [contentHash, setContentHash] = useState('')
   const [spaceHash, setSpaceHash] = useState('')
 
@@ -79,7 +81,7 @@ export default function RegisterForm({
     }
 
     setIsProcessing(true)
-    await handlerRegister(regMe, userAddress, contentHash, spaceHash)
+    await handlerRegister(regMe, account, contentHash, spaceHash)
     setIsProcessing(false)
   }
 
@@ -111,10 +113,8 @@ export default function RegisterForm({
 
     if (data.owner) {
       setNameAvailable(false)
-      setUserAddress(data.owner)
     } else {
       setNameAvailable(true)
-      setUserAddress('')
     }
   }
 
@@ -215,7 +215,7 @@ export default function RegisterForm({
               type="submit"
               disabled={isProcessing}
             >
-              Debug: mint 10 fake USDC tokens
+              Debug: mint 1000 fake USDC tokens
             </LoadingButton>
           </div>
         </div>
@@ -231,12 +231,12 @@ export default function RegisterForm({
               type="submit"
               disabled={
                 isProcessing ||
+                isProcessingMint ||
                 !isNameValid(domainName) ||
-                !isAddressValid(userAddress) ||
                 !isNameAvailable
               }
             >
-              Pay 10 fake USDC tokens and Register
+              Pay 20 fake USDC tokens and register
             </LoadingButton>
           </div>
 

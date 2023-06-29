@@ -5,8 +5,8 @@ import { useWeb3React } from '@web3-react/core'
 import {
   checkNameAvailability,
   removeTLD,
-  namehash,
   fetchNameInfo,
+  prepareCallData,
 } from '../lib/anyns'
 
 import { injected } from '../components/connectors'
@@ -79,43 +79,6 @@ export default function Admin() {
     }
 
     return true
-  }
-
-  const prepareCallData = async (contentHash, spaceID, nameFull) => {
-    // instantiate the contract using Ethers library
-    const wallet = null
-    const resolver = new ethers.Contract(
-      resolverJson.address,
-      resolverJson.abi,
-      wallet,
-    )
-
-    const node = namehash(nameFull)
-    const callData = []
-
-    if (spaceID) {
-      const spaceIDHex = web3.utils.utf8ToHex(spaceID)
-      console.log('Adding space ID: ' + spaceIDHex)
-
-      const data = resolver.interface.encodeFunctionData(
-        'setSpaceId(bytes32,bytes)',
-        [node, spaceIDHex],
-      )
-      callData.push(data)
-    }
-
-    if (contentHash) {
-      const contentHashHex = web3.utils.utf8ToHex(contentHash)
-      console.log('Adding content hash: ' + contentHashHex)
-
-      const data = resolver.interface.encodeFunctionData('setContenthash', [
-        node,
-        contentHashHex,
-      ])
-      callData.push(data)
-    }
-
-    return callData
   }
 
   // the name MUST be concatendted with .any suffix

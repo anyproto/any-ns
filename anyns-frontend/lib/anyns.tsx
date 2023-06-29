@@ -1,6 +1,10 @@
 const Web3 = require('web3')
 const web3 = new Web3()
 
+const ethers = require('ethers')
+
+const resolverJson = require('../deployments/sepolia/AnytypeResolver.json')
+
 export async function checkNameAvailability(name) {
   console.log('Checking name availability...: ' + name)
 
@@ -81,4 +85,41 @@ export function namehash(name) {
     node = web3.utils.sha3(node + labelHash.slice(2), { encoding: 'hex' })
   }
   return node
+}
+
+export async function prepareCallData(contentHash, spaceID, nameFull) {
+  // instantiate the contract using Ethers library
+  const wallet = null
+  const resolver = new ethers.Contract(
+    resolverJson.address,
+    resolverJson.abi,
+    wallet,
+  )
+
+  const node = namehash(nameFull)
+  const callData = []
+
+  if (spaceID) {
+    const spaceIDHex = web3.utils.utf8ToHex(spaceID)
+    console.log('Adding space ID: ' + spaceIDHex)
+
+    const data = resolver.interface.encodeFunctionData(
+      'setSpaceId(bytes32,bytes)',
+      [node, spaceIDHex],
+    )
+    callData.push(data)
+  }
+
+  if (contentHash) {
+    const contentHashHex = web3.utils.utf8ToHex(contentHash)
+    console.log('Adding content hash: ' + contentHashHex)
+
+    const data = resolver.interface.encodeFunctionData('setContenthash', [
+      node,
+      contentHashHex,
+    ])
+    callData.push(data)
+  }
+
+  return callData
 }
