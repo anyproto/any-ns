@@ -15,10 +15,14 @@ export default function ConnectedPanel({ isAdminMode }) {
   const { active, account, activate, chainId } = useWeb3React()
   const [amountUsdc, setAmountUsdc] = useState(0.0)
 
-  // TODO: somehow it doesn't work when page is refreshed
   useEffect(() => {
     const connectWalletOnPageLoad = async () => {
       try {
+        // TODO: remove this line
+        // somehow page is not refreshed
+        // without this delay
+        await new Promise((r) => setTimeout(r, 500))
+
         await activate(injected)
       } catch (ex) {
         console.log(ex)

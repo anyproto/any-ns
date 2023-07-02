@@ -32,7 +32,6 @@ export default function RegisterPage() {
   const [modalTitle, setModalTitle] = useState('Name availability')
   const [modalText, setModalText] = useState('Name is available!')
 
-  const [isProcessingMint, setIsProcessingMint] = useState(false)
   const [error, setError] = useState(null)
 
   const router = useRouter()
@@ -41,9 +40,7 @@ export default function RegisterPage() {
     setShowModal(false)
   }
 
-  const handleMint = async (e) => {
-    e.preventDefault()
-
+  const handleMint = async () => {
     const erc20Contract = new web3.eth.Contract(
       erc20TokenJson.abi,
       erc20TokenJson.address,
@@ -55,7 +52,6 @@ export default function RegisterPage() {
         from: account,
       })
 
-      setIsProcessingMint(true)
       const tx = await erc20Contract.methods.mint(account, 1000).send({
         from: account,
         gas,
@@ -70,9 +66,6 @@ export default function RegisterPage() {
       setModalTitle('Something went wrong!')
       setModalText('Can not mint tokens...')
       setShowModal(true)
-
-      // do not continue
-      setIsProcessingMint(false)
       return
     }
 
@@ -86,7 +79,6 @@ export default function RegisterPage() {
           from: account,
         })
 
-      setIsProcessingMint(true)
       const tx = await erc20Contract.methods.approve(approveTo, 1000).send({
         from: account,
         gas,
@@ -103,11 +95,8 @@ export default function RegisterPage() {
       setShowModal(true)
 
       // do not continue
-      setIsProcessingMint(false)
       return
     }
-
-    setIsProcessingMint(false)
 
     // update screen
     router.reload()
@@ -185,7 +174,6 @@ export default function RegisterPage() {
     const DAY = 24 * 60 * 60
     const REGISTRATION_TIME = 365 * DAY
 
-    // TODO: uncomment
     // randomize secret
     const secret = web3.utils.randomHex(32)
     //const secret = "0x7823456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
@@ -317,7 +305,6 @@ export default function RegisterPage() {
           handleFetchNameInfo={fetchNameInfo}
           handlerRegister={handlerRegisterForUsdcs}
           handleMintUsdcs={handleMint}
-          isProcessingMint={isProcessingMint}
         />
 
         {showModal && (
@@ -325,24 +312,6 @@ export default function RegisterPage() {
             <p>{modalText}</p>
           </ModalDlg>
         )}
-
-        {/*
-        <form onSubmit={onDebug} className="animate-in fade-in duration-700">
-          <div>
-            <div className="text-center text-2xl font-bold m-2">
-              <LoadingButton
-                loading={isProcessingMint}
-                variant="outlined"
-                className="text-small my-button"
-                type="submit"
-                disabled={isProcessing}
-              >
-                Debug: 2nd step - register
-              </LoadingButton>
-            </div>
-          </div>
-        </form>
-        */}
       </div>
     </Layout>
   )

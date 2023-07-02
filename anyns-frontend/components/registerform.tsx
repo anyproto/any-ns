@@ -17,11 +17,13 @@ export default function RegisterForm({
   handleFetchNameInfo,
   handlerRegister,
   handleMintUsdcs,
-  isProcessingMint,
 }) {
   const { account } = useWeb3React()
 
   const [isProcessing, setIsProcessing] = useState(false)
+  const [isProcessingMint, setIsProcessingMint] = useState(false)
+  const [isProcessingRegister, setIsProcessingRegister] = useState(false)
+
   const [domainName, setDomainName] = useState(domainNamePreselected)
   const debouncedLookup = useDebounce(domainName, 1000)
 
@@ -70,6 +72,14 @@ export default function RegisterForm({
     return address.length === 42 && address.startsWith('0x')
   }
 
+  const onMint = async (e) => {
+    e.preventDefault()
+
+    setIsProcessingMint(true)
+    await handleMintUsdcs()
+    setIsProcessingMint(false)
+  }
+
   const onRegister = async (e) => {
     e.preventDefault()
 
@@ -80,9 +90,9 @@ export default function RegisterForm({
       regMe = domainName + tld
     }
 
-    setIsProcessing(true)
+    setIsProcessingRegister(true)
     await handlerRegister(regMe, account, contentHash, spaceHash)
-    setIsProcessing(false)
+    setIsProcessingRegister(false)
   }
 
   const getNameInfo = async (nameFull) => {
@@ -120,10 +130,7 @@ export default function RegisterForm({
 
   return (
     <div>
-      <form
-        onSubmit={handleMintUsdcs}
-        className="animate-in fade-in duration-700"
-      >
+      <form onSubmit={onMint} className="animate-in fade-in duration-700">
         <div className="singleDataLine">
           <div className="flex mt-1">
             <p>Name:</p>
@@ -209,11 +216,13 @@ export default function RegisterForm({
         <div>
           <div className="text-center text-2xl font-bold m-2">
             <LoadingButton
-              loading={isProcessing || isProcessingMint}
+              loading={isProcessingMint}
               variant="outlined"
               className="text-small my-button"
               type="submit"
-              disabled={isProcessing}
+              disabled={
+                isProcessing || isProcessingMint || isProcessingRegister
+              }
             >
               Debug: mint 1000 fake USDC tokens
             </LoadingButton>
@@ -225,13 +234,14 @@ export default function RegisterForm({
         <div>
           <div className="text-center text-2xl font-bold m-2">
             <LoadingButton
-              loading={isProcessing}
+              loading={isProcessingRegister}
               variant="outlined"
               className="text-small my-button"
               type="submit"
               disabled={
                 isProcessing ||
                 isProcessingMint ||
+                isProcessingRegister ||
                 !isNameValid(domainName) ||
                 !isNameAvailable
               }
