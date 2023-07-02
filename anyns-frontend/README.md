@@ -3,26 +3,17 @@
 AnyNS, short for Anytype Naming Service, is a decentralized domain name system based on ENS and compatible with ENS.
 Please see anyns contracts for description of what was changed.
 
-## Sepolia deployment
+## Sepolia testnet deployment
 
-```
-  // used on backend AND frontend
-  NEXT_PUBLIC_MAIN_ACCOUNT = "0x61d1eeE7FBF652482DEa98A1Df591C626bA09a60"
-  // used by backend only
-  REGISTRY_CONTRACT_ADDRESS="0x0e9d17d5fc9a037A92F1aac52D3Bae04b0e30224"
-```
-
-# Name examples
-
-- hello.a.any -> can be only registered by a.any owner or Anytype
-- INVALID: aa.any -> can not register domains with less than 3 letters
-- INVALID: aa -> can not register TLD domain
+Current frontend uses contracts that were deployed previously (see top-level folder for details and Hardhat instructions).
+All contract addresses are kept in **../deployments/sepolia/** folder. Howerver, NextJS can not usually access the **../** folder, so we have to create a symbolic link.
 
 # How to build and run locally
 
 1. Create a .env file (see .env-example)
-2. Run `npm install`
-3. Run `npm run dev`
+2. Create a symlink: `ln -s ../deployments ./deployments`
+3. Run `npm install`
+4. Run `npm run dev`
 
 # TODOs
 

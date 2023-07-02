@@ -1,5 +1,13 @@
 # AnyNS
 
+This repository contains 3 projects:
+
+- AnyNS smart contracts (**this** top-level folder)
+- AnyNS frontend (**anyns-frontend** sub-folder)
+- AnyNS API serveri (**api-server** sub-folder)
+
+---
+
 Please see original [ENS README file](ORIGINAL_ENS_README.md)!
 
 AnyNS, which stands for Anytype Naming Service, is an experimental decentralized domain name system based on ENS (Ethereum Name Service) and compatible with ENS.
@@ -17,16 +25,25 @@ To view all custom Anytype contracts, please refer to the **contracts/anytype** 
 - AnytypePriceOracle - very simple price oracle, with basic functionality
 - **[anytype-frontend](anytype-frontend)** - AnyNS NextJS/React frontend.
 
-# How to deploy
+## Name examples
 
-1. Create a symbolic link from ../deployments to ./deployments
-   (this is needed because NextJS can not access ../ dir):
+- hello.a.any - can be only registered by a.any owner or Anytype
+- INVALID: aa.any - domains with less than 3 letters can not be registered
+- INVALID: aa - Top-Level-Domain (TLD) can not be registered, the only valid is .any
+
+## 0 - How to test contracts
 
 ```
-ln -s ../deployments ./deployments
+# to test all contracts
+npm run test
+
+# to test particular contract
+npm run test -- --grep "AnytypeRegistrarControllerPrivate"
 ```
 
-2. Define a .env file with 3 variables:
+## 1 - How to deploy smart contracts
+
+1. Define a **.env** file with 3 variables:
 
 ```
 PRIVATE_KEY=XXX
@@ -34,7 +51,23 @@ DEPLOYER_KEY=XXX
 INFURA_API_KEY=YYY
 ```
 
-3. Run `npx hardhat --network sepolia deploy --tags "anytype"`.
+2. (optional) Remove **deployments/sepolia** folder to reset all migrations:
+   `rm -rf deployments/sepolia`
+
+3. Run migrations:
+   `npx hardhat --network sepolia deploy --tags "anytype"`.
+
+As a result, folder **deployments/sepolia** should be updated with new contract addresses.
+
+p.s. Please see custom gas setting in the **hardhat.config.ts** file. This should increase the speed of the migration.
+
+## 2 - How to run the frontend
+
+See **anyns-frontend** folder for more details.
+
+## 3 - How to runun the API service
+
+See **api-server** folder for more details.
 
 # Howtos and links
 
