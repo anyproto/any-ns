@@ -65,7 +65,7 @@ p.s. Please see custom gas setting in the **hardhat.config.ts** file. This shoul
 
 See **anyns-frontend** folder for more details.
 
-## 3 - How to runun the API service
+## 3 - How to run the API service
 
 See **api-server** folder for more details.
 

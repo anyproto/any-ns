@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option go_package = "pb/anyns_api_server";
+
+message NameAvailableRequest {
+  // name including .any suffix
+  string fullName = 1;
+}
+
+message NameAvailableResponse {
+  bool available = 1;
+}
+
+service Anyns { 
+  rpc IsNameAvailable(NameAvailableRequest) returns (NameAvailableResponse) {}
+}
