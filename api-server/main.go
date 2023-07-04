@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/hex"
 	"log"
 	"math/big"
 	"net"
@@ -14,7 +15,6 @@ import (
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/ethclient"
 
 	ac "github.com/anytype/anyns_api_server/anytype_crypto"
@@ -279,15 +279,16 @@ func getAdditionalData(fullName string) (*string, *string, error) {
 		// return nil, nil, err
 	}
 
-	log.Printf("Contenthash is: %v", hexutil.Encode(hash))
-	log.Printf("Space ID is: %v", hexutil.Encode(space))
+	hexString := hex.EncodeToString(hash)
+	contentHashDecoded, _ := hex.DecodeString(hexString)
+	log.Printf("Contenthash is: %s", contentHashDecoded)
 
-	// 4 - TODO: convert them from hex string to string (decode)
-	// there are 2 ways to do that:
-	// ens.ContenthashToString(hash)
-	// cid.CidFromBytes(hash)
-	var contentHashOut string = hexutil.Encode(hash)
-	var spaceIDOut string = hexutil.Encode(space)
+	hexString = hex.EncodeToString(space)
+	spaceIDDecoded, _ := hex.DecodeString(hexString)
+	log.Printf("Space ID is: %s", spaceIDDecoded)
+
+	var contentHashOut string = string(contentHashDecoded)
+	var spaceIDOut string = string(spaceIDDecoded)
 
 	return &contentHashOut, &spaceIDOut, nil
 }
