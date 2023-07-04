@@ -173,6 +173,12 @@
           >
           <ul>
             <li>
+              <a href="#.GetOperationStatusRequest"
+                ><span class="badge">M</span>GetOperationStatusRequest</a
+              >
+            </li>
+
+            <li>
               <a href="#.NameAvailableRequest"
                 ><span class="badge">M</span>NameAvailableRequest</a
               >
@@ -181,6 +187,30 @@
             <li>
               <a href="#.NameAvailableResponse"
                 ><span class="badge">M</span>NameAvailableResponse</a
+              >
+            </li>
+
+            <li>
+              <a href="#.NameRegisterRequest"
+                ><span class="badge">M</span>NameRegisterRequest</a
+              >
+            </li>
+
+            <li>
+              <a href="#.NameUpdateRequest"
+                ><span class="badge">M</span>NameUpdateRequest</a
+              >
+            </li>
+
+            <li>
+              <a href="#.OperationResponse"
+                ><span class="badge">M</span>OperationResponse</a
+              >
+            </li>
+
+            <li>
+              <a href="#.OperationState"
+                ><span class="badge">E</span>OperationState</a
               >
             </li>
 
@@ -200,6 +230,28 @@
     </div>
     <p></p>
 
+    <h3 id=".GetOperationStatusRequest">GetOperationStatusRequest</h3>
+    <p></p>
+
+    <table class="field-table">
+      <thead>
+        <tr>
+          <td>Field</td>
+          <td>Type</td>
+          <td>Label</td>
+          <td>Description</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>operationId</td>
+          <td><a href="#uint32">uint32</a></td>
+          <td></td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+
     <h3 id=".NameAvailableRequest">NameAvailableRequest</h3>
     <p></p>
 
@@ -217,7 +269,7 @@
           <td>fullName</td>
           <td><a href="#string">string</a></td>
           <td></td>
-          <td><p>name including .any suffix</p></td>
+          <td><p>Name including .any suffix</p></td>
         </tr>
       </tbody>
     </table>
@@ -248,8 +300,8 @@
           <td></td>
           <td>
             <p>
-              if name is not available for registration - then these fields will
-              be filled with data
+              An Ethereum address that owns that name This field is present only
+              if name is &#34;not available for registration&#34; (free)
             </p>
           </td>
         </tr>
@@ -258,13 +310,162 @@
           <td>contentHash</td>
           <td><a href="#string">string</a></td>
           <td></td>
-          <td><p></p></td>
+          <td>
+            <p>
+              A content hash attached to this name This field is present only if
+              name is &#34;not available for registration&#34; (free)
+            </p>
+          </td>
         </tr>
 
         <tr>
           <td>spaceId</td>
           <td><a href="#string">string</a></td>
           <td></td>
+          <td>
+            <p>
+              A SpaceID attached to this name This field is present only if name
+              is &#34;not available for registration&#34; (free)
+            </p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id=".NameRegisterRequest">NameRegisterRequest</h3>
+    <p></p>
+
+    <table class="field-table">
+      <thead>
+        <tr>
+          <td>Field</td>
+          <td>Type</td>
+          <td>Label</td>
+          <td>Description</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>fullName</td>
+          <td><a href="#string">string</a></td>
+          <td></td>
+          <td><p></p></td>
+        </tr>
+
+        <tr>
+          <td>owner</td>
+          <td><a href="#string">string</a></td>
+          <td></td>
+          <td><p>An Ethereum address that owns that name</p></td>
+        </tr>
+
+        <tr>
+          <td>contentHash</td>
+          <td><a href="#string">string</a></td>
+          <td></td>
+          <td><p>A content hash attached to this name</p></td>
+        </tr>
+
+        <tr>
+          <td>spaceId</td>
+          <td><a href="#string">string</a></td>
+          <td></td>
+          <td><p>A SpaceID attached to this name</p></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id=".NameUpdateRequest">NameUpdateRequest</h3>
+    <p></p>
+
+    <table class="field-table">
+      <thead>
+        <tr>
+          <td>Field</td>
+          <td>Type</td>
+          <td>Label</td>
+          <td>Description</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>fullName</td>
+          <td><a href="#string">string</a></td>
+          <td></td>
+          <td><p></p></td>
+        </tr>
+
+        <tr>
+          <td>contentHash</td>
+          <td><a href="#string">string</a></td>
+          <td></td>
+          <td><p>A content hash attached to this name</p></td>
+        </tr>
+
+        <tr>
+          <td>spaceId</td>
+          <td><a href="#string">string</a></td>
+          <td></td>
+          <td><p>A SpaceID attached to this name</p></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id=".OperationResponse">OperationResponse</h3>
+    <p></p>
+
+    <table class="field-table">
+      <thead>
+        <tr>
+          <td>Field</td>
+          <td>Type</td>
+          <td>Label</td>
+          <td>Description</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>operationId</td>
+          <td><a href="#uint32">uint32</a></td>
+          <td></td>
+          <td><p></p></td>
+        </tr>
+
+        <tr>
+          <td>operationState</td>
+          <td><a href="#OperationState">OperationState</a></td>
+          <td>repeated</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id=".OperationState">OperationState</h3>
+    <p></p>
+    <table class="enum-table">
+      <thead>
+        <tr>
+          <td>Name</td>
+          <td>Number</td>
+          <td>Description</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Pending</td>
+          <td>0</td>
+          <td><p></p></td>
+        </tr>
+
+        <tr>
+          <td>Completed</td>
+          <td>1</td>
+          <td><p></p></td>
+        </tr>
+
+        <tr>
+          <td>Error</td>
+          <td>2</td>
           <td><p></p></td>
         </tr>
       </tbody>
@@ -286,7 +487,41 @@
           <td>IsNameAvailable</td>
           <td><a href="#NameAvailableRequest">.NameAvailableRequest</a></td>
           <td><a href="#NameAvailableResponse">.NameAvailableResponse</a></td>
-          <td><p></p></td>
+          <td>
+            <p>Check if name is free or get the attached information if not</p>
+          </td>
+        </tr>
+
+        <tr>
+          <td>NameRegister</td>
+          <td><a href="#NameRegisterRequest">.NameRegisterRequest</a></td>
+          <td><a href="#OperationResponse">.OperationResponse</a></td>
+          <td>
+            <p>
+              Add to queue a name registration operation results in async
+              operation
+            </p>
+          </td>
+        </tr>
+
+        <tr>
+          <td>NameUpdate</td>
+          <td><a href="#NameUpdateRequest">.NameUpdateRequest</a></td>
+          <td><a href="#OperationResponse">.OperationResponse</a></td>
+          <td>
+            <p>
+              Add to queue a name update operation results in async operation
+            </p>
+          </td>
+        </tr>
+
+        <tr>
+          <td>GetOperationStatus</td>
+          <td>
+            <a href="#GetOperationStatusRequest">.GetOperationStatusRequest</a>
+          </td>
+          <td><a href="#OperationResponse">.OperationResponse</a></td>
+          <td><p>Get the async operation with id==X statue</p></td>
         </tr>
       </tbody>
     </table>

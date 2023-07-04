@@ -20,12 +20,61 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type OperationState int32
+
+const (
+	OperationState_Pending   OperationState = 0
+	OperationState_Completed OperationState = 1
+	OperationState_Error     OperationState = 2
+)
+
+// Enum value maps for OperationState.
+var (
+	OperationState_name = map[int32]string{
+		0: "Pending",
+		1: "Completed",
+		2: "Error",
+	}
+	OperationState_value = map[string]int32{
+		"Pending":   0,
+		"Completed": 1,
+		"Error":     2,
+	}
+)
+
+func (x OperationState) Enum() *OperationState {
+	p := new(OperationState)
+	*p = x
+	return p
+}
+
+func (x OperationState) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (OperationState) Descriptor() protoreflect.EnumDescriptor {
+	return file_anyns_api_server_proto_enumTypes[0].Descriptor()
+}
+
+func (OperationState) Type() protoreflect.EnumType {
+	return &file_anyns_api_server_proto_enumTypes[0]
+}
+
+func (x OperationState) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use OperationState.Descriptor instead.
+func (OperationState) EnumDescriptor() ([]byte, []int) {
+	return file_anyns_api_server_proto_rawDescGZIP(), []int{0}
+}
+
 type NameAvailableRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// name including .any suffix
+	// Name including .any suffix
 	FullName string `protobuf:"bytes,1,opt,name=fullName,proto3" json:"fullName,omitempty"`
 }
 
@@ -74,11 +123,15 @@ type NameAvailableResponse struct {
 	unknownFields protoimpl.UnknownFields
 
 	Available bool `protobuf:"varint,1,opt,name=available,proto3" json:"available,omitempty"`
-	// if name is not available for registration - then these fields
-	// will be filled with data
-	Owner       string `protobuf:"bytes,2,opt,name=owner,proto3" json:"owner,omitempty"`
+	// An Ethereum address that owns that name
+	// This field is present only if name is "not available for registration" (free)
+	Owner string `protobuf:"bytes,2,opt,name=owner,proto3" json:"owner,omitempty"`
+	// A content hash attached to this name
+	// This field is present only if name is "not available for registration" (free)
 	ContentHash string `protobuf:"bytes,3,opt,name=contentHash,proto3" json:"contentHash,omitempty"`
-	SpaceId     string `protobuf:"bytes,4,opt,name=spaceId,proto3" json:"spaceId,omitempty"`
+	// A SpaceID attached to this name
+	// This field is present only if name is "not available for registration" (free)
+	SpaceId string `protobuf:"bytes,4,opt,name=spaceId,proto3" json:"spaceId,omitempty"`
 }
 
 func (x *NameAvailableResponse) Reset() {
@@ -141,6 +194,247 @@ func (x *NameAvailableResponse) GetSpaceId() string {
 	return ""
 }
 
+type NameRegisterRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	FullName string `protobuf:"bytes,1,opt,name=fullName,proto3" json:"fullName,omitempty"`
+	// An Ethereum address that owns that name
+	Owner string `protobuf:"bytes,2,opt,name=owner,proto3" json:"owner,omitempty"`
+	// A content hash attached to this name
+	ContentHash string `protobuf:"bytes,3,opt,name=contentHash,proto3" json:"contentHash,omitempty"`
+	// A SpaceID attached to this name
+	SpaceId string `protobuf:"bytes,4,opt,name=spaceId,proto3" json:"spaceId,omitempty"`
+}
+
+func (x *NameRegisterRequest) Reset() {
+	*x = NameRegisterRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_anyns_api_server_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *NameRegisterRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NameRegisterRequest) ProtoMessage() {}
+
+func (x *NameRegisterRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_anyns_api_server_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NameRegisterRequest.ProtoReflect.Descriptor instead.
+func (*NameRegisterRequest) Descriptor() ([]byte, []int) {
+	return file_anyns_api_server_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *NameRegisterRequest) GetFullName() string {
+	if x != nil {
+		return x.FullName
+	}
+	return ""
+}
+
+func (x *NameRegisterRequest) GetOwner() string {
+	if x != nil {
+		return x.Owner
+	}
+	return ""
+}
+
+func (x *NameRegisterRequest) GetContentHash() string {
+	if x != nil {
+		return x.ContentHash
+	}
+	return ""
+}
+
+func (x *NameRegisterRequest) GetSpaceId() string {
+	if x != nil {
+		return x.SpaceId
+	}
+	return ""
+}
+
+type NameUpdateRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	FullName string `protobuf:"bytes,1,opt,name=fullName,proto3" json:"fullName,omitempty"`
+	// A content hash attached to this name
+	ContentHash string `protobuf:"bytes,2,opt,name=contentHash,proto3" json:"contentHash,omitempty"`
+	// A SpaceID attached to this name
+	SpaceId string `protobuf:"bytes,3,opt,name=spaceId,proto3" json:"spaceId,omitempty"`
+}
+
+func (x *NameUpdateRequest) Reset() {
+	*x = NameUpdateRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_anyns_api_server_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *NameUpdateRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NameUpdateRequest) ProtoMessage() {}
+
+func (x *NameUpdateRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_anyns_api_server_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NameUpdateRequest.ProtoReflect.Descriptor instead.
+func (*NameUpdateRequest) Descriptor() ([]byte, []int) {
+	return file_anyns_api_server_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *NameUpdateRequest) GetFullName() string {
+	if x != nil {
+		return x.FullName
+	}
+	return ""
+}
+
+func (x *NameUpdateRequest) GetContentHash() string {
+	if x != nil {
+		return x.ContentHash
+	}
+	return ""
+}
+
+func (x *NameUpdateRequest) GetSpaceId() string {
+	if x != nil {
+		return x.SpaceId
+	}
+	return ""
+}
+
+type GetOperationStatusRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	OperationId uint32 `protobuf:"varint,1,opt,name=operationId,proto3" json:"operationId,omitempty"`
+}
+
+func (x *GetOperationStatusRequest) Reset() {
+	*x = GetOperationStatusRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_anyns_api_server_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetOperationStatusRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetOperationStatusRequest) ProtoMessage() {}
+
+func (x *GetOperationStatusRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_anyns_api_server_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetOperationStatusRequest.ProtoReflect.Descriptor instead.
+func (*GetOperationStatusRequest) Descriptor() ([]byte, []int) {
+	return file_anyns_api_server_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetOperationStatusRequest) GetOperationId() uint32 {
+	if x != nil {
+		return x.OperationId
+	}
+	return 0
+}
+
+type OperationResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	OperationId    uint32           `protobuf:"varint,1,opt,name=operationId,proto3" json:"operationId,omitempty"`
+	OperationState []OperationState `protobuf:"varint,2,rep,packed,name=operationState,proto3,enum=OperationState" json:"operationState,omitempty"`
+}
+
+func (x *OperationResponse) Reset() {
+	*x = OperationResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_anyns_api_server_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OperationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OperationResponse) ProtoMessage() {}
+
+func (x *OperationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_anyns_api_server_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OperationResponse.ProtoReflect.Descriptor instead.
+func (*OperationResponse) Descriptor() ([]byte, []int) {
+	return file_anyns_api_server_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *OperationResponse) GetOperationId() uint32 {
+	if x != nil {
+		return x.OperationId
+	}
+	return 0
+}
+
+func (x *OperationResponse) GetOperationState() []OperationState {
+	if x != nil {
+		return x.OperationState
+	}
+	return nil
+}
+
 var File_anyns_api_server_proto protoreflect.FileDescriptor
 
 var file_anyns_api_server_proto_rawDesc = []byte{
@@ -157,14 +451,55 @@ var file_anyns_api_server_proto_rawDesc = []byte{
 	0x6e, 0x74, 0x65, 0x6e, 0x74, 0x48, 0x61, 0x73, 0x68, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52,
 	0x0b, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x48, 0x61, 0x73, 0x68, 0x12, 0x18, 0x0a, 0x07,
 	0x73, 0x70, 0x61, 0x63, 0x65, 0x49, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x73,
-	0x70, 0x61, 0x63, 0x65, 0x49, 0x64, 0x32, 0x4b, 0x0a, 0x05, 0x41, 0x6e, 0x79, 0x6e, 0x73, 0x12,
-	0x42, 0x0a, 0x0f, 0x49, 0x73, 0x4e, 0x61, 0x6d, 0x65, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62,
-	0x6c, 0x65, 0x12, 0x15, 0x2e, 0x4e, 0x61, 0x6d, 0x65, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62,
-	0x6c, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x4e, 0x61, 0x6d, 0x65,
-	0x41, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x6c, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x22, 0x00, 0x42, 0x15, 0x5a, 0x13, 0x70, 0x62, 0x2f, 0x61, 0x6e, 0x79, 0x6e, 0x73, 0x5f,
-	0x61, 0x70, 0x69, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x33,
+	0x70, 0x61, 0x63, 0x65, 0x49, 0x64, 0x22, 0x83, 0x01, 0x0a, 0x13, 0x4e, 0x61, 0x6d, 0x65, 0x52,
+	0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1a,
+	0x0a, 0x08, 0x66, 0x75, 0x6c, 0x6c, 0x4e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x08, 0x66, 0x75, 0x6c, 0x6c, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x6f, 0x77,
+	0x6e, 0x65, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72,
+	0x12, 0x20, 0x0a, 0x0b, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x48, 0x61, 0x73, 0x68, 0x18,
+	0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x48, 0x61,
+	0x73, 0x68, 0x12, 0x18, 0x0a, 0x07, 0x73, 0x70, 0x61, 0x63, 0x65, 0x49, 0x64, 0x18, 0x04, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x07, 0x73, 0x70, 0x61, 0x63, 0x65, 0x49, 0x64, 0x22, 0x6b, 0x0a, 0x11,
+	0x4e, 0x61, 0x6d, 0x65, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x12, 0x1a, 0x0a, 0x08, 0x66, 0x75, 0x6c, 0x6c, 0x4e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x08, 0x66, 0x75, 0x6c, 0x6c, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x20, 0x0a,
+	0x0b, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x48, 0x61, 0x73, 0x68, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x0b, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x48, 0x61, 0x73, 0x68, 0x12,
+	0x18, 0x0a, 0x07, 0x73, 0x70, 0x61, 0x63, 0x65, 0x49, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x07, 0x73, 0x70, 0x61, 0x63, 0x65, 0x49, 0x64, 0x22, 0x3d, 0x0a, 0x19, 0x47, 0x65, 0x74,
+	0x4f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x20, 0x0a, 0x0b, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x0b, 0x6f, 0x70, 0x65,
+	0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x22, 0x6e, 0x0a, 0x11, 0x4f, 0x70, 0x65, 0x72,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x20, 0x0a,
+	0x0b, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0d, 0x52, 0x0b, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x12,
+	0x37, 0x0a, 0x0e, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x74, 0x61, 0x74,
+	0x65, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0e, 0x32, 0x0f, 0x2e, 0x4f, 0x70, 0x65, 0x72, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x53, 0x74, 0x61, 0x74, 0x65, 0x52, 0x0e, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x53, 0x74, 0x61, 0x74, 0x65, 0x2a, 0x37, 0x0a, 0x0e, 0x4f, 0x70, 0x65, 0x72,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x74, 0x61, 0x74, 0x65, 0x12, 0x0b, 0x0a, 0x07, 0x50, 0x65,
+	0x6e, 0x64, 0x69, 0x6e, 0x67, 0x10, 0x00, 0x12, 0x0d, 0x0a, 0x09, 0x43, 0x6f, 0x6d, 0x70, 0x6c,
+	0x65, 0x74, 0x65, 0x64, 0x10, 0x01, 0x12, 0x09, 0x0a, 0x05, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x10,
+	0x02, 0x32, 0x87, 0x02, 0x0a, 0x05, 0x41, 0x6e, 0x79, 0x6e, 0x73, 0x12, 0x42, 0x0a, 0x0f, 0x49,
+	0x73, 0x4e, 0x61, 0x6d, 0x65, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x6c, 0x65, 0x12, 0x15,
+	0x2e, 0x4e, 0x61, 0x6d, 0x65, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x6c, 0x65, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x4e, 0x61, 0x6d, 0x65, 0x41, 0x76, 0x61, 0x69,
+	0x6c, 0x61, 0x62, 0x6c, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12,
+	0x3a, 0x0a, 0x0c, 0x4e, 0x61, 0x6d, 0x65, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x12,
+	0x14, 0x2e, 0x4e, 0x61, 0x6d, 0x65, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x12, 0x2e, 0x4f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x36, 0x0a, 0x0a, 0x4e,
+	0x61, 0x6d, 0x65, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x12, 0x12, 0x2e, 0x4e, 0x61, 0x6d, 0x65,
+	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x12, 0x2e,
+	0x4f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x22, 0x00, 0x12, 0x46, 0x0a, 0x12, 0x47, 0x65, 0x74, 0x4f, 0x70, 0x65, 0x72, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x1a, 0x2e, 0x47, 0x65, 0x74, 0x4f,
+	0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x12, 0x2e, 0x4f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x15, 0x5a, 0x13, 0x70,
+	0x62, 0x2f, 0x61, 0x6e, 0x79, 0x6e, 0x73, 0x5f, 0x61, 0x70, 0x69, 0x5f, 0x73, 0x65, 0x72, 0x76,
+	0x65, 0x72, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -179,19 +514,32 @@ func file_anyns_api_server_proto_rawDescGZIP() []byte {
 	return file_anyns_api_server_proto_rawDescData
 }
 
-var file_anyns_api_server_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_anyns_api_server_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_anyns_api_server_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_anyns_api_server_proto_goTypes = []interface{}{
-	(*NameAvailableRequest)(nil),  // 0: NameAvailableRequest
-	(*NameAvailableResponse)(nil), // 1: NameAvailableResponse
+	(OperationState)(0),               // 0: OperationState
+	(*NameAvailableRequest)(nil),      // 1: NameAvailableRequest
+	(*NameAvailableResponse)(nil),     // 2: NameAvailableResponse
+	(*NameRegisterRequest)(nil),       // 3: NameRegisterRequest
+	(*NameUpdateRequest)(nil),         // 4: NameUpdateRequest
+	(*GetOperationStatusRequest)(nil), // 5: GetOperationStatusRequest
+	(*OperationResponse)(nil),         // 6: OperationResponse
 }
 var file_anyns_api_server_proto_depIdxs = []int32{
-	0, // 0: Anyns.IsNameAvailable:input_type -> NameAvailableRequest
-	1, // 1: Anyns.IsNameAvailable:output_type -> NameAvailableResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: OperationResponse.operationState:type_name -> OperationState
+	1, // 1: Anyns.IsNameAvailable:input_type -> NameAvailableRequest
+	3, // 2: Anyns.NameRegister:input_type -> NameRegisterRequest
+	4, // 3: Anyns.NameUpdate:input_type -> NameUpdateRequest
+	5, // 4: Anyns.GetOperationStatus:input_type -> GetOperationStatusRequest
+	2, // 5: Anyns.IsNameAvailable:output_type -> NameAvailableResponse
+	6, // 6: Anyns.NameRegister:output_type -> OperationResponse
+	6, // 7: Anyns.NameUpdate:output_type -> OperationResponse
+	6, // 8: Anyns.GetOperationStatus:output_type -> OperationResponse
+	5, // [5:9] is the sub-list for method output_type
+	1, // [1:5] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_anyns_api_server_proto_init() }
@@ -224,19 +572,68 @@ func file_anyns_api_server_proto_init() {
 				return nil
 			}
 		}
+		file_anyns_api_server_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*NameRegisterRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_anyns_api_server_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*NameUpdateRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_anyns_api_server_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetOperationStatusRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_anyns_api_server_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*OperationResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_anyns_api_server_proto_rawDesc,
-			NumEnums:      0,
-			NumMessages:   2,
+			NumEnums:      1,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_anyns_api_server_proto_goTypes,
 		DependencyIndexes: file_anyns_api_server_proto_depIdxs,
+		EnumInfos:         file_anyns_api_server_proto_enumTypes,
 		MessageInfos:      file_anyns_api_server_proto_msgTypes,
 	}.Build()
 	File_anyns_api_server_proto = out.File

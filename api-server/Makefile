@@ -61,7 +61,7 @@ run-server: anytype_crypto
     CONTRACT_REG_ADDR=$(CONTRACT_REG_ADDR)\
     CONTRACT_NW_ADDR=$(CONTRACT_NW_ADDR)\
     CONTRACT_RESOLVER_ADDR=$(CONTRACT_RESOLVER_ADDR)\
-    go run main.go
+    go run .
 
 # Run a test client that connects to server
 .PHONY: is-name-avail

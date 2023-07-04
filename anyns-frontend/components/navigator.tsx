@@ -40,6 +40,12 @@ export default function Navigator({ domainName }) {
       <Link href="/help">
         <button>Help</button>
       </Link>
+
+      <span> | </span>
+
+      <Link href="/api-description">
+        <button>API</button>
+      </Link>
     </div>
   )
 }

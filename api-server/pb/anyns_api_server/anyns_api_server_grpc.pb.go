@@ -22,7 +22,16 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AnynsClient interface {
+	// Check if name is free or get the attached information if not
 	IsNameAvailable(ctx context.Context, in *NameAvailableRequest, opts ...grpc.CallOption) (*NameAvailableResponse, error)
+	// Add to queue a name registration operation
+	// results in async operation
+	NameRegister(ctx context.Context, in *NameRegisterRequest, opts ...grpc.CallOption) (*OperationResponse, error)
+	// Add to queue a name update operation
+	// results in async operation
+	NameUpdate(ctx context.Context, in *NameUpdateRequest, opts ...grpc.CallOption) (*OperationResponse, error)
+	// Get the async operation with id==X statue
+	GetOperationStatus(ctx context.Context, in *GetOperationStatusRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 }
 
 type anynsClient struct {
@@ -42,11 +51,47 @@ func (c *anynsClient) IsNameAvailable(ctx context.Context, in *NameAvailableRequ
 	return out, nil
 }
 
+func (c *anynsClient) NameRegister(ctx context.Context, in *NameRegisterRequest, opts ...grpc.CallOption) (*OperationResponse, error) {
+	out := new(OperationResponse)
+	err := c.cc.Invoke(ctx, "/Anyns/NameRegister", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *anynsClient) NameUpdate(ctx context.Context, in *NameUpdateRequest, opts ...grpc.CallOption) (*OperationResponse, error) {
+	out := new(OperationResponse)
+	err := c.cc.Invoke(ctx, "/Anyns/NameUpdate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *anynsClient) GetOperationStatus(ctx context.Context, in *GetOperationStatusRequest, opts ...grpc.CallOption) (*OperationResponse, error) {
+	out := new(OperationResponse)
+	err := c.cc.Invoke(ctx, "/Anyns/GetOperationStatus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AnynsServer is the server API for Anyns service.
 // All implementations must embed UnimplementedAnynsServer
 // for forward compatibility
 type AnynsServer interface {
+	// Check if name is free or get the attached information if not
 	IsNameAvailable(context.Context, *NameAvailableRequest) (*NameAvailableResponse, error)
+	// Add to queue a name registration operation
+	// results in async operation
+	NameRegister(context.Context, *NameRegisterRequest) (*OperationResponse, error)
+	// Add to queue a name update operation
+	// results in async operation
+	NameUpdate(context.Context, *NameUpdateRequest) (*OperationResponse, error)
+	// Get the async operation with id==X statue
+	GetOperationStatus(context.Context, *GetOperationStatusRequest) (*OperationResponse, error)
 	mustEmbedUnimplementedAnynsServer()
 }
 
@@ -56,6 +101,15 @@ type UnimplementedAnynsServer struct {
 
 func (UnimplementedAnynsServer) IsNameAvailable(context.Context, *NameAvailableRequest) (*NameAvailableResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IsNameAvailable not implemented")
+}
+func (UnimplementedAnynsServer) NameRegister(context.Context, *NameRegisterRequest) (*OperationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NameRegister not implemented")
+}
+func (UnimplementedAnynsServer) NameUpdate(context.Context, *NameUpdateRequest) (*OperationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NameUpdate not implemented")
+}
+func (UnimplementedAnynsServer) GetOperationStatus(context.Context, *GetOperationStatusRequest) (*OperationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOperationStatus not implemented")
 }
 func (UnimplementedAnynsServer) mustEmbedUnimplementedAnynsServer() {}
 
@@ -88,6 +142,60 @@ func _Anyns_IsNameAvailable_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Anyns_NameRegister_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NameRegisterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AnynsServer).NameRegister(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Anyns/NameRegister",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AnynsServer).NameRegister(ctx, req.(*NameRegisterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Anyns_NameUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NameUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AnynsServer).NameUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Anyns/NameUpdate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AnynsServer).NameUpdate(ctx, req.(*NameUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Anyns_GetOperationStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOperationStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AnynsServer).GetOperationStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Anyns/GetOperationStatus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AnynsServer).GetOperationStatus(ctx, req.(*GetOperationStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Anyns_ServiceDesc is the grpc.ServiceDesc for Anyns service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +206,18 @@ var Anyns_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "IsNameAvailable",
 			Handler:    _Anyns_IsNameAvailable_Handler,
+		},
+		{
+			MethodName: "NameRegister",
+			Handler:    _Anyns_NameRegister_Handler,
+		},
+		{
+			MethodName: "NameUpdate",
+			Handler:    _Anyns_NameUpdate_Handler,
+		},
+		{
+			MethodName: "GetOperationStatus",
+			Handler:    _Anyns_GetOperationStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
