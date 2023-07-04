@@ -3,17 +3,18 @@ package main
 import (
 	"context"
 	"log"
+	"math/big"
 	"net"
 	"os"
 	"strings"
 
+	"golang.org/x/crypto/sha3"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	"golang.org/x/crypto/sha3"
-
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/ethclient"
 
 	ac "github.com/anytype/anyns_api_server/anytype_crypto"
@@ -64,7 +65,7 @@ func createEthConnection() (*ethclient.Client, error) {
 	return conn, err
 }
 
-func connectToContract() (*ac.ENSRegistry, error) {
+func connectToRegistryContract() (*ac.ENSRegistry, error) {
 	// 1 - connect to the registry contract
 	conn, err := createEthConnection()
 	if err != nil {
@@ -83,21 +84,56 @@ func connectToContract() (*ac.ENSRegistry, error) {
 	return reg, err
 }
 
+func connectToNamewrapperContract() (*ac.AnytypeNameWrapper, error) {
+	// 1 - connect to the registry contract
+	conn, err := createEthConnection()
+	if err != nil {
+		log.Fatalf("Failed to connect to geth: %v", err)
+		return nil, err
+	}
+
+	// 2 - create new contract instance
+	contractAddr := os.Getenv("CONTRACT_NW_ADDR")
+	nw, err := ac.NewAnytypeNameWrapper(common.HexToAddress(contractAddr), conn)
+	if err != nil || nw == nil {
+		log.Fatalf("Failed to instantiate AnytypeNameWrapper contract: %v", err)
+		return nil, err
+	}
+
+	return nw, err
+}
+
+func connectToResolver() (*ac.AnytypeResolver, error) {
+	// 1 - connect to the registry contract
+	conn, err := createEthConnection()
+	if err != nil {
+		log.Fatalf("Failed to connect to geth: %v", err)
+		return nil, err
+	}
+
+	// 2 - create new contract instance
+	contractAddr := os.Getenv("CONTRACT_RESOLVER_ADDR")
+	ar, err := ac.NewAnytypeResolver(common.HexToAddress(contractAddr), conn)
+	if err != nil || ar == nil {
+		log.Fatalf("Failed to instantiate AnytypeResolver contract: %v", err)
+		return nil, err
+	}
+
+	return ar, err
+}
+
 /*
  * This will create ETH connection each time (slow)
- * It is a read-only function. There are different write functions in the contract, but this server does not allow you to use it
- * TODO: cache it in the DB, because list of nodes is rarely changed
  */
 func (s *server) IsNameAvailable(ctx context.Context, in *pb.NameAvailableRequest) (*pb.NameAvailableResponse, error) {
 	log.Printf("Received request: %v", in.ProtoReflect().Descriptor().FullName())
 
 	// 1 - connect to geth
-	reg, err := connectToContract()
+	reg, err := connectToRegistryContract()
 	if err != nil {
 		log.Fatalf("Failed to connect to contract: %v", err)
 		panic(err)
 	}
-	log.Printf("Connected!")
 
 	// 2 - convert to name hash
 	nh, err := nameHash(in.FullName)
@@ -106,7 +142,9 @@ func (s *server) IsNameAvailable(ctx context.Context, in *pb.NameAvailableReques
 		panic(err)
 	}
 
-	// 3 - get owner from registry
+	// 3 - call contract's method
+	log.Printf("Getting owner for name: %v", in.GetFullName())
+
 	callOpts := bind.CallOpts{}
 	addr, err := reg.Owner(&callOpts, nh)
 	if err != nil {
@@ -114,17 +152,144 @@ func (s *server) IsNameAvailable(ctx context.Context, in *pb.NameAvailableReques
 		panic(err)
 	}
 
-	// 3 - covert to result
+	// 4 - covert to result
+	// the owner can be NameWrapper
+	log.Printf("Received owner address: %v", addr.Hex())
+
 	var res pb.NameAvailableResponse
 	var addrEmpty = common.Address{}
 
 	if addr != addrEmpty {
-		res.Available = false
+		log.Printf("Name is NOT available...Getting additional info")
+		// 5 - if name is not available, then get additional info
+		return getAdditionalNameInfo(addr, in.GetFullName())
+	}
+
+	log.Printf("Name is available for registration...")
+	res.Available = true
+
+	return &res, nil
+}
+
+func getAdditionalNameInfo(currentOwner common.Address, fullName string) (*pb.NameAvailableResponse, error) {
+	var res pb.NameAvailableResponse
+	res.Available = false
+
+	// 1 - if current owner is the NW contract - then ask it again about the "real owner"
+	nwAddress := os.Getenv("CONTRACT_NW_ADDR")
+	nwAddressBytes := common.HexToAddress(nwAddress)
+
+	if currentOwner == nwAddressBytes {
+		log.Printf("Address is owned by NameWrapper contract, ask it to retrieve real owner")
+
+		realOwner, err := getRealOwner(fullName)
+		if err != nil {
+			log.Fatalf("Failed to get real owner of the name: %v", err)
+			// do not panic, try to continue
+		}
+
+		if realOwner != nil {
+			res.Owner = *realOwner
+		}
 	} else {
-		res.Available = true
+		// if NW is not the "owner" of the contract -> then it is the real owner
+		res.Owner = currentOwner.Hex()
+	}
+
+	// 2 - get content hash and spaceID
+	contentHash, spaceID, err := getAdditionalData(fullName)
+	if err != nil {
+		log.Fatalf("Failed to get real additional data of the name: %v", err)
+		// do not panic, try to continue
+	}
+	if contentHash != nil {
+		res.ContentHash = *contentHash
+	}
+	if spaceID != nil {
+		res.SpaceId = *spaceID
 	}
 
 	return &res, nil
+}
+
+func getRealOwner(fullName string) (*string, error) {
+	// 1 - connect to contract
+	nw, err := connectToNamewrapperContract()
+	if err != nil {
+		log.Fatalf("Failed to connect to contract: %v", err)
+		return nil, err
+	}
+
+	// 2 - convert to name hash
+	nh, err := nameHash(fullName)
+	if err != nil {
+		log.Fatalf("Can not convert FullName to namehash: %v", err)
+		return nil, err
+	}
+
+	// 3 - call contract's method
+	log.Printf("Getting real owner for name: %v", fullName)
+
+	callOpts := bind.CallOpts{}
+
+	// convert bytes32 -> uin256 (also 32 bytes long)
+	id := new(big.Int).SetBytes(nh[:])
+	addr, err := nw.OwnerOf(&callOpts, id)
+	if err != nil {
+		log.Fatalf("Failed to get : %v", err)
+		return nil, err
+	}
+
+	// 4 - covert to result
+	// the owner can be NameWrapper
+	log.Printf("Received real owner address: %v", addr)
+
+	var out string = addr.Hex()
+	return &out, nil
+}
+
+func getAdditionalData(fullName string) (*string, *string, error) {
+	// 1 - connect to contract
+	ar, err := connectToResolver()
+	if err != nil {
+		log.Fatalf("Failed to connect to contract: %v", err)
+		return nil, nil, err
+	}
+
+	// 2 - convert to name hash
+	nh, err := nameHash(fullName)
+	if err != nil {
+		log.Fatalf("Can not convert FullName to namehash: %v", err)
+		return nil, nil, err
+	}
+
+	// 3 - get content hash and space ID
+	callOpts := bind.CallOpts{}
+	hash, err := ar.Contenthash(&callOpts, nh)
+	if err != nil {
+		log.Fatalf("Can not get contenthash: %v", err)
+		// do not panic, continue
+		// return nil, nil, err
+	}
+
+	space, err := ar.SpaceId(&callOpts, nh)
+	if err != nil {
+		log.Fatalf("Can not get SpaceID: %v", err)
+		// do not panic, continue
+		// return nil, nil, err
+	}
+
+	log.Printf("Contenthash is: %v", hexutil.Encode(hash))
+	log.Printf("Space ID is: %v", hexutil.Encode(space))
+
+	// 4 - TODO: convert them from hex string to string (decode)
+	// there are 2 ways to do that:
+	// ens.ContenthashToString(hash)
+	// cid.CidFromBytes(hash)
+	var contentHashOut string = hexutil.Encode(hash)
+	var spaceIDOut string = hexutil.Encode(space)
+
+	return &contentHashOut, &spaceIDOut, nil
 }
 
 func main() {

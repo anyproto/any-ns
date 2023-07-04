@@ -1,16 +1,28 @@
 syntax = "proto3";
-
 option go_package = "pb/anyns_api_server";
 
 message NameAvailableRequest {
-  // name including .any suffix
+  // Name including .any suffix
   string fullName = 1;
 }
 
 message NameAvailableResponse {
   bool available = 1;
+  
+  // An Ethereum address that owns that name
+  // This field is present only if name is "not available for registration" (free)
+  string owner = 2;
+
+  // A content hash attached to this name
+  // This field is present only if name is "not available for registration" (free)
+  string contentHash = 3;
+
+  // A SpaceID attached to this name
+  // This field is present only if name is "not available for registration" (free)
+  string spaceId = 4;
 }
 
-service Anyns { 
+service Anyns {
+  // Check if name is free or get the attached information if not
   rpc IsNameAvailable(NameAvailableRequest) returns (NameAvailableResponse) {}
 }

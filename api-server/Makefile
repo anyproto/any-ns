@@ -3,6 +3,8 @@ PORT=8080
 GETH_URL="https://sepolia.infura.io/v3/68c55936b8534264801fa4bc313ff26f" 
 # TODO: read from ../deployments/sepolia folder
 CONTRACT_REG_ADDR="0xc0D3c96aE923Da6b45E6d4c21a0424730a20BCA9" 
+CONTRACT_NW_ADDR="0xFe69BF9B3fD69d09977b37b5953C8B43687f3B23"
+CONTRACT_RESOLVER_ADDR="0x34F9c5CB9b6dcc036e045a15af20CEdC0dE4dcB2"
 
 .PHONY: prereqs-for-mac
 prereqs-for-mac:
@@ -31,14 +33,43 @@ anytype_crypto/ens_registry_stub.go: ../deployments/sepolia/ENSRegistry.json
 	abigen --bin contract.bin --abi contract.abi --pkg anytype_crypto --type ENSRegistry --out anytype_crypto/ens_registry_stub.go
 	rm contract.bin contract.abi
 
+anytype_crypto/name_wrapper_stub.go: ../deployments/sepolia/AnytypeNameWrapper.json
+	node utils/combined_json_to_abi_and_bin.js ../deployments/sepolia/AnytypeNameWrapper.json
+	abigen --bin contract.bin --abi contract.abi --pkg anytype_crypto --type AnytypeNameWrapper --out anytype_crypto/name_wrapper_stub.go
+	rm contract.bin contract.abi
+
+anytype_crypto/anytype_resolver_stub.go: ../deployments/sepolia/AnytypeResolver.json
+	node utils/combined_json_to_abi_and_bin.js ../deployments/sepolia/AnytypeResolver.json
+	abigen --bin contract.bin --abi contract.abi --pkg anytype_crypto --type AnytypeResolver --out anytype_crypto/anytype_resolver_stub.go
+	rm contract.bin contract.abi
+
 # requires Go stubs generated from *.sol files
-api_server: anytype_crypto/ens_registry_stub.go
+anytype_crypto:\
+    anytype_crypto/ens_registry_stub.go\
+    anytype_crypto/name_wrapper_stub.go\
+    anytype_crypto/anytype_resolver_stub.go
 
+# Build everything
 .PHONY: all
-all: pb api_server
+all: pb anytype_crypto
 
-# run gRPC server
+# Run a gRPC server
 .PHONY: run-server
-run-server: api_server
-	GRPC_PORT=$(PORT) GETH_URL=$(GETH_URL) CONTRACT_REG_ADDR=$(CONTRACT_REG_ADDR) go run main.go
+run-server: anytype_crypto
+	GRPC_PORT=$(PORT)\
+    GETH_URL=$(GETH_URL)\
+    CONTRACT_REG_ADDR=$(CONTRACT_REG_ADDR)\
+    CONTRACT_NW_ADDR=$(CONTRACT_NW_ADDR)\
+    CONTRACT_RESOLVER_ADDR=$(CONTRACT_RESOLVER_ADDR)\
+    go run main.go
+
+# Run a test client that connects to server
+.PHONY: is-name-avail
+is-name-avail:
+	grpcurl -plaintext -d '{"fullName": "hello.any"}' localhost:8080 Anyns/IsNameAvailable
+
+# Print a helpful description of the gRPC interface
+.PHONY: describe
+describe:
+	grpcurl -plaintext localhost:$(PORT) describe Anyns
 
