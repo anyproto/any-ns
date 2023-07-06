@@ -17,7 +17,7 @@ func createEthConnection() (*ethclient.Client, error) {
 }
 
 func ConnectToRegistryContract() (*ac.ENSRegistry, error) {
-	// 1 - connect to the registry contract
+	// 1 - connect to the contract
 	conn, err := createEthConnection()
 	if err != nil {
 		log.Fatalf("Failed to connect to geth: %v", err)
@@ -36,7 +36,7 @@ func ConnectToRegistryContract() (*ac.ENSRegistry, error) {
 }
 
 func ConnectToNamewrapperContract() (*ac.AnytypeNameWrapper, error) {
-	// 1 - connect to the registry contract
+	// 1 - connect to the contract
 	conn, err := createEthConnection()
 	if err != nil {
 		log.Fatalf("Failed to connect to geth: %v", err)
@@ -55,7 +55,7 @@ func ConnectToNamewrapperContract() (*ac.AnytypeNameWrapper, error) {
 }
 
 func ConnectToResolver() (*ac.AnytypeResolver, error) {
-	// 1 - connect to the registry contract
+	// 1 - connect to the contract
 	conn, err := createEthConnection()
 	if err != nil {
 		log.Fatalf("Failed to connect to geth: %v", err)
@@ -71,4 +71,23 @@ func ConnectToResolver() (*ac.AnytypeResolver, error) {
 	}
 
 	return ar, err
+}
+
+func ConnectToController() (*ac.AnytypeRegistrarControllerPrivate, error) {
+	// 1 - connect to the registry contract
+	conn, err := createEthConnection()
+	if err != nil {
+		log.Fatalf("Failed to connect to geth: %v", err)
+		return nil, err
+	}
+
+	// 2 - create new contract instance
+	contractAddr := os.Getenv("CONTRACT_CONTROLLER_PRIVATE_ADDR")
+	ac, err := ac.NewAnytypeRegistrarControllerPrivate(common.HexToAddress(contractAddr), conn)
+	if err != nil || ac == nil {
+		log.Fatalf("Failed to instantiate AnytypeRegistrarControllerPrivate contract: %v", err)
+		return nil, err
+	}
+
+	return ac, err
 }

@@ -193,6 +193,66 @@ func getAdditionalData(fullName string) (*string, *string, error) {
 	return &contentHashOut, &spaceIDOut, nil
 }
 
+func (s *server) NameRegister(ctx context.Context, in *pb.NameRegisterRequest) (*pb.OperationResponse, error) {
+	log.Printf("Received request: %v", in.ProtoReflect().Descriptor().FullName())
+
+	// 1 - connect to geth
+	ac, err := ConnectToController()
+	if err != nil {
+		log.Fatalf("Failed to connect to contract: %v", err)
+		panic(err)
+	}
+
+	// 2 - get a name's first part
+	// TODO: normalize string
+	nameFirstPart := RemoveTLD(in.FullName)
+
+	// 3 - calculate a commitment
+	var registrantAccount common.Address
+	var REGISTRATION_TIME big.Int
+	secret, err := GenerateRandomSecret()
+
+	if err != nil {
+		log.Fatalf("Can not generate random secret: %v", err)
+		panic(err)
+	}
+
+	var resolverAddr common.Address = common.HexToAddress(os.Getenv("CONTRACT_RESOLVER_ADDR"))
+	var callData [][]byte = nil
+	var isReverseRecord bool = false
+	var ownerControlledFuses uint16 = 0
+
+	callOpts := bind.CallOpts{}
+	callOpts.From = common.HexToAddress("0x61d1eeE7FBF652482DEa98A1Df591C626bA09a60")
+
+	commitment, err := ac.MakeCommitment(
+		&callOpts,
+		nameFirstPart,
+		registrantAccount,
+		&REGISTRATION_TIME,
+		secret,
+		resolverAddr,
+		callData,
+		isReverseRecord,
+		ownerControlledFuses)
+
+	if err != nil {
+		log.Fatalf("Can not calculate a commitment: %v", err)
+		panic(err)
+	}
+
+	log.Printf("Commitment value is: %v", commitment)
+
+	// ...
+
+	// return
+	var resp pb.OperationResponse
+	resp.OperationId = 1
+	resp.OperationState = pb.OperationState_Error
+
+	return &resp, nil
+}
+
 func main() {
 	port := os.Getenv("GRPC_PORT")
 	listener, err := net.Listen("tcp", ":"+port)

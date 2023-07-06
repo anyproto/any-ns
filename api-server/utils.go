@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/rand"
 	"strings"
 
 	"golang.org/x/crypto/sha3"
@@ -38,4 +39,23 @@ func NameHash(name string) (hash [32]byte, err error) {
 		}
 	}
 	return
+}
+
+func RemoveTLD(str string) string {
+	suffix := ".any"
+
+	if strings.HasSuffix(str, suffix) {
+		return str[:len(str)-len(suffix)]
+	}
+	return str
+}
+
+func GenerateRandomSecret() ([32]byte, error) {
+	var byteArray [32]byte
+
+	_, err := rand.Read(byteArray[:])
+	if err != nil {
+		return byteArray, err
+	}
+	return byteArray, nil
 }
