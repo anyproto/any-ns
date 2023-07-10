@@ -28,8 +28,8 @@ func (s *server) NameRegister(ctx context.Context, in *pb.NameRegisterRequest) (
 	log.Printf("Received request: %v", in.ProtoReflect().Descriptor().FullName())
 
 	// TODO: make non-blocking and save to queue
-	// TODO: increase the operation ID
 	var resp pb.OperationResponse
+	// TODO: increase the operation ID
 	resp.OperationId = 1
 
 	err := nameRegister(ctx, in)
@@ -41,6 +41,18 @@ func (s *server) NameRegister(ctx context.Context, in *pb.NameRegisterRequest) (
 	}
 
 	return &resp, err
+}
+
+func (s *server) GetOperationStatus(ctx context.Context, in *pb.GetOperationStatusRequest) (*pb.OperationResponse, error) {
+	log.Printf("Received request: %v", in.ProtoReflect().Descriptor().FullName())
+
+	// TODO: get status from the queue
+	// for now, just return completed
+	var resp pb.OperationResponse
+	resp.OperationId = in.OperationId
+	resp.OperationState = pb.OperationState_Completed
+
+	return &resp, nil
 }
 
 func main() {

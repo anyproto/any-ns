@@ -75,4 +75,7 @@ service Anyns {
 
   // Get the async operation with id==X statue
   rpc GetOperationStatus(GetOperationStatusRequest) returns (OperationResponse) {}
+
+  // ??? reverse resolver
+  // rpc GetNameByAddress()
 }

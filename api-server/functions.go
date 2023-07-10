@@ -4,10 +4,13 @@ import (
 	"context"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"log"
 	"math/big"
 	"os"
+	"strings"
 
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -219,7 +222,12 @@ func nameRegister(ctx context.Context, in *pb.NameRegisterRequest) error {
 		return err
 	}
 
-	var callData [][]byte = prepareCallData(in)
+	callData, err := prepareCallData(in)
+	if err != nil {
+		log.Printf("Can not prepare call data: %v", err)
+		return err
+	}
+
 	var isReverseRecord bool = false
 	var ownerControlledFuses uint16 = 0
 
@@ -305,8 +313,112 @@ func nameRegister(ctx context.Context, in *pb.NameRegisterRequest) error {
 	return nil
 }
 
-func prepareCallData(in *pb.NameRegisterRequest) [][]byte {
-	// TODO:
+func Utf8ToHex(input string) string {
+	encoded := hex.EncodeToString([]byte(input))
+	return "0x" + encoded
+}
 
-	return nil
+func prepareCallData(in *pb.NameRegisterRequest) ([][]byte, error) {
+	var out [][]byte
+
+	// 1 -
+	const jsondata = `
+		[
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "node",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes",
+						"name": "hash",
+						"type": "bytes"
+					}
+				],
+				"name": "setContenthash",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "node",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes",
+						"name": "spaceid",
+						"type": "bytes"
+					}
+				],
+				"name": "setSpaceId",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		]
+	`
+	contractABI, err := abi.JSON(strings.NewReader(jsondata))
+	if err != nil {
+		fmt.Println("Error parsing ABI:", err)
+		return nil, err
+	}
+
+	// get params from the input
+	var fullName string = in.GetFullName()
+	var contentHash string = in.GetContentHash()
+	var spaceID string = in.GetSpaceId()
+
+	// print to debug log
+	log.Printf("Preparing call data for name: %v", fullName)
+	log.Printf("ContentHash: %v", contentHash)
+	log.Printf("SpaceID: %v", spaceID)
+
+	// 2 - convert fullName to name hash
+	nh, err := NameHash(fullName)
+	if err != nil {
+		log.Printf("Can not convert FullName to namehash: %v", err)
+		return nil, err
+	}
+
+	// 3 - if spaceID is not empty - then call setSpaceId method of resolver
+	if spaceID != "" {
+		// convert spaceID to bytes
+		x := Utf8ToHex(spaceID)
+
+		data, err := contractABI.Pack("setSpaceId", nh, []byte(x))
+		if err != nil {
+			fmt.Println("Error encoding function data:", err)
+			return nil, nil
+		}
+
+		out = append(out, data)
+	}
+
+	// 4 - if contentHash is not empty - then call encodeFunctionData method of resolver
+	if contentHash != "" {
+		x := Utf8ToHex(contentHash)
+
+		// print NameHash and ContentHash to debug log in string format (hex)
+		log.Printf("NameHash in hex formatted string: %v", hex.EncodeToString(nh[:]))
+		log.Printf("ContentHash in hex formatted string: %v", x)
+
+		data, err := contractABI.Pack("setContenthash", nh, []byte(x))
+		if err != nil {
+			fmt.Println("Error encoding function data:", err)
+			return nil, nil
+		}
+
+		// convert bytes to string
+		log.Printf("Encoded data: %v", hex.EncodeToString(data))
+
+		out = append(out, data)
+	}
+
+	return out, nil
 }
