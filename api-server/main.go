@@ -6,12 +6,10 @@ import (
 	"net"
 	"os"
 
+	pb "github.com/anytype/anyns_api_server/pb/anyns_api_server"
 	"github.com/joho/godotenv"
-
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
-
-	pb "github.com/anytype/anyns_api_server/pb/anyns_api_server"
 )
 
 type server struct {

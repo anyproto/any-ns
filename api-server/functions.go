@@ -222,7 +222,8 @@ func nameRegister(ctx context.Context, in *pb.NameRegisterRequest) error {
 		return err
 	}
 
-	callData, err := prepareCallData(in)
+	callData, err := prepareCallData(in.GetFullName(), in.GetContentHash(), in.GetSpaceId())
+
 	if err != nil {
 		log.Printf("Can not prepare call data: %v", err)
 		return err
@@ -318,7 +319,7 @@ func Utf8ToHex(input string) string {
 	return "0x" + encoded
 }
 
-func prepareCallData(in *pb.NameRegisterRequest) ([][]byte, error) {
+func prepareCallData(fullName string, contentHash string, spaceID string) ([][]byte, error) {
 	var out [][]byte
 
 	// 1 -
@@ -369,11 +370,6 @@ func prepareCallData(in *pb.NameRegisterRequest) ([][]byte, error) {
 		return nil, err
 	}
 
-	// get params from the input
-	var fullName string = in.GetFullName()
-	var contentHash string = in.GetContentHash()
-	var spaceID string = in.GetSpaceId()
-
 	// print to debug log
 	log.Printf("Preparing call data for name: %v", fullName)
 	log.Printf("ContentHash: %v", contentHash)
@@ -388,27 +384,20 @@ func prepareCallData(in *pb.NameRegisterRequest) ([][]byte, error) {
 
 	// 3 - if spaceID is not empty - then call setSpaceId method of resolver
 	if spaceID != "" {
-		// convert spaceID to bytes
-		x := Utf8ToHex(spaceID)
-
-		data, err := contractABI.Pack("setSpaceId", nh, []byte(x))
+		data, err := contractABI.Pack("setSpaceId", nh, []byte(spaceID))
 		if err != nil {
 			fmt.Println("Error encoding function data:", err)
 			return nil, nil
 		}
+
+		fmt.Printf("Encoded space ID: %v", hex.EncodeToString(data))
 
 		out = append(out, data)
 	}
 
 	// 4 - if contentHash is not empty - then call encodeFunctionData method of resolver
 	if contentHash != "" {
-		x := Utf8ToHex(contentHash)
-
-		// print NameHash and ContentHash to debug log in string format (hex)
-		log.Printf("NameHash in hex formatted string: %v", hex.EncodeToString(nh[:]))
-		log.Printf("ContentHash in hex formatted string: %v", x)
-
-		data, err := contractABI.Pack("setContenthash", nh, []byte(x))
+		data, err := contractABI.Pack("setContenthash", nh, []byte(contentHash))
 		if err != nil {
 			fmt.Println("Error encoding function data:", err)
 			return nil, nil
