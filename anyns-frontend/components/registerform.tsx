@@ -161,7 +161,7 @@ export default function RegisterForm({
 
         <div className="singleDataLine">
           <div className="flex mt-1">
-            <p>Content hash/CID (optional):</p>
+            <p>Anytype identity of Owner (optional):</p>
           </div>
 
           <div>

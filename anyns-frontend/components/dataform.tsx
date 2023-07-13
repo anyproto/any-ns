@@ -161,7 +161,7 @@ export default function DataForm({
 
         <div className="singleDataLine">
           <div className="flex mt-1">
-            <p>Owner:</p>
+            <p>Ethereum identity of Owner:</p>
           </div>
 
           <div>
@@ -188,7 +188,7 @@ export default function DataForm({
 
         <div className="singleDataLine">
           <div className="flex mt-1">
-            <p>Content hash/CID (optional):</p>
+            <p>Anytype identity of Owner (optional):</p>
           </div>
 
           <div>
