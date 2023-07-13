@@ -11,6 +11,7 @@ This will build a gRPC server that can be used to call contract's functions:
 
 Run:
 
+- prepare .env file. See example: .env-example
 - `make run-server`
 
 Now use your server:

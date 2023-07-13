@@ -179,7 +179,7 @@ export default function RegisterPage() {
     //const secret = "0x7823456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
 
     // TODO: check if this is correct
-    const isReverseRecord = false
+    const isReverseRecord = true
     const ownerControlledFuses = 0
 
     // this calldata will set spaceid + contenthash automatically

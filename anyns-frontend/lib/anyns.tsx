@@ -114,10 +114,10 @@ export async function prepareCallData(contentHash, spaceID, nameFull) {
     const contentHashHex = web3.utils.utf8ToHex(contentHash)
     console.log('Adding content hash: ' + contentHashHex)
 
-    const data = resolver.interface.encodeFunctionData('setContenthash', [
-      node,
-      contentHashHex,
-    ])
+    const data = resolver.interface.encodeFunctionData(
+      'setContenthash(bytes32, bytes)',
+      [node, contentHashHex],
+    )
     callData.push(data)
   }
 
