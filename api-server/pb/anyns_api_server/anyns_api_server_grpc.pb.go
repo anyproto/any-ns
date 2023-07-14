@@ -24,8 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type AnynsClient interface {
 	// Check if name is free or get the attached information if not
 	IsNameAvailable(ctx context.Context, in *NameAvailableRequest, opts ...grpc.CallOption) (*NameAvailableResponse, error)
-	// Add to queue a name registration operation
-	// results in async operation
+	// TODO: use NameRegisterRequestSigned
 	NameRegister(ctx context.Context, in *NameRegisterRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 	// Add to queue a name update operation
 	// results in async operation
@@ -84,8 +83,7 @@ func (c *anynsClient) GetOperationStatus(ctx context.Context, in *GetOperationSt
 type AnynsServer interface {
 	// Check if name is free or get the attached information if not
 	IsNameAvailable(context.Context, *NameAvailableRequest) (*NameAvailableResponse, error)
-	// Add to queue a name registration operation
-	// results in async operation
+	// TODO: use NameRegisterRequestSigned
 	NameRegister(context.Context, *NameRegisterRequest) (*OperationResponse, error)
 	// Add to queue a name update operation
 	// results in async operation

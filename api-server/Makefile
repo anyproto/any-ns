@@ -80,7 +80,7 @@ is-name-avail:
 
 .PHONY: reg-test-name
 reg-test-name:
-	grpcurl -plaintext -d '{"fullName": "some2.any", "owner": "0xe595e2BA3f0cE990d8037e07250c5C78ce40f8fF", "contentHash": "QmR6EJCK4z8wJbqWGMbTA33wkvVLeVMkzwhmfe3mKCgYXu"}' localhost:8080 Anyns/NameRegister
+	grpcurl -plaintext -d '{"fullName": "some9.any", "ownerEthAddress": "0xe595e2BA3f0cE990d8037e07250c5C78ce40f8fF", "ownerAnyAddress": "A6WVkd1MxX1i7hGQCcDhMFvfEzokPppRzxve2wdhTZ8jZTio"}' localhost:8080 Anyns/NameRegister
 
 # Print a helpful description of the gRPC interface
 .PHONY: describe

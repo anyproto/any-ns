@@ -173,6 +173,12 @@
           >
           <ul>
             <li>
+              <a href="#.GetNameRegisterMsgResponse"
+                ><span class="badge">M</span>GetNameRegisterMsgResponse</a
+              >
+            </li>
+
+            <li>
               <a href="#.GetOperationStatusRequest"
                 ><span class="badge">M</span>GetOperationStatusRequest</a
               >
@@ -193,6 +199,12 @@
             <li>
               <a href="#.NameRegisterRequest"
                 ><span class="badge">M</span>NameRegisterRequest</a
+              >
+            </li>
+
+            <li>
+              <a href="#.NameRegisterRequestSigned"
+                ><span class="badge">M</span>NameRegisterRequestSigned</a
               >
             </li>
 
@@ -229,6 +241,28 @@
       <a href="#title">Top</a>
     </div>
     <p></p>
+
+    <h3 id=".GetNameRegisterMsgResponse">GetNameRegisterMsgResponse</h3>
+    <p></p>
+
+    <table class="field-table">
+      <thead>
+        <tr>
+          <td>Field</td>
+          <td>Type</td>
+          <td>Label</td>
+          <td>Description</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>msg</td>
+          <td><a href="#bytes">bytes</a></td>
+          <td></td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
 
     <h3 id=".GetOperationStatusRequest">GetOperationStatusRequest</h3>
     <p></p>
@@ -353,17 +387,27 @@
         </tr>
 
         <tr>
-          <td>owner</td>
+          <td>ownerAnyAddress</td>
           <td><a href="#string">string</a></td>
-          <td>optional</td>
-          <td><p>An Ethereum address that owns that name</p></td>
+          <td></td>
+          <td>
+            <p>
+              A content hash attached to this name contentHash -&gt;
+              ownerAnyAddress (this data can not be changed later)
+            </p>
+          </td>
         </tr>
 
         <tr>
-          <td>contentHash</td>
+          <td>ownerEthAddress</td>
           <td><a href="#string">string</a></td>
-          <td>optional</td>
-          <td><p>A content hash attached to this name</p></td>
+          <td></td>
+          <td>
+            <p>
+              An Ethereum address that owns that name owner -&gt;
+              ownerEthAddress (this data can not be changed later)
+            </p>
+          </td>
         </tr>
 
         <tr>
@@ -371,6 +415,35 @@
           <td><a href="#string">string</a></td>
           <td>optional</td>
           <td><p>A SpaceID attached to this name</p></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id=".NameRegisterRequestSigned">NameRegisterRequestSigned</h3>
+    <p></p>
+
+    <table class="field-table">
+      <thead>
+        <tr>
+          <td>Field</td>
+          <td>Type</td>
+          <td>Label</td>
+          <td>Description</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>payload</td>
+          <td><a href="#bytes">bytes</a></td>
+          <td></td>
+          <td><p>NameRegisterRequest struct</p></td>
+        </tr>
+
+        <tr>
+          <td>signature</td>
+          <td><a href="#bytes">bytes</a></td>
+          <td></td>
+          <td><p>payload signed by payload.ownerAnyAddress</p></td>
         </tr>
       </tbody>
     </table>
@@ -472,7 +545,8 @@
     </table>
 
     <h3 id=".Anyns">Anyns</h3>
-    <p></p>
+    <p>Add to queue a name registration operation</p>
+    <p>results in async operation</p>
     <table class="enum-table">
       <thead>
         <tr>
@@ -496,12 +570,7 @@
           <td>NameRegister</td>
           <td><a href="#NameRegisterRequest">.NameRegisterRequest</a></td>
           <td><a href="#OperationResponse">.OperationResponse</a></td>
-          <td>
-            <p>
-              Add to queue a name registration operation results in async
-              operation
-            </p>
-          </td>
+          <td><p>TODO: use NameRegisterRequestSigned</p></td>
         </tr>
 
         <tr>

@@ -25,14 +25,19 @@ message NameAvailableResponse {
 message NameRegisterRequest {
   string fullName = 1;
 
-  // An Ethereum address that owns that name
-  optional string owner = 2;
-
   // A content hash attached to this name
-  optional string contentHash = 3;
+  string ownerAnyAddress = 2;
+  
+  // An Ethereum address that owns that name
+  string ownerEthAddress = 3;
 
   // A SpaceID attached to this name
   optional string spaceId = 4;
+}
+
+message NameRegisterRequestSigned {
+  bytes payload = 1;    // NameRegisterRequest struct
+  bytes signature = 2;  // payload signed by payload.ownerEthAddress 
 }
 
 message NameUpdateRequest {
@@ -61,12 +66,17 @@ message OperationResponse {
   OperationState operationState = 2;
 }
 
+message GetNameRegisterMsgResponse {
+  bytes msg = 1;
+}
+
+// Add to queue a name registration operation
+// results in async operation
 service Anyns {
   // Check if name is free or get the attached information if not
   rpc IsNameAvailable(NameAvailableRequest) returns (NameAvailableResponse) {}
 
-  // Add to queue a name registration operation
-  // results in async operation
+  // TODO: use NameRegisterRequestSigned
   rpc NameRegister(NameRegisterRequest) returns (OperationResponse) {}
 
   // Add to queue a name update operation
@@ -75,6 +85,9 @@ service Anyns {
 
   // Get the async operation with id==X statue
   rpc GetOperationStatus(GetOperationStatusRequest) returns (OperationResponse) {}
+
+// v2:
+  //rpc RenewName(NameRegisterRequest) returns (OperationResponse) {}
 
   // ??? reverse resolver
   // rpc GetNameByAddress()

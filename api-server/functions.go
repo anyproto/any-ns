@@ -95,13 +95,13 @@ func getAdditionalNameInfo(conn *ethclient.Client, currentOwner common.Address, 
 	}
 
 	// 2 - get content hash and spaceID
-	contentHash, spaceID, err := getAdditionalData(conn, fullName)
+	ownerAnyAddress, spaceID, err := getAdditionalData(conn, fullName)
 	if err != nil {
 		log.Printf("Failed to get real additional data of the name: %v", err)
 		return nil, err
 	}
-	if contentHash != nil {
-		res.ContentHash = *contentHash
+	if ownerAnyAddress != nil {
+		res.ContentHash = *ownerAnyAddress
 	}
 	if spaceID != nil {
 		res.SpaceId = *spaceID
@@ -184,16 +184,16 @@ func getAdditionalData(conn *ethclient.Client, fullName string) (*string, *strin
 	spaceIDDecoded, _ := hex.DecodeString(hexString)
 	log.Printf("Space ID is: %s", spaceIDDecoded)
 
-	contentHashOut := string(contentHashDecoded)
+	ownerAnyAddressOut := string(contentHashDecoded)
 	spaceIDOut := string(spaceIDDecoded)
 
-	return &contentHashOut, &spaceIDOut, nil
+	return &ownerAnyAddressOut, &spaceIDOut, nil
 }
 
 func nameRegister(ctx context.Context, in *pb.NameRegisterRequest) error {
 	var adminAddr common.Address = common.HexToAddress(os.Getenv("ADMIN_ADDR"))
 	var resolverAddr common.Address = common.HexToAddress(os.Getenv("CONTRACT_RESOLVER_ADDR"))
-	var registrantAccount common.Address = common.HexToAddress(*in.Owner)
+	var registrantAccount common.Address = common.HexToAddress(in.OwnerAnyAddress)
 
 	conn, err := createEthConnection()
 	if err != nil {
@@ -222,7 +222,7 @@ func nameRegister(ctx context.Context, in *pb.NameRegisterRequest) error {
 		return err
 	}
 
-	callData, err := prepareCallData(in.GetFullName(), in.GetContentHash(), in.GetSpaceId())
+	callData, err := prepareCallData(in.GetFullName(), in.GetOwnerAnyAddress(), in.GetSpaceId())
 
 	if err != nil {
 		log.Printf("Can not prepare call data: %v", err)
