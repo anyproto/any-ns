@@ -154,14 +154,14 @@ export default function RegisterForm({
               disabled={isProcessing}
               autoFocus
               //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
-              //required
+              required
             />
           </div>
         </div>
 
         <div className="singleDataLine">
           <div className="flex mt-1">
-            <p>Anytype identity of Owner (optional):</p>
+            <p>Anytype identity of Owner:</p>
           </div>
 
           <div>
@@ -181,7 +181,7 @@ export default function RegisterForm({
               }`}
               disabled={isProcessing}
               //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
-              //required
+              required
             />
           </div>
         </div>
