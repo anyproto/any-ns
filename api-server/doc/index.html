@@ -203,8 +203,8 @@
             </li>
 
             <li>
-              <a href="#.NameRegisterRequestSigned"
-                ><span class="badge">M</span>NameRegisterRequestSigned</a
+              <a href="#.NameRegisterSignedRequest"
+                ><span class="badge">M</span>NameRegisterSignedRequest</a
               >
             </li>
 
@@ -390,36 +390,26 @@
           <td>ownerAnyAddress</td>
           <td><a href="#string">string</a></td>
           <td></td>
-          <td>
-            <p>
-              A content hash attached to this name contentHash -&gt;
-              ownerAnyAddress (this data can not be changed later)
-            </p>
-          </td>
+          <td><p>A content hash attached to this name</p></td>
         </tr>
 
         <tr>
           <td>ownerEthAddress</td>
           <td><a href="#string">string</a></td>
           <td></td>
-          <td>
-            <p>
-              An Ethereum address that owns that name owner -&gt;
-              ownerEthAddress (this data can not be changed later)
-            </p>
-          </td>
+          <td><p>An Ethereum address that owns that name</p></td>
         </tr>
 
         <tr>
           <td>spaceId</td>
           <td><a href="#string">string</a></td>
-          <td>optional</td>
+          <td></td>
           <td><p>A SpaceID attached to this name</p></td>
         </tr>
       </tbody>
     </table>
 
-    <h3 id=".NameRegisterRequestSigned">NameRegisterRequestSigned</h3>
+    <h3 id=".NameRegisterSignedRequest">NameRegisterSignedRequest</h3>
     <p></p>
 
     <table class="field-table">
@@ -443,7 +433,7 @@
           <td>signature</td>
           <td><a href="#bytes">bytes</a></td>
           <td></td>
-          <td><p>payload signed by payload.ownerAnyAddress</p></td>
+          <td><p>payload signed by payload.ownerEthAddress</p></td>
         </tr>
       </tbody>
     </table>
@@ -570,7 +560,21 @@
           <td>NameRegister</td>
           <td><a href="#NameRegisterRequest">.NameRegisterRequest</a></td>
           <td><a href="#OperationResponse">.OperationResponse</a></td>
-          <td><p>TODO: use NameRegisterRequestSigned</p></td>
+          <td>
+            <p>
+              TODO: remove this method (it is insecure) and use
+              NameRegisterRequestSigned
+            </p>
+          </td>
+        </tr>
+
+        <tr>
+          <td>NameRegisterSigned</td>
+          <td>
+            <a href="#NameRegisterSignedRequest">.NameRegisterSignedRequest</a>
+          </td>
+          <td><a href="#OperationResponse">.OperationResponse</a></td>
+          <td><p></p></td>
         </tr>
 
         <tr>

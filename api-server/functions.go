@@ -19,7 +19,7 @@ import (
 )
 
 func isNameAvailable(ctx context.Context, in *pb.NameAvailableRequest) (*pb.NameAvailableResponse, error) {
-	log.Printf("Received request: %v", in.ProtoReflect().Descriptor().FullName())
+	//log.Printf("Received request: %v", in.ProtoReflect().Descriptor().FullName())
 
 	conn, err := createEthConnection()
 	if err != nil {
@@ -193,7 +193,7 @@ func getAdditionalData(conn *ethclient.Client, fullName string) (*string, *strin
 func nameRegister(ctx context.Context, in *pb.NameRegisterRequest) error {
 	var adminAddr common.Address = common.HexToAddress(os.Getenv("ADMIN_ADDR"))
 	var resolverAddr common.Address = common.HexToAddress(os.Getenv("CONTRACT_RESOLVER_ADDR"))
-	var registrantAccount common.Address = common.HexToAddress(in.OwnerAnyAddress)
+	var registrantAccount common.Address = common.HexToAddress(in.OwnerEthAddress)
 
 	conn, err := createEthConnection()
 	if err != nil {

@@ -18,7 +18,7 @@ prereqs-for-mac:
 
 # Generate protobuf stubs and documentation
 pb: proto/anyns_api_server.proto
-	protoc --proto_path=proto proto/*.proto --go_out=. --go-grpc_out=.
+	protoc --proto_path=proto proto/*.proto --gofast_out=. --go-grpc_out=.
 	protoc --doc_out=./doc --doc_opt=html,index.html proto/*.proto
 
 .PHONY: check-style
@@ -80,7 +80,7 @@ is-name-avail:
 
 .PHONY: reg-test-name
 reg-test-name:
-	grpcurl -plaintext -d '{"fullName": "some9.any", "ownerEthAddress": "0xe595e2BA3f0cE990d8037e07250c5C78ce40f8fF", "ownerAnyAddress": "A6WVkd1MxX1i7hGQCcDhMFvfEzokPppRzxve2wdhTZ8jZTio"}' localhost:8080 Anyns/NameRegister
+	grpcurl -plaintext -d '{"fullName": "some10.any", "ownerEthAddress": "0xe595e2BA3f0cE990d8037e07250c5C78ce40f8fF", "ownerAnyAddress": "A6WVkd1MxX1i7hGQCcDhMFvfEzokPppRzxve2wdhTZ8jZTio"}' localhost:8080 Anyns/NameRegister
 
 # Print a helpful description of the gRPC interface
 .PHONY: describe

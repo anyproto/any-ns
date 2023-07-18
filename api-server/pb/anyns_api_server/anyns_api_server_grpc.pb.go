@@ -24,8 +24,9 @@ const _ = grpc.SupportPackageIsVersion7
 type AnynsClient interface {
 	// Check if name is free or get the attached information if not
 	IsNameAvailable(ctx context.Context, in *NameAvailableRequest, opts ...grpc.CallOption) (*NameAvailableResponse, error)
-	// TODO: use NameRegisterRequestSigned
+	// TODO: remove this method (it is insecure) and use NameRegisterRequestSigned
 	NameRegister(ctx context.Context, in *NameRegisterRequest, opts ...grpc.CallOption) (*OperationResponse, error)
+	NameRegisterSigned(ctx context.Context, in *NameRegisterSignedRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 	// Add to queue a name update operation
 	// results in async operation
 	NameUpdate(ctx context.Context, in *NameUpdateRequest, opts ...grpc.CallOption) (*OperationResponse, error)
@@ -59,6 +60,15 @@ func (c *anynsClient) NameRegister(ctx context.Context, in *NameRegisterRequest,
 	return out, nil
 }
 
+func (c *anynsClient) NameRegisterSigned(ctx context.Context, in *NameRegisterSignedRequest, opts ...grpc.CallOption) (*OperationResponse, error) {
+	out := new(OperationResponse)
+	err := c.cc.Invoke(ctx, "/Anyns/NameRegisterSigned", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *anynsClient) NameUpdate(ctx context.Context, in *NameUpdateRequest, opts ...grpc.CallOption) (*OperationResponse, error) {
 	out := new(OperationResponse)
 	err := c.cc.Invoke(ctx, "/Anyns/NameUpdate", in, out, opts...)
@@ -83,8 +93,9 @@ func (c *anynsClient) GetOperationStatus(ctx context.Context, in *GetOperationSt
 type AnynsServer interface {
 	// Check if name is free or get the attached information if not
 	IsNameAvailable(context.Context, *NameAvailableRequest) (*NameAvailableResponse, error)
-	// TODO: use NameRegisterRequestSigned
+	// TODO: remove this method (it is insecure) and use NameRegisterRequestSigned
 	NameRegister(context.Context, *NameRegisterRequest) (*OperationResponse, error)
+	NameRegisterSigned(context.Context, *NameRegisterSignedRequest) (*OperationResponse, error)
 	// Add to queue a name update operation
 	// results in async operation
 	NameUpdate(context.Context, *NameUpdateRequest) (*OperationResponse, error)
@@ -102,6 +113,9 @@ func (UnimplementedAnynsServer) IsNameAvailable(context.Context, *NameAvailableR
 }
 func (UnimplementedAnynsServer) NameRegister(context.Context, *NameRegisterRequest) (*OperationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NameRegister not implemented")
+}
+func (UnimplementedAnynsServer) NameRegisterSigned(context.Context, *NameRegisterSignedRequest) (*OperationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NameRegisterSigned not implemented")
 }
 func (UnimplementedAnynsServer) NameUpdate(context.Context, *NameUpdateRequest) (*OperationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NameUpdate not implemented")
@@ -158,6 +172,24 @@ func _Anyns_NameRegister_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Anyns_NameRegisterSigned_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NameRegisterSignedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AnynsServer).NameRegisterSigned(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Anyns/NameRegisterSigned",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AnynsServer).NameRegisterSigned(ctx, req.(*NameRegisterSignedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Anyns_NameUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(NameUpdateRequest)
 	if err := dec(in); err != nil {
@@ -208,6 +240,10 @@ var Anyns_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "NameRegister",
 			Handler:    _Anyns_NameRegister_Handler,
+		},
+		{
+			MethodName: "NameRegisterSigned",
+			Handler:    _Anyns_NameRegisterSigned_Handler,
 		},
 		{
 			MethodName: "NameUpdate",

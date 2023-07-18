@@ -32,12 +32,15 @@ message NameRegisterRequest {
   string ownerEthAddress = 3;
 
   // A SpaceID attached to this name
-  optional string spaceId = 4;
+  string spaceId = 4;
 }
 
-message NameRegisterRequestSigned {
-  bytes payload = 1;    // NameRegisterRequest struct
-  bytes signature = 2;  // payload signed by payload.ownerEthAddress 
+message NameRegisterSignedRequest {
+  // NameRegisterRequest struct
+  bytes payload = 1;
+
+  // payload signed by payload.ownerEthAddress 
+  bytes signature = 2; 
 }
 
 message NameUpdateRequest {
@@ -62,7 +65,6 @@ enum OperationState {
 
 message OperationResponse {
   uint32 operationId = 1;
-
   OperationState operationState = 2;
 }
 
@@ -76,8 +78,9 @@ service Anyns {
   // Check if name is free or get the attached information if not
   rpc IsNameAvailable(NameAvailableRequest) returns (NameAvailableResponse) {}
 
-  // TODO: use NameRegisterRequestSigned
+  // TODO: remove this method (it is unsecure) and use NameRegisterRequestSigned
   rpc NameRegister(NameRegisterRequest) returns (OperationResponse) {}
+  rpc NameRegisterSigned(NameRegisterSignedRequest) returns (OperationResponse) {}
 
   // Add to queue a name update operation
   // results in async operation
