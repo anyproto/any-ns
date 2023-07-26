@@ -7,9 +7,9 @@ export default function ApiPage() {
         <h2>gRPC proto files: </h2>
         <p>
           {' '}
-          <a href="https://github.com/anyproto/anyns/blob/master/api-server/proto/anyns_api_server.proto">
+          <a href="https://github.com/anyproto/any-ns-node/blob/master/proto/anyns_api_server.proto">
             <strong>
-              https://github.com/anyproto/anyns/blob/master/api-server/proto/anyns_api_server.proto
+              https://github.com/anyproto/any-ns-node/blob/master/proto/anyns_api_server.proto
             </strong>
           </a>
         </p>

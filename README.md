@@ -1,10 +1,9 @@
 # AnyNS
 
-This repository contains 3 projects:
+This repository contains 2 projects:
 
 - AnyNS smart contracts (**this** top-level folder)
 - AnyNS frontend (**anyns-frontend** sub-folder)
-- AnyNS API serveri (**api-server** sub-folder)
 
 ---
 
@@ -64,10 +63,6 @@ p.s. Please see custom gas setting in the **hardhat.config.ts** file. This shoul
 ## 2 - How to run the frontend
 
 See **anyns-frontend** folder for more details.
-
-## 3 - How to run the API service
-
-See **api-server** folder for more details.
 
 # Howtos and links
 
