@@ -24,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type AnynsClient interface {
 	// Check if name is free or get the attached information if not
 	IsNameAvailable(ctx context.Context, in *NameAvailableRequest, opts ...grpc.CallOption) (*NameAvailableResponse, error)
-	// TODO: remove this method (it is insecure) and use NameRegisterRequestSigned
+	// TODO: remove this method (it is unsecure) and use NameRegisterRequestSigned
 	NameRegister(ctx context.Context, in *NameRegisterRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 	NameRegisterSigned(ctx context.Context, in *NameRegisterSignedRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 	// Add to queue a name update operation
@@ -93,7 +93,7 @@ func (c *anynsClient) GetOperationStatus(ctx context.Context, in *GetOperationSt
 type AnynsServer interface {
 	// Check if name is free or get the attached information if not
 	IsNameAvailable(context.Context, *NameAvailableRequest) (*NameAvailableResponse, error)
-	// TODO: remove this method (it is insecure) and use NameRegisterRequestSigned
+	// TODO: remove this method (it is unsecure) and use NameRegisterRequestSigned
 	NameRegister(context.Context, *NameRegisterRequest) (*OperationResponse, error)
 	NameRegisterSigned(context.Context, *NameRegisterSignedRequest) (*OperationResponse, error)
 	// Add to queue a name update operation

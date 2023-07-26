@@ -329,25 +329,25 @@
         </tr>
 
         <tr>
-          <td>owner</td>
+          <td>ownerEthAddress</td>
           <td><a href="#string">string</a></td>
           <td></td>
           <td>
             <p>
-              An Ethereum address that owns that name This field is present only
-              if name is &#34;not available for registration&#34; (free)
+              An Ethereum address that owns that name This field is non-empty
+              only if name is &#34;already registered&#34;
             </p>
           </td>
         </tr>
 
         <tr>
-          <td>contentHash</td>
+          <td>ownerAnyAddress</td>
           <td><a href="#string">string</a></td>
           <td></td>
           <td>
             <p>
-              A content hash attached to this name This field is present only if
-              name is &#34;not available for registration&#34; (free)
+              A content hash attached to this name This field is non-empty only
+              if name is &#34;already registered&#34;
             </p>
           </td>
         </tr>
@@ -358,8 +358,8 @@
           <td></td>
           <td>
             <p>
-              A SpaceID attached to this name This field is present only if name
-              is &#34;not available for registration&#34; (free)
+              A SpaceID attached to this name This field is non-empty only if
+              name is &#34;already registered&#34;
             </p>
           </td>
         </tr>
@@ -459,7 +459,7 @@
         </tr>
 
         <tr>
-          <td>contentHash</td>
+          <td>ownerAnyAddress</td>
           <td><a href="#string">string</a></td>
           <td></td>
           <td><p>A content hash attached to this name</p></td>
@@ -535,8 +535,7 @@
     </table>
 
     <h3 id=".Anyns">Anyns</h3>
-    <p>Add to queue a name registration operation</p>
-    <p>results in async operation</p>
+    <p></p>
     <table class="enum-table">
       <thead>
         <tr>
@@ -562,7 +561,7 @@
           <td><a href="#OperationResponse">.OperationResponse</a></td>
           <td>
             <p>
-              TODO: remove this method (it is insecure) and use
+              TODO: remove this method (it is unsecure) and use
               NameRegisterRequestSigned
             </p>
           </td>

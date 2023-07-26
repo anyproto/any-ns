@@ -87,11 +87,11 @@ func getAdditionalNameInfo(conn *ethclient.Client, currentOwner common.Address, 
 		}
 
 		if realOwner != nil {
-			res.Owner = *realOwner
+			res.OwnerEthAddress = *realOwner
 		}
 	} else {
 		// if NW is not the "owner" of the contract -> then it is the real owner
-		res.Owner = currentOwner.Hex()
+		res.OwnerEthAddress = currentOwner.Hex()
 	}
 
 	// 2 - get content hash and spaceID
@@ -101,7 +101,7 @@ func getAdditionalNameInfo(conn *ethclient.Client, currentOwner common.Address, 
 		return nil, err
 	}
 	if ownerAnyAddress != nil {
-		res.ContentHash = *ownerAnyAddress
+		res.OwnerAnyAddress = *ownerAnyAddress
 	}
 	if spaceID != nil {
 		res.SpaceId = *spaceID
