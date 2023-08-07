@@ -1,6 +1,6 @@
 # Description
 
-AnyNS, short for Anytype Naming Service, is a decentralized domain name system based on ENS and compatible with ENS.
+AnyNS, short for Any Naming Service, is a decentralized domain name system based on ENS and compatible with ENS.
 Please see anyns contracts for description of what was changed.
 
 ## Sepolia testnet deployment
