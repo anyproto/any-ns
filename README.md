@@ -9,7 +9,7 @@ This repository contains 2 projects:
 
 Please see original [ENS README file](ORIGINAL_ENS_README.md)!
 
-AnyNS, which stands for Anytype Naming Service, is an experimental decentralized domain name system based on ENS (Ethereum Name Service) and compatible with ENS.
+AnyNS, which stands for Any Naming Service, is an experimental decentralized domain name system based on ENS (Ethereum Name Service) and compatible with ENS.
 
 The current repository features "anytype" folders containing custom Anytype contracts and code. The original ENS contracts and deployment files remain intact. However, some of the Anytype contracts rely on and use the original ENS contracts. For example, the original ENSRegistry is used without being copied. Therefore, please exercise caution when merging or updating these contracts and interfaces from the master branch, as changes to the original ENS contracts may affect them.
 
