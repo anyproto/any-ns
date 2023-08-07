@@ -101,6 +101,6 @@ Thank you for your desire to develop Anytype together!
 🤝 Follow us on [Github](https://github.com/anyproto) and join the [Contributors Community](https://github.com/orgs/anyproto/discussions).
 
 ---
+Original files from ENS are licensed under [MIT](./LICENSE.txt).
 
-Made by Any — a Swiss association 🇨🇭
-Licensed under [LICENSE](./LICENSE.md).
+Additions, made by Any — a Swiss association 🇨🇭, are licensed under MIT (see `LICENSE.md` in `anyns-frontend` and `anytype` sub-folders).
