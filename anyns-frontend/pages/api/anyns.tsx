@@ -1,8 +1,11 @@
 const Web3 = require('web3')
 
+const { utils } = require('ethers')
+
 const RegistryJson = require('deployments/sepolia/ENSRegistry.json')
 const ABIResolver = require('deployments/sepolia/AnytypeResolver.json')
 const NameWrapperJson = require('deployments/sepolia/AnytypeNameWrapper.json')
+const RegistrarJson = require('deployments/sepolia/AnytypeRegistrarImplementation.json')
 
 const web3 = new Web3()
 web3.setProvider(new Web3.providers.HttpProvider(process.env.INFURA_URL))
@@ -17,6 +20,8 @@ function namehash(name) {
   }
   return node
 }
+
+const labelhash = (label) => utils.keccak256(utils.toUtf8Bytes(label))
 
 async function getOwner(name) {
   const ensContract = new web3.eth.Contract(
@@ -97,6 +102,31 @@ async function getRealOwner(name) {
   return null
 }
 
+async function getExpDate(name) {
+  const registrarContract = new web3.eth.Contract(
+    RegistrarJson.abi,
+    RegistrarJson.address,
+  )
+
+  // split name into label and tld
+  const labels = name.split('.')
+  const label = labels[0]
+
+  const lh = labelhash(label)
+
+  try {
+    const exp = await registrarContract.methods.nameExpires(lh).call()
+
+    // convert to unix timestamp
+    let expStr = exp.toString()
+    return expStr
+  } catch (error) {
+    console.error('Error getting exp date: ', error)
+  }
+
+  return null
+}
+
 // returns 200 if name is found
 // returns 404 if name is not found
 // returns 500 if error
@@ -115,12 +145,14 @@ export default async function handler(req, res) {
       const contentID = await getContentID(name)
       const spaceID = await getSpaceID(name)
       const realOwner = await getRealOwner(name)
+      const expirationDate = await getExpDate(name)
 
       res.status(200).json({
         name: name,
         owner: realOwner,
         contentID: contentID,
         spaceID: spaceID,
+        expirationDate: expirationDate,
       })
     }
   } else {

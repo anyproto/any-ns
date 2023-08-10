@@ -27,6 +27,7 @@ export default function DataForm({
   const [userAddress, setUserAddress] = useState('')
   const [contentHash, setContentHash] = useState('')
   const [spaceHash, setSpaceHash] = useState('')
+  const [expirationDate, setExpirationDate] = useState('')
 
   const [isNameAvailable, setNameAvailable] = useState(false)
 
@@ -122,9 +123,13 @@ export default function DataForm({
     if (data.owner) {
       setNameAvailable(false)
       setUserAddress(data.owner)
+      // convert unixdate to string
+      let date = new Date(data.expirationDate * 1000)
+      setExpirationDate(date.toString())
     } else {
       setNameAvailable(true)
       setUserAddress('')
+      setExpirationDate('')
     }
   }
 
@@ -234,6 +239,33 @@ export default function DataForm({
                 isProcessing ? ' rounded-md' : ' rounded-l-md'
               }`}
               disabled={isProcessing || !handlerRegister}
+              //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
+              //required
+            />
+          </div>
+        </div>
+
+        <div className="singleDataLine">
+          <div className="flex mt-1">
+            <p>Expiration date:</p>
+          </div>
+
+          <div>
+            <input
+              id="prompt-exp-date"
+              type="text"
+              name="exp-date"
+              value={expirationDate}
+              onChange={(e) => setExpirationDate(e.target.value)}
+              //onChange={(e) => dispatch({
+              //        type: "SELECTED_NAME",
+              //        payload: e.target.value
+              //    })}
+              placeholder=""
+              className={`block w-full input-with-no-button flex-grow${
+                isProcessing ? ' rounded-md' : ' rounded-l-md'
+              }`}
+              disabled={true}
               //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
               //required
             />

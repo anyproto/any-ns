@@ -41,6 +41,7 @@ All contract addresses are kept in **../deployments/sepolia/** folder. Howerver,
 - set prices
 
 ## Contribution
+
 Thank you for your desire to develop Anytype together!
 
 ❤️ This project and everyone involved in it is governed by the [Code of Conduct](https://github.com/anyproto/.github/blob/main/docs/CODE_OF_CONDUCT.md).
@@ -52,6 +53,7 @@ Thank you for your desire to develop Anytype together!
 🤝 Follow us on [Github](https://github.com/anyproto) and join the [Contributors Community](https://github.com/orgs/anyproto/discussions).
 
 ---
+
 Made by Any — a Swiss association 🇨🇭
 
 Licensed under [MIT](./LICENSE.md).

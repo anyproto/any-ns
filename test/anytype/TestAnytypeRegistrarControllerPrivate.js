@@ -703,7 +703,7 @@ contract('AnytypeRegistrarControllerPrivate', function () {
     ).to.be.revertedWith(`CommitmentTooOld("${commitment}")`)
   })
 
-  it('should allow anyone to renew a name without changing fuse expiry', async () => {
+  it('should allow to renew a name without changing fuse expiry', async () => {
     await registerName('newname')
     var nodehash = namehash('newname.any')
     var fuseExpiry = (await nameWrapper.getData(nodehash))[2]
