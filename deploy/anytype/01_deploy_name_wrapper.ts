@@ -60,6 +60,7 @@ func.tags = ['anytype', 'AnytypeNameWrapper']
 func.dependencies = [
   'AnytypeRegistrarImplementation',
   'StaticMetadataService',
+  // somehow without this line NameWrapper can not be deployed :-(
   'ReverseRegistrar',
   'registry',
 ]

@@ -58,7 +58,26 @@ INFURA_API_KEY=YYY
 
 As a result, folder **deployments/sepolia** should be updated with new contract addresses.
 
-p.s. Please see custom gas setting in the **hardhat.config.ts** file. This should increase the speed of the migration.
+### Gas price
+
+Please see custom gas setting in the **hardhat.config.ts** file. This should increase the speed of the migration.
+
+### Gas limit
+
+In some cases deployment txs will fail because of low gas limit. There is a "gas" parameter in the **hardhat.config.ts** file, but unfortunately it is not passed when running migrations using **ethers**. For details see [this explanation](https://github.com/NomicFoundation/hardhat/pull/2406).
+
+In such case we recomend you to set gasLimit values directly for EACH transaction in the deployment scripts. Example:
+
+```
+  const deployArgs = {
+    from: deployer,
+    args: [registry.address, registrar.address, metadata.address],
+    log: true,
+    gasLimit: 3000000
+  }
+
+  const nameWrapper = await deploy('AnytypeNameWrapper', deployArgs)
+```
 
 ## 2 - How to run the frontend
 

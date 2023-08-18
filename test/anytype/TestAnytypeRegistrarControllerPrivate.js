@@ -761,7 +761,7 @@ contract('AnytypeRegistrarControllerPrivate', function () {
 
   it('should set the reverse record of the account', async () => {
     const commitment = await controller.makeCommitment(
-      'reverse',
+      'xxx',
       registrantAccount,
       REGISTRATION_TIME,
       secret,
@@ -774,7 +774,7 @@ contract('AnytypeRegistrarControllerPrivate', function () {
 
     await evm.advanceTime((await controller.minCommitmentAge()).toNumber())
     await controller.register(
-      'reverse',
+      'xxx',
       registrantAccount,
       REGISTRATION_TIME,
       secret,
@@ -784,9 +784,10 @@ contract('AnytypeRegistrarControllerPrivate', function () {
       0,
     )
 
-    expect(await resolver.name(getReverseNode(ownerAccount))).to.equal(
-      'reverse.any',
-    )
+    // this should be something like (example) 333333f332a06ECB5D20D35da44ba07986D6E203.addr.reverse
+    const reverseName = getReverseNode(registrantAccount)
+
+    expect(await resolver.name(reverseName)).to.equal('xxx.any')
   })
 
   it('should not set the reverse record of the account when set to false', async () => {

@@ -173,7 +173,7 @@ contract AnytypeRegistrarControllerPrivate is
         }
 
         if (reverseRecord) {
-            _setReverseRecord(name, resolver, msg.sender);
+            _setReverseRecord(name, resolver, owner);
         }
 
         emit NameRegistered(name, keccak256(bytes(name)), owner, expires);
@@ -242,7 +242,7 @@ contract AnytypeRegistrarControllerPrivate is
         address owner
     ) internal {
         reverseRegistrar.setNameForAddr(
-            msg.sender,
+            owner,
             owner,
             resolver,
             string.concat(name, ".any")

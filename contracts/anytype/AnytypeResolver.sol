@@ -21,7 +21,7 @@ import {INameWrapper} from "../wrapper/INameWrapper.sol";
 
 /**
  * This is a copy of PublicResolver contract from ENS repo with the following changes:
- *   - AddrResolver impl. is removed
+ *   - AddrResolver impl. is removed (use registry.owner() method instead)
  *   - ABIResolver impl. is removed
  *   - InterfaceResolver impl. is removed
  *   - SpaceResolver is added
