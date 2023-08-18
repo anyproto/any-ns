@@ -4,7 +4,7 @@ import { checkNameAvailability, removeTLD } from '../lib/anyns'
 
 import ModalDlg from '../components/modal'
 import Layout from '../components/layout'
-import InfoForm from '../components/addform'
+import InfoForm from '../components/infoform'
 import Navigator from '../components/navigator'
 
 export default function Home() {

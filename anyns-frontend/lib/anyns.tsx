@@ -123,3 +123,26 @@ export async function prepareCallData(contentHash, spaceID, nameFull) {
 
   return callData
 }
+
+export async function handleReverseLoookup(addr) {
+  console.log('Do reverse lookup...: ' + addr)
+
+  const response = await fetch('/api/anyns/reverse/' + addr, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  const out = await response.json()
+
+  // [error, data]
+  if (response.status === 200) {
+    return [false, out]
+  } else if (response.status === 404) {
+    return [false, {}]
+  }
+
+  // error
+  return [true, {}]
+}

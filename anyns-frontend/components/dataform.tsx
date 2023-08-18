@@ -193,7 +193,7 @@ export default function DataForm({
 
         <div className="singleDataLine">
           <div className="flex mt-1">
-            <p>Anytype identity of Owner</p>
+            <p>Anytype identity of Owner:</p>
           </div>
 
           <div>

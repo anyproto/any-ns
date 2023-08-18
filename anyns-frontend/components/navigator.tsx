@@ -31,9 +31,18 @@ export default function Navigator({ domainName }) {
     }
   }
 
+  const onGoToReverse = async (e) => {
+    e.preventDefault()
+    router.push('/reverse')
+  }
+
   return (
     <div className="text-center mt-16 text-l">
       <button onClick={onGoToAdmin}>Admin</button>
+
+      <span> | </span>
+
+      <button onClick={onGoToReverse}>Reverse Resolver</button>
 
       <span> | </span>
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { LoadingButton } from '@mui/lab'
-import useDebounce from '../components/debounce'
+import useDebounce from './debounce'
 
 import { concatenateWithTLD, removeTLD } from '../lib/anyns'
 

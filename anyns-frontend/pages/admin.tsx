@@ -141,9 +141,6 @@ export default function Admin() {
     const callData = await prepareCallData(contentHash, spaceID, nameFull)
     console.log('Call data: ' + callData)
 
-    // TODO: remove
-    return
-
     // should be only called by owner!
     const commitment = await registrarController.methods
       .makeCommitment(
