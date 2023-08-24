@@ -293,6 +293,7 @@ export default function Admin() {
           domainNamePreselected={optionalDomainName}
           handleFetchNameInfo={fetchNameInfo}
           handlerRegister={handlerRegister}
+          fetchRealOwnerOfSmartContractWallet={null}
         />
 
         {/*

@@ -18,13 +18,19 @@ export default function DataForm({
   handleFetchNameInfo,
   // if null is specified -> do not show "register" button
   handlerRegister,
+  fetchRealOwnerOfSmartContractWallet,
 }) {
   const [isProcessing, setIsProcessing] = useState(false)
 
   const [domainName, setDomainName] = useState(domainNamePreselected)
   const debouncedLookup = useDebounce(domainName, 1000)
 
+  // if AA was used to register a domain name -> this is the address of the
+  // AA smart wallet
+  const [userAddressAA, setUserAddressAA] = useState('')
+  // this is end-user address
   const [userAddress, setUserAddress] = useState('')
+
   const [contentHash, setContentHash] = useState('')
   const [spaceHash, setSpaceHash] = useState('')
   const [expirationDate, setExpirationDate] = useState('')
@@ -94,6 +100,19 @@ export default function DataForm({
     setIsProcessing(false)
   }
 
+  // if AA was used to deploy a smart contract wallet
+  // then name is really owned by this SCW, but owner of this SCW is
+  // EOA that was used to sign transaction (in his Metamask probably)
+  //
+  // EOA -> SCW -> name
+  const tryGetAAOwner = async (address) => {
+    if (!fetchRealOwnerOfSmartContractWallet) {
+      return ''
+    }
+
+    return await fetchRealOwnerOfSmartContractWallet(address)
+  }
+
   const getNameInfo = async (nameFull) => {
     const [isErr, data] = await handleFetchNameInfo(nameFull)
     if (isErr) {
@@ -126,10 +145,16 @@ export default function DataForm({
       // convert unixdate to string
       let date = new Date(data.expirationDate * 1000)
       setExpirationDate(date.toString())
+
+      // check if AA was used to register name
+      // can be ''
+      const realAaOwner = await tryGetAAOwner(data.owner)
+      setUserAddressAA(realAaOwner)
     } else {
       setNameAvailable(true)
       setUserAddress('')
       setExpirationDate('')
+      setUserAddressAA('')
     }
   }
 
@@ -160,6 +185,34 @@ export default function DataForm({
               autoFocus
               //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
               //required
+            />
+          </div>
+        </div>
+
+        <div className="singleDataLine">
+          <div className="flex mt-1">
+            <p>
+              Ethereum smart contract wallet (Account Abstraction, optional):
+            </p>
+          </div>
+
+          <div>
+            <input
+              id="prompt-address-aa"
+              type="text"
+              name="addressAA"
+              value={userAddressAA}
+              //onChange={(e) => dispatch({
+              //        type: "SELECTED_NAME",
+              //        payload: e.target.value
+              //    })}
+              placeholder=""
+              className={`block w-full input-with-no-button flex-grow${
+                isProcessing ? ' rounded-md' : ' rounded-l-md'
+              }`}
+              disabled={true}
+              //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
+              required
             />
           </div>
         </div>

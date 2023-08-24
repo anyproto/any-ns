@@ -7,6 +7,7 @@ import Layout from '../../components/layout'
 import DataForm from '../../components/dataform'
 
 import { fetchNameInfo } from '../../lib/anyns'
+import { fetchRealOwnerOfSmartContractWallet } from '../../lib/anyns'
 
 export default function NameInfoPage() {
   const [showModal, setShowModal] = useState(false)
@@ -31,6 +32,9 @@ export default function NameInfoPage() {
             domainNamePreselected={router.query.id}
             handleFetchNameInfo={fetchNameInfo}
             handlerRegister={null}
+            fetchRealOwnerOfSmartContractWallet={
+              fetchRealOwnerOfSmartContractWallet
+            }
           />
         </main>
 

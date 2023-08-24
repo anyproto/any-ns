@@ -1,5 +1,5 @@
 const Web3 = require('web3')
-const web3 = new Web3()
+const web3 = new Web3(Web3.givenProvider)
 
 const ethers = require('ethers')
 
@@ -145,4 +145,41 @@ export async function handleReverseLoookup(addr) {
 
   // error
   return [true, {}]
+}
+
+// if AA was used to deploy a smart contract wallet
+// then name is really owned by this SCW, but owner of this SCW is
+// EOA that was used to sign transaction (in his Metamask probably)
+//
+// EOA -> SCW -> name
+export async function fetchRealOwnerOfSmartContractWallet(addr) {
+  const SCW_ABI = {
+    abi: [
+      {
+        constant: true,
+        inputs: [],
+        name: 'owner',
+        outputs: [
+          {
+            internalType: 'address',
+            name: '',
+            type: 'address',
+          },
+        ],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+    ],
+  }
+
+  const scw = new web3.eth.Contract(SCW_ABI.abi, addr)
+
+  try {
+    const owner = await scw.methods.owner().call()
+    return owner
+  } catch (err) {
+    console.log('Error: ' + err)
+    return ''
+  }
 }
