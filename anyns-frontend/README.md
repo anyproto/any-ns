@@ -10,7 +10,7 @@ All contract addresses are kept in **../deployments/sepolia/** folder. Howerver,
 
 # How to build and run locally
 
-1. Create a .env file (see .env-example)
+1. Create a .env file (see .env-example). **Please be careful with parameters that start with NEXT_PUBLIC, because they are visible in the "browser". Others will be able to see them!**
 2. Create a symlink: `ln -s ../deployments ./deployments`
 3. Run `npm install`
 4. Run `npm run dev`

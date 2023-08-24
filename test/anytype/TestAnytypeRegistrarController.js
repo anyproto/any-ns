@@ -849,6 +849,9 @@ contract('AnytypeRegistrarController', function () {
   it('should set the reverse record of the account', async () => {
     await mintAndAllowTokens(registrantAccount, 10)
 
+    // yes, you can register name for someone else
+    expect(registrantAccount).to.not.be.equal(ownerAccount)
+
     const commitment = await controller.makeCommitment(
       'reverse',
       registrantAccount,
@@ -859,7 +862,7 @@ contract('AnytypeRegistrarController', function () {
       true,
       0,
     )
-    await controller.commit(commitment)
+    await controller.commit(commitment, { from: ownerAccount })
 
     await evm.advanceTime((await controller.minCommitmentAge()).toNumber())
     await controller.register(
@@ -871,11 +874,18 @@ contract('AnytypeRegistrarController', function () {
       [],
       true,
       0,
+
+      { from: ownerAccount },
     )
 
+    // if you register name not for YOUR account (i.e. passing owner != msg.sender)
+    // YOUR reverse record will be updated
+    // that is because we don't want someone to be able to register a reverse name for someone else!
     expect(await resolver.name(getReverseNode(ownerAccount))).to.equal(
       'reverse.any',
     )
+
+    expect(await resolver.name(getReverseNode(registrantAccount))).to.equal('')
   })
 
   it('should not set the reverse record of the account when set to false', async () => {
