@@ -8,6 +8,8 @@
     "start": "next start"
   },
   "dependencies": {
+    "@alchemy/aa-alchemy": "^0.1.0-alpha.25",
+    "@alchemy/aa-core": "^0.1.0-alpha.25",
     "@emotion/styled": "^11.11.0",
     "@ethersproject/bignumber": "^5.6.0",
     "@ethersproject/contracts": "^5.7.0",
@@ -41,6 +43,8 @@
     "remark-html": "^15.0.1",
     "styled-components": "^5.3.10",
     "tailwindcss-animate": "^1.0.6",
+    "viem": "^1.6.3",
+    "wagmi": "^1.3.10",
     "web3": "^1.10.0"
   },
   "devDependencies": {

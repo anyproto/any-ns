@@ -250,6 +250,9 @@ contract AnytypeRegistrarController is
         }
 
         if (reverseRecord) {
+            // if you register name not for YOUR account (i.e. passing owner != msg.sender)
+            // YOUR reverse record will be updated
+            // that is because we don't want someone to be able to register a reverse name for someone else!
             _setReverseRecord(name, resolver, msg.sender);
         }
 

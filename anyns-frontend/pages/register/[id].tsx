@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useWeb3React } from '@web3-react/core'
-import { LoadingButton } from '@mui/lab'
 
 import ModalDlg from '../../components/modal'
 import Layout from '../../components/layout'
 import RegisterForm from '../../components/registerform'
 import ConnectedPanel from '../../components/connected_panel'
+
+import { encodeFunctionData } from 'viem'
+
+import { createAlchemyAA } from '../../lib/alchemy_aa'
+import { useMetaMaskAsSmartAccountOwner } from '../../lib/mmsigner'
 
 import {
   fetchNameInfo,
@@ -21,10 +25,12 @@ const registrarControllerJson = require('../../deployments/sepolia/AnytypeRegist
 
 // Access our wallet inside of our dapp
 import Web3 from 'web3'
+import { rpc } from 'viem/utils'
+import { create } from 'domain'
 const web3 = new Web3(Web3.givenProvider)
 
 export default function RegisterPage() {
-  const { active, account } = useWeb3React()
+  const { active, account, library } = useWeb3React()
 
   const [isProcessing, setIsProcessing] = useState(false)
 
@@ -33,6 +39,8 @@ export default function RegisterPage() {
   const [modalText, setModalText] = useState('Name is available!')
 
   const [error, setError] = useState(null)
+
+  const metamaskOwner = useMetaMaskAsSmartAccountOwner()
 
   const router = useRouter()
 
@@ -46,13 +54,17 @@ export default function RegisterPage() {
       erc20TokenJson.address,
     )
 
+    const mintUsd = 1000
+
     try {
       // Get permission to access user funds to pay for gas fees
-      const gas = await erc20Contract.methods.mint(account, 1000).estimateGas({
-        from: account,
-      })
+      const gas = await erc20Contract.methods
+        .mint(account, mintUsd)
+        .estimateGas({
+          from: account,
+        })
 
-      const tx = await erc20Contract.methods.mint(account, 1000).send({
+      const tx = await erc20Contract.methods.mint(account, mintUsd).send({
         from: account,
         gas,
       })
@@ -74,15 +86,17 @@ export default function RegisterPage() {
       // Get permission to access user funds to pay for gas fees
       const approveTo = registrarControllerJson.address
       const gas = await erc20Contract.methods
-        .approve(approveTo, 1000)
+        .approve(approveTo, mintUsd * 1000000)
         .estimateGas({
           from: account,
         })
 
-      const tx = await erc20Contract.methods.approve(approveTo, 1000).send({
-        from: account,
-        gas,
-      })
+      const tx = await erc20Contract.methods
+        .approve(approveTo, mintUsd * 1000000)
+        .send({
+          from: account,
+          gas,
+        })
 
       console.log('Mint approve transaction: ')
       console.log(tx)
@@ -95,6 +109,64 @@ export default function RegisterPage() {
       setShowModal(true)
 
       // do not continue
+      return
+    }
+
+    // update screen
+    router.reload()
+  }
+
+  const handleMintAA = async () => {
+    const erc20Contract = new web3.eth.Contract(
+      erc20TokenJson.abi,
+      erc20TokenJson.address,
+    )
+
+    const mintUsd = 1000
+
+    try {
+      const [smartAccountSigner, smartAccountAddress, _] =
+        await createAlchemyAA(metamaskOwner)
+
+      // to controller
+      const approveTo = registrarControllerJson.address
+
+      const txs = [
+        // mint
+        {
+          from: smartAccountAddress,
+          to: erc20TokenJson.address,
+          data: encodeFunctionData({
+            abi: erc20TokenJson.abi,
+            functionName: 'mint',
+            args: [smartAccountAddress, mintUsd],
+          }),
+        },
+
+        // approve
+        {
+          from: smartAccountAddress,
+          to: erc20TokenJson.address,
+          data: encodeFunctionData({
+            abi: erc20TokenJson.abi,
+            functionName: 'approve',
+            args: [approveTo, mintUsd * 1000000],
+          }),
+        },
+      ]
+
+      // @ts-ignore
+      const res = await smartAccountSigner.sendTransactions(txs)
+
+      console.log('Mint+Approve Transactions: ')
+      console.log(res)
+    } catch (err) {
+      console.error('Can not mint + approve!')
+      console.error(err)
+
+      setModalTitle('Something went wrong!')
+      setModalText('Can not mint  + approve tokens...')
+      setShowModal(true)
       return
     }
 
@@ -176,9 +248,8 @@ export default function RegisterPage() {
 
     // randomize secret
     const secret = web3.utils.randomHex(32)
-    //const secret = "0x7823456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
+    //const secret = "0x4323456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
 
-    // TODO: check if this is correct
     const isReverseRecord = true
     const ownerControlledFuses = 0
 
@@ -295,6 +366,172 @@ export default function RegisterPage() {
     router.replace(router.asPath)
   }
 
+  const handlerRegisterForUsdcsAA = async (
+    nameFull,
+    _,
+    contentHash,
+    spaceID,
+  ) => {
+    // 0 - check if MM is installed
+    if (!active) {
+      setModalTitle('Metamask is not connected!')
+      setModalText('Please install Metamask and connect it...')
+      setShowModal(true)
+      return
+    }
+
+    // 1 - do a name check first
+    if (!verifyFullName(nameFull)) {
+      return
+    }
+
+    const [isErr, isAvail] = await checkNameAvailability(nameFull)
+    if (isErr) {
+      setModalTitle('Something went wrong!')
+      setModalText('Can not check your name availability...')
+      setShowModal(true)
+      return
+    }
+
+    if (!isAvail) {
+      setModalTitle(nameFull + ' is not available!')
+      setModalText('Please choose another name...')
+      setShowModal(true)
+      return
+    }
+
+    // get only first part of the name
+    // (name should bear no .any suffix)
+    const nameFirstPart = removeTLD(nameFull)
+
+    const [smartAccountSigner, smartAccountAddress, erc4337client] =
+      await createAlchemyAA(metamaskOwner)
+    const registrantAccount = smartAccountAddress
+
+    // 2 - commit
+    // Contract address of the deployed smart contract
+    const registrarController = new web3.eth.Contract(
+      registrarControllerJson.abi,
+      registrarControllerJson.address,
+    )
+
+    const DAY = 24 * 60 * 60
+    const REGISTRATION_TIME = 365 * DAY
+
+    // this secret should be same between calls to "commit" and "register"
+    const secret = web3.utils.randomHex(32)
+    //const secret = "0x5954445583ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789A11119";
+
+    // this option means we want to register "reverse" record
+    // i.e. "0x1234...5678.addr.reverse" name that will resolve using name() method
+    // into a domain name like "hello.any"
+    const isReverseRecord = true
+    const ownerControlledFuses = 0
+
+    // this calldata will set spaceid + contenthash automatically
+    //const callData = await prepareCallData(contentHash, spaceID, nameFull)
+    const callData = []
+
+    // should be only called by owner!
+    const commitment = await registrarController.methods
+      .makeCommitment(
+        nameFirstPart,
+        registrantAccount,
+        REGISTRATION_TIME,
+        secret,
+        resolverJson.address,
+        callData,
+        isReverseRecord,
+        ownerControlledFuses,
+      )
+      .call({
+        from: smartAccountAddress,
+      })
+
+    console.log('Commitment value: ' + commitment)
+
+    console.log("Commiting '" + nameFirstPart + "' to " + registrantAccount)
+
+    //const maxPrioirity: BigNumberish = await erc4337client.getMaxPriorityFeePerGas()
+    //console.log("Max priority fee: ", maxPrioirity)
+
+    const txs = [
+      // 1 - commit
+      {
+        from: smartAccountAddress,
+        to: registrarControllerJson.address,
+        data: encodeFunctionData({
+          abi: registrarControllerJson.abi,
+          functionName: 'commit',
+          args: [commitment],
+        }),
+
+        // for Sepolia only: Users should set the maxPriorityFeePerGas parameter
+        // in their userOps equal to the outcome of eth_maxPriorityFeePerGas
+        //maxPriorityFeePerGas: maxPrioirity,
+      },
+
+      // 2 - register
+      {
+        from: smartAccountAddress,
+        to: registrarControllerJson.address,
+        data: encodeFunctionData({
+          abi: registrarControllerJson.abi,
+          functionName: 'register',
+          args: [
+            nameFirstPart,
+            registrantAccount,
+            REGISTRATION_TIME,
+            secret,
+            resolverJson.address,
+            callData,
+            isReverseRecord,
+            ownerControlledFuses,
+          ],
+        }),
+      },
+    ]
+
+    // 1 - commit + register
+    try {
+      // will :
+      // 1 - call eth_sendUserOperation()
+      // 2 - wait in eth_getUserOperationReceipt()
+      // @ts-ignore
+      const out = await smartAccountSigner.sendTransactions(txs)
+
+      console.log('Commit+register result: ')
+      console.log(out)
+
+      // TODO: process "replacement underpriced" error
+      // https://docs.alchemy.com/reference/eth-senduseroperation
+      //const txResult = await erc4337client.getTransactionReceipt({ hash: tx })
+      //console.log("Commit+register tx result: ", txResult)
+    } catch (err) {
+      // TODO: "Failed to find transaction for User Operation" in some cases
+      // Alchemy's library returns this but the operation is still then mined...
+      console.error('Can not commit!')
+      console.error(err)
+
+      setModalTitle('Something went wrong!')
+      setModalText('Can not send 1st <commit> transaction...')
+      setShowModal(true)
+
+      // do not continue
+      setIsProcessing(false)
+      return
+    }
+
+    setIsProcessing(false)
+
+    setModalTitle('All is good!')
+    setModalText(nameFirstPart + ' is registered!')
+    setShowModal(true)
+
+    // update screen
+    router.replace(router.asPath)
+  }
+
   return (
     <Layout>
       <div>
@@ -304,7 +541,9 @@ export default function RegisterPage() {
           domainNamePreselected={router.query.id}
           handleFetchNameInfo={fetchNameInfo}
           handlerRegister={handlerRegisterForUsdcs}
+          handlerRegisterAA={handlerRegisterForUsdcsAA}
           handleMintUsdcs={handleMint}
+          handleMintUsdcsAA={handleMintAA}
         />
 
         {showModal && (

@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react'
 
 import { injected } from '../components/connectors'
 
+import { createAlchemyAA } from '../lib/alchemy_aa'
+import { useMetaMaskAsSmartAccountOwner } from '../lib/mmsigner'
+
 import Web3 from 'web3'
 const web3 = new Web3(Web3.givenProvider)
 
@@ -14,6 +17,11 @@ const erc20Token = require('../../deployments/sepolia/FakeUSDC.json')
 export default function ConnectedPanel({ isAdminMode }) {
   const { active, account, activate, chainId } = useWeb3React()
   const [amountUsdc, setAmountUsdc] = useState(0.0)
+
+  const [accountAA, setAccountAA] = useState('')
+  const [amountUsdcAA, setAmountUsdcAA] = useState(0.0)
+
+  const metamaskOwner = useMetaMaskAsSmartAccountOwner()
 
   useEffect(() => {
     const connectWalletOnPageLoad = async () => {
@@ -30,7 +38,6 @@ export default function ConnectedPanel({ isAdminMode }) {
     }
 
     console.log('Try to reconnect...')
-
     connectWalletOnPageLoad()
   }, [])
 
@@ -45,19 +52,41 @@ export default function ConnectedPanel({ isAdminMode }) {
       const balanceFloat = parseFloat(balance) / 10 ** 6
 
       setAmountUsdc(balanceFloat)
+
+      // load AA
+      const [x, smartAccountAddress, y] = await createAlchemyAA(metamaskOwner)
+      setAccountAA('' + smartAccountAddress)
     }
 
     if (account && typeof account != 'undefined') {
+      // normal account
       loadTokenBalanceAsync(account)
     }
   }, [account])
+
+  useEffect(() => {
+    const loadTokenBalanceAsync = async (account) => {
+      const erc20Contract = new web3.eth.Contract(
+        erc20Token.abi,
+        erc20Token.address,
+      )
+
+      const balance = await erc20Contract.methods.balanceOf(account).call()
+      const balanceFloat = parseFloat(balance) / 10 ** 6
+
+      setAmountUsdcAA(balanceFloat)
+    }
+
+    if (accountAA && typeof accountAA != 'undefined' && accountAA != '') {
+      loadTokenBalanceAsync(accountAA)
+    }
+  }, [accountAA])
 
   const isAccountAdmin = (address) => {
     return address === process.env.NEXT_PUBLIC_MAIN_ACCOUNT
   }
 
   const getAccountStr = (account) => {
-    // lowercase compare account with 0x61d1eeE7FBF652482DEa98A1Df591C626bA09a60
     const accountLower = account.toLowerCase()
     const accountMain = process.env.NEXT_PUBLIC_MAIN_ACCOUNT.toLowerCase()
 
@@ -67,6 +96,10 @@ export default function ConnectedPanel({ isAdminMode }) {
       return '' + account + ' (Please switch to Admin account)'
     }
     return '' + account
+  }
+
+  const getAccountStrAA = () => {
+    return accountAA
   }
 
   const convertChainIDToString = (chainId) => {
@@ -134,6 +167,23 @@ export default function ConnectedPanel({ isAdminMode }) {
           <div>
             <span>
               Fake USDC tokens balance: <strong>{amountUsdc}</strong>
+            </span>
+          </div>
+        </div>
+      )}
+
+      {active && !isAdminMode && (
+        <div>
+          <div>
+            <span>
+              Account Abstraction smart wallet is{' '}
+              <strong>{getAccountStrAA()}</strong>
+            </span>
+          </div>
+
+          <div>
+            <span>
+              Fake USDC tokens balance: <strong>{amountUsdcAA}</strong>
             </span>
           </div>
         </div>
