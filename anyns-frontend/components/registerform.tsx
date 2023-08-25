@@ -235,6 +235,7 @@ export default function RegisterForm({
         </div>
       </div>
 
+      {/*
       <div className="text-center text-l font-bold m-2 p-2">
         <p>Direct methods</p>
       </div>
@@ -251,7 +252,7 @@ export default function RegisterForm({
                 isProcessing || isProcessingMint || isProcessingRegister
               }
             >
-              Mint 1000 fake USDC tokens
+              Mint 100 fake USDC tokens
             </LoadingButton>
           </div>
         </div>
@@ -278,9 +279,10 @@ export default function RegisterForm({
           </div>
         </div>
       </form>
+      */}
 
       <div className="text-center text-l font-bold m-2 p-2">
-        <p>Use Alchemy's AccountAbstraction (will pay for your gas!)</p>
+        <p>We use AccountAbstraction (will pay for your gas!)</p>
       </div>
 
       <form onSubmit={onMintAA} className="animate-in fade-in duration-700">
@@ -295,7 +297,7 @@ export default function RegisterForm({
                 isProcessing || isProcessingMint || isProcessingRegister
               }
             >
-              Mint 1000 fake USDC tokens
+              Mint 100 fake USDC tokens
             </LoadingButton>
           </div>
         </div>

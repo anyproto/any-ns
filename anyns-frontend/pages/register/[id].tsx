@@ -54,7 +54,7 @@ export default function RegisterPage() {
       erc20TokenJson.address,
     )
 
-    const mintUsd = 1000
+    const mintUsd = 100
 
     try {
       // Get permission to access user funds to pay for gas fees
@@ -122,7 +122,7 @@ export default function RegisterPage() {
       erc20TokenJson.address,
     )
 
-    const mintUsd = 1000
+    const mintUsd = 100
 
     try {
       const [smartAccountSigner, smartAccountAddress, _] =
