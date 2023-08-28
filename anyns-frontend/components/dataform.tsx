@@ -149,7 +149,13 @@ export default function DataForm({
       // check if AA was used to register name
       // can be ''
       const realAaOwner = await tryGetAAOwner(data.owner)
-      setUserAddressAA(realAaOwner)
+      if (realAaOwner != '') {
+        // swap them!
+        setUserAddressAA(data.owner)
+        setUserAddress(realAaOwner)
+      } else {
+        setUserAddressAA('')
+      }
     } else {
       setNameAvailable(true)
       setUserAddress('')

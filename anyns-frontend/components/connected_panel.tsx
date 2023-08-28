@@ -43,19 +43,23 @@ export default function ConnectedPanel({ isAdminMode }) {
 
   useEffect(() => {
     const loadTokenBalanceAsync = async (account) => {
-      const erc20Contract = new web3.eth.Contract(
-        erc20Token.abi,
-        erc20Token.address,
-      )
+      try {
+        const erc20Contract = new web3.eth.Contract(
+          erc20Token.abi,
+          erc20Token.address,
+        )
 
-      const balance = await erc20Contract.methods.balanceOf(account).call()
-      const balanceFloat = parseFloat(balance) / 10 ** 6
+        const balance = await erc20Contract.methods.balanceOf(account).call()
+        const balanceFloat = parseFloat(balance) / 10 ** 6
 
-      setAmountUsdc(balanceFloat)
+        setAmountUsdc(balanceFloat)
 
-      // load AA
-      const [x, smartAccountAddress, y] = await createAlchemyAA(metamaskOwner)
-      setAccountAA('' + smartAccountAddress)
+        // load AA
+        const [x, smartAccountAddress, y] = await createAlchemyAA(metamaskOwner)
+        setAccountAA('' + smartAccountAddress)
+      } catch (ex) {
+        console.log(ex)
+      }
     }
 
     if (account && typeof account != 'undefined') {
@@ -66,15 +70,19 @@ export default function ConnectedPanel({ isAdminMode }) {
 
   useEffect(() => {
     const loadTokenBalanceAsync = async (account) => {
-      const erc20Contract = new web3.eth.Contract(
-        erc20Token.abi,
-        erc20Token.address,
-      )
+      try {
+        const erc20Contract = new web3.eth.Contract(
+          erc20Token.abi,
+          erc20Token.address,
+        )
 
-      const balance = await erc20Contract.methods.balanceOf(account).call()
-      const balanceFloat = parseFloat(balance) / 10 ** 6
+        const balance = await erc20Contract.methods.balanceOf(account).call()
+        const balanceFloat = parseFloat(balance) / 10 ** 6
 
-      setAmountUsdcAA(balanceFloat)
+        setAmountUsdcAA(balanceFloat)
+      } catch (ex) {
+        console.log(ex)
+      }
     }
 
     if (accountAA && typeof accountAA != 'undefined' && accountAA != '') {
@@ -140,14 +148,8 @@ export default function ConnectedPanel({ isAdminMode }) {
         </form>
       )}
 
-      {active && isAdminMode && isAccountAdmin(account) && (
+      {active && (
         <div>
-          <div>
-            <span>
-              Connected with <strong>{getAccountStr(account)}</strong>
-            </span>
-          </div>
-
           <div>
             <span>
               Chain ID: <strong>{convertChainIDToString(chainId)}</strong>
