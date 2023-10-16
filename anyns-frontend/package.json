@@ -8,8 +8,9 @@
     "start": "next start"
   },
   "dependencies": {
-    "@alchemy/aa-alchemy": "^0.1.0-alpha.25",
-    "@alchemy/aa-core": "^0.1.0-alpha.25",
+    "@alchemy/aa-accounts": "^0.1.0",
+    "@alchemy/aa-alchemy": "^0.1.0",
+    "@alchemy/aa-core": "^0.1.0",
     "@emotion/styled": "^11.11.0",
     "@ethersproject/bignumber": "^5.6.0",
     "@ethersproject/contracts": "^5.7.0",
