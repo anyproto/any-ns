@@ -763,6 +763,7 @@ contract('AnytypeRegistrarController', function () {
     await mintAndAllowTokens(registrantAccount, 10)
 
     await registerName('newname')
+
     var nodehash = namehash('newname.any')
     var fuseExpiry = (await nameWrapper.getData(nodehash))[2]
     var expires = await baseRegistrar.nameExpires(sha3('newname'))
@@ -770,16 +771,16 @@ contract('AnytypeRegistrarController', function () {
     const duration = 86400
     const [price] = await controller.rentPrice(sha3('newname'), duration)
 
-    // mint again
-    await mintAndAllowTokens(registrantAccount, 10)
-    await controller.renew('newname', registrantAccount, duration)
+    // mint again (but to different account)
+    await mintAndAllowTokens(accounts[2], 10)
+    await controller.renew('newname', accounts[2], duration)
 
     var newExpires = await baseRegistrar.nameExpires(sha3('newname'))
     var newFuseExpiry = (await nameWrapper.getData(nodehash))[2]
     expect(newExpires.toNumber() - expires.toNumber()).to.equal(duration)
     expect(newFuseExpiry.toNumber() - fuseExpiry.toNumber()).to.equal(86400)
 
-    expect(await stable1.balanceOf(registrantAccount)).to.equal(0)
+    expect(await stable1.balanceOf(accounts[2])).to.equal(0)
   })
 
   it('should allow token owners to renew a name', async () => {

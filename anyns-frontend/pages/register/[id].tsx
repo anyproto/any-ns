@@ -113,7 +113,7 @@ export default function RegisterPage() {
     }
 
     // update screen
-    router.reload()
+    //router.reload()
   }
 
   const handleMintAA = async () => {
@@ -173,7 +173,7 @@ export default function RegisterPage() {
     }
 
     // update screen
-    router.reload()
+    //router.reload()
   }
 
   const verifyFullName = (nameFull) => {
