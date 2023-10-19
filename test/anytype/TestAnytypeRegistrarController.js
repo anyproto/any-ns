@@ -35,6 +35,7 @@ contract('AnytypeRegistrarController', function () {
   let priceOracle
   let reverseRegistrar
   let nameWrapper
+  let nameToken
   let callData
 
   const secret =
@@ -176,9 +177,11 @@ contract('AnytypeRegistrarController', function () {
 
     // deploy ERC20 "stablecoin" stub contract with initial balance of 0 USD tokens
     stable1 = await deploy('ERC20StablecoinStub', 'Token1', 'USDCC', 18, 0)
+    nameToken = await deploy('ERC20NameToken', 0)
 
     // add it as a payment option
     await controller.addERC20UsdPaymentOption(stable1.address, 18)
+    //await controller.addERC20UsdPaymentOption(nameToken.address, 2)
   })
 
   beforeEach(async () => {
@@ -330,6 +333,32 @@ contract('AnytypeRegistrarController', function () {
     expect(await controller.available(name)).to.equal(false)
 
     expect(await stable2.balanceOf(registrantAccount)).to.equal(0)
+  })
+
+  it('should allow to pay from NameToken', async () => {
+    const name = 'newname'
+
+    const decimals = 2
+    await controller.addERC20UsdPaymentOption(nameToken.address, decimals)
+    expect(await controller.paymentOptionsCount()).to.equal(2)
+
+    // mint it
+    const amount = 10 // 10 "USD" = 1 name
+    await nameToken.mintToUser(registrantAccount, amount * 100)
+
+    // check balances
+    let wei = BigNumber.from(amount).mul(BigNumber.from(10).pow(2))
+    expect(await stable1.balanceOf(registrantAccount)).to.equal(0)
+    expect(await nameToken.balanceOf(registrantAccount)).to.equal(wei)
+
+    // approve stable2 for controller
+    await nameToken.approveFor(registrantAccount, controller.address, wei)
+
+    // now register with stable2
+    await registerName(name)
+    expect(await controller.available(name)).to.equal(false)
+
+    expect(await nameToken.balanceOf(registrantAccount)).to.equal(0)
   })
 
   it('should allow to disable payment option #2', async () => {

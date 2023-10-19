@@ -16,32 +16,25 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = deployments
   const { deployer, owner } = await getNamedAccounts()
 
-  // deploy fake USDC token contract
-  console.log('Deploying Fake USDC contract for debugging...')
+  console.log('Deploying Name Token contract...')
 
-  if (network.name !== 'sepolia') {
-    console.log('Skipping deployment of FakeUSDC')
-    return
-  }
-
-  // (anyone can mint it, so it's not a real USDC)
-  await deploy('FakeUSDC', {
+  await deploy('ERC20NameToken', {
     from: deployer,
     args: [],
     log: true,
   })
 
-  // set Fake USDC as a payment option
-  const fakeUSDC = await ethers.getContract('FakeUSDC', owner)
-  const usdcDecimals = 6 // like in a real USDC token
+  // set it as a payment option
+  const nameToken = await ethers.getContract('ERC20NameToken', owner)
+  const usdcDecimals = 2
 
-  console.log('Adding FakeUSDC as a payment option...')
+  console.log('Adding NameToken as a payment option...')
   const c = await ethers.getContract('AnytypeRegistrarController', deployer)
-  await c.addERC20UsdPaymentOption(fakeUSDC.address, usdcDecimals)
+  await c.addERC20UsdPaymentOption(nameToken.address, usdcDecimals)
 }
 
-func.id = 'anytype-fake-usdc'
-func.tags = ['anytype', 'FakeUSDC']
+func.id = 'anytype-name-token'
+func.tags = ['anytype', 'ERC20NameToken']
 
 func.dependencies = ['AnytypeRegistrarController']
 
