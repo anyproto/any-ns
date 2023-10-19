@@ -417,6 +417,7 @@ export default function RegisterPage() {
       registrarControllerJson.address,
     )
 
+    // 1 year
     const DAY = 24 * 60 * 60
     const REGISTRATION_TIME = 365 * DAY
 

@@ -5,8 +5,10 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @title AnytypePriceOracle
- * @dev Single token allows to buy/renew a single name for 1 year
+ * @dev Token contract that allows to buy or renew a single name for 1 year
  * It should not be used for monetary purposes, this is an utility token
+ *
+ * TODO: turn off transferability
  *
  * Workflow:
  *   Anytype Admin mints 1 token to a user

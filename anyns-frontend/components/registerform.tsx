@@ -252,7 +252,7 @@ export default function RegisterForm({
                 isProcessing || isProcessingMint || isProcessingRegister
               }
             >
-              Mint 100 fake USDC tokens
+              Mint 100 USDC tokens
             </LoadingButton>
           </div>
         </div>
@@ -274,7 +274,7 @@ export default function RegisterForm({
                 !isNameAvailable
               }
             >
-              Pay 20 fake USDC tokens and register
+              Pay 20 USDC tokens and register
             </LoadingButton>
           </div>
         </div>
@@ -297,7 +297,7 @@ export default function RegisterForm({
                 isProcessing || isProcessingMint || isProcessingRegister
               }
             >
-              Mint 100 fake USDC tokens
+              Mint 100 USDC tokens
             </LoadingButton>
           </div>
         </div>
@@ -322,7 +322,7 @@ export default function RegisterForm({
                 !isNameAvailable
               }
             >
-              Pay 20 fake USDC tokens and register
+              Pay 20 USDC tokens to Register
             </LoadingButton>
           </div>
         </div>

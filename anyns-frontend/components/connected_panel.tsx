@@ -12,7 +12,8 @@ const web3 = new Web3(Web3.givenProvider)
 
 import WarningPanel from '../components/warning_panel'
 
-const erc20Token = require('../../deployments/sepolia/FakeUSDC.json')
+const usdcToken = require('../../deployments/sepolia/FakeUSDC.json')
+const nameToken = require('../../deployments/sepolia/ERC20NameToken.json')
 
 export default function ConnectedPanel({ isAdminMode }) {
   const { active, account, activate, chainId } = useWeb3React()
@@ -20,6 +21,7 @@ export default function ConnectedPanel({ isAdminMode }) {
 
   const [accountAA, setAccountAA] = useState('')
   const [amountUsdcAA, setAmountUsdcAA] = useState(0.0)
+  const [amountNameTokensAA, setAmountNameTokensAA] = useState(0.0)
 
   const metamaskOwner = useMetaMaskAsSmartAccountOwner()
 
@@ -45,8 +47,8 @@ export default function ConnectedPanel({ isAdminMode }) {
     const loadTokenBalanceAsync = async (account) => {
       try {
         const erc20Contract = new web3.eth.Contract(
-          erc20Token.abi,
-          erc20Token.address,
+          usdcToken.abi,
+          usdcToken.address,
         )
 
         const balance = await erc20Contract.methods.balanceOf(account).call()
@@ -72,8 +74,8 @@ export default function ConnectedPanel({ isAdminMode }) {
     const loadTokenBalanceAsync = async (account) => {
       try {
         const erc20Contract = new web3.eth.Contract(
-          erc20Token.abi,
-          erc20Token.address,
+          usdcToken.abi,
+          usdcToken.address,
         )
 
         const balance = await erc20Contract.methods.balanceOf(account).call()
@@ -85,8 +87,26 @@ export default function ConnectedPanel({ isAdminMode }) {
       }
     }
 
+    // name tokens
+    const loadTokenBalance2Async = async (account) => {
+      try {
+        const erc20Contract = new web3.eth.Contract(
+          nameToken.abi,
+          nameToken.address,
+        )
+
+        const balance = await erc20Contract.methods.balanceOf(account).call()
+        const balanceFloat = parseFloat(balance) / 10 ** 2
+
+        setAmountNameTokensAA(balanceFloat)
+      } catch (ex) {
+        console.log(ex)
+      }
+    }
+
     if (accountAA && typeof accountAA != 'undefined' && accountAA != '') {
       loadTokenBalanceAsync(accountAA)
+      loadTokenBalance2Async(accountAA)
     }
   }, [accountAA])
 
@@ -148,6 +168,7 @@ export default function ConnectedPanel({ isAdminMode }) {
         </form>
       )}
 
+      {/*
       {active && (
         <div>
           <div>
@@ -157,35 +178,42 @@ export default function ConnectedPanel({ isAdminMode }) {
           </div>
         </div>
       )}
+      */}
 
+      <br></br>
       {active && !isAdminMode && (
         <div>
           <div>
             <span>
-              Connected with <strong>{getAccountStr(account)}</strong>
+              Current account: <strong>{getAccountStr(account)}</strong>
             </span>
           </div>
 
           <div>
             <span>
-              Fake USDC tokens balance: <strong>{amountUsdc}</strong>
+              USDC tokens balance: <strong>{amountUsdc}</strong>
             </span>
           </div>
         </div>
       )}
-
+      <br></br>
       {active && !isAdminMode && (
         <div>
           <div>
             <span>
-              Account Abstraction smart wallet is{' '}
-              <strong>{getAccountStrAA()}</strong>
+              Smart Contract Wallet (AA): <strong>{getAccountStrAA()}</strong>
             </span>
           </div>
 
           <div>
             <span>
-              Fake USDC tokens balance: <strong>{amountUsdcAA}</strong>
+              USDC tokens balance: <strong>{amountUsdcAA}</strong>
+            </span>
+          </div>
+
+          <div>
+            <span>
+              Name tokens balance: <strong>{amountNameTokensAA}</strong>
             </span>
           </div>
         </div>
