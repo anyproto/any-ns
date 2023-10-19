@@ -31,6 +31,10 @@ export async function createAlchemyAA(metamaskOwner: SimpleSmartAccountOwner) {
     apiKey: apiKey as string,
     entryPointAddress: entryPointAddress as `0x${string}`,
     chain: sepolia as Chain,
+
+    opts: {
+      txMaxRetries: 100,
+    },
   }).connect(
     (rpcClient) =>
       new SimpleSmartContractAccount({
