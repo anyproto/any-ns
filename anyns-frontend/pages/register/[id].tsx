@@ -513,11 +513,11 @@ export default function RegisterPage() {
     } catch (err) {
       // TODO: "Failed to find transaction for User Operation" in some cases
       // Alchemy's library returns this but the operation is still then mined...
-      console.error('Can not commit!')
+      console.error('Can not commit + register!')
       console.error(err)
 
       setModalTitle('Something went wrong!')
-      setModalText('Can not send 1st <commit> transaction...')
+      setModalText('Can not send transaction...')
       setShowModal(true)
 
       // do not continue

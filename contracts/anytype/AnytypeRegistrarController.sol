@@ -128,6 +128,7 @@ contract AnytypeRegistrarController is
         uint8 _decimals
     ) external onlyOwner {
         require(paymentOptionsCount < 10, "Too many payment options");
+        require(_decimals >= 2, "Decimals must be >= 2");
 
         paymentOptions[paymentOptionsCount].token = _token;
         paymentOptions[paymentOptionsCount].decimals = _decimals;
@@ -302,7 +303,8 @@ contract AnytypeRegistrarController is
         for (uint256 i = 0; i < paymentOptionsCount; i++) {
             if (paymentOptions[i].enabled) {
                 // check if allowance is more than needed
-                // TODO: make sure decimals is > 2 (otherwise it will fail)
+                // make sure decimals is >= 2 (otherwise it will fail)
+                // it was checked in addERC20UsdPaymentOption
                 uint256 payInTokenUnits = centsToPay *
                     (10 ** (paymentOptions[i].decimals - 2));
                 uint256 allowance = IERC20(paymentOptions[i].token).allowance(

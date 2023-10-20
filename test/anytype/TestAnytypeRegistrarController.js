@@ -177,10 +177,12 @@ contract('AnytypeRegistrarController', function () {
 
     // deploy ERC20 "stablecoin" stub contract with initial balance of 0 USD tokens
     stable1 = await deploy('ERC20StablecoinStub', 'Token1', 'USDCC', 18, 0)
-    nameToken = await deploy('ERC20NameToken', 0)
+    nameToken = await deploy('ERC20NameToken')
 
     // add it as a payment option
     await controller.addERC20UsdPaymentOption(stable1.address, 18)
+
+    // will be added later (see below)
     //await controller.addERC20UsdPaymentOption(nameToken.address, 2)
   })
 
@@ -225,6 +227,14 @@ contract('AnytypeRegistrarController', function () {
     await expect(
       controller2.addERC20UsdPaymentOption(stable1.address, 18),
     ).to.be.revertedWith('Ownable: caller is not the owner')
+  })
+
+  it('should not allow to add payment option with too little decimals', async () => {
+    await expect(
+      controller.addERC20UsdPaymentOption(stable1.address, 1),
+    ).to.be.revertedWith('Decimals must be >= 2')
+
+    controller.addERC20UsdPaymentOption(stable1.address, 2)
   })
 
   it('should allow to add 1 payment option', async () => {
