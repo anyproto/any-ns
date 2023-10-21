@@ -96,7 +96,12 @@ export default function ConnectedPanel({ isAdminMode }) {
         )
 
         const balance = await erc20Contract.methods.balanceOf(account).call()
-        const balanceFloat = parseFloat(balance) / 10 ** 2
+
+        console.log('Name token address: ', nameToken.address)
+        console.log('Current account: ', account)
+        console.log('Name token balance: ', balance)
+
+        const balanceFloat = parseFloat(balance) / 10 ** 6
 
         setAmountNameTokensAA(balanceFloat)
       } catch (ex) {

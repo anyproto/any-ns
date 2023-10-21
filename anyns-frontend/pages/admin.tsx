@@ -128,7 +128,7 @@ export default function Admin() {
     )
 
     const DAY = 24 * 60 * 60
-    const REGISTRATION_TIME = 365 * DAY
+    const REGISTRATION_TIME = 364 * DAY
 
     // randomize secret
     const secret = web3.utils.randomHex(32)

@@ -129,6 +129,7 @@ export default function RegisterPage() {
         await createAlchemyAA(metamaskOwner)
 
       // to controller
+      const mintMe = smartAccountAddress
       const approveTo = registrarControllerJson.address
 
       const txs = [
@@ -139,18 +140,18 @@ export default function RegisterPage() {
           data: encodeFunctionData({
             abi: erc20TokenJson.abi,
             functionName: 'mint',
-            args: [smartAccountAddress, mintUsd],
+            args: [mintMe, mintUsd * 1000000],
           }),
         },
 
-        // approve
+        // can also use approve if calling from the same account
         {
           from: smartAccountAddress,
           to: erc20TokenJson.address,
           data: encodeFunctionData({
             abi: erc20TokenJson.abi,
-            functionName: 'approve',
-            args: [approveTo, mintUsd * 1000000],
+            functionName: 'approveFor',
+            args: [mintMe, approveTo, mintUsd * 1000000],
           }),
         },
       ]
@@ -246,7 +247,7 @@ export default function RegisterPage() {
     )
 
     const DAY = 24 * 60 * 60
-    const REGISTRATION_TIME = 365 * DAY
+    const REGISTRATION_TIME = 364 * DAY
 
     // randomize secret
     const secret = web3.utils.randomHex(32)
@@ -419,7 +420,7 @@ export default function RegisterPage() {
 
     // 1 year
     const DAY = 24 * 60 * 60
-    const REGISTRATION_TIME = 365 * DAY
+    const REGISTRATION_TIME = 364 * DAY
 
     // this secret should be same between calls to "commit" and "register"
     const secret = web3.utils.randomHex(32)

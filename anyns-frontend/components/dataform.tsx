@@ -352,7 +352,7 @@ export default function DataForm({
             </div>
 
             <div className="text-center text-m m-2">
-              <p>Domain will be registered for: 365 days</p>
+              <p>Domain will be registered for: 364 days</p>
             </div>
           </div>
         )}

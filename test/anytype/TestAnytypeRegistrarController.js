@@ -348,16 +348,16 @@ contract('AnytypeRegistrarController', function () {
   it('should allow to pay from NameToken', async () => {
     const name = 'newname'
 
-    const decimals = 2
+    const decimals = 6
     await controller.addERC20UsdPaymentOption(nameToken.address, decimals)
     expect(await controller.paymentOptionsCount()).to.equal(2)
 
     // mint it
     const amount = 10 // 10 "USD" = 1 name
-    await nameToken.mintToUser(registrantAccount, amount * 100)
+    await nameToken.mint(registrantAccount, amount * 1000000)
 
     // check balances
-    let wei = BigNumber.from(amount).mul(BigNumber.from(10).pow(2))
+    let wei = BigNumber.from(amount).mul(BigNumber.from(10).pow(6))
     expect(await stable1.balanceOf(registrantAccount)).to.equal(0)
     expect(await nameToken.balanceOf(registrantAccount)).to.equal(wei)
 

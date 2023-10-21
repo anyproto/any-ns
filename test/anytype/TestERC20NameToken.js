@@ -33,47 +33,47 @@ contract('ERC20NameToken', function (accounts) {
   })
 
   describe('decimals', async () => {
-    it('should return 2', async () => {
+    it('should return 6', async () => {
       const d = await nameToken.decimals()
-      assert.equal(d, 2)
+      assert.equal(d, 6)
     })
   })
 
-  describe('mintToUser', async () => {
+  describe('mint', async () => {
     it('should not mint X to if not from owner', async () => {
-      await expect(nameToken.mintToUser(account2, 15000, { from: account2 })).to
-        .be.reverted
+      await expect(nameToken.mint(account2, 15000, { from: account2 })).to.be
+        .reverted
 
       const balance = await nameToken.balanceOf(account2)
       assert.equal(balance, 0)
     })
 
     it('should mint 150.00 tokens to other account', async () => {
-      await nameToken.mintToUser(account2, 15000)
+      await nameToken.mint(account2, 15000)
       const balance = await nameToken.balanceOf(account2)
       assert.equal(balance, 15000)
     })
   })
 
-  describe('burnFromUser', async () => {
+  describe('burn', async () => {
     it('should not allow to burn if not from owner', async () => {
-      await nameToken.mintToUser(account2, 15000)
+      await nameToken.mint(account2, 15000)
       const balance = await nameToken.balanceOf(account2)
       assert.equal(balance, 15000)
 
-      await expect(nameToken.burnFromUser(account2, 10000, { from: account2 }))
-        .to.be.reverted
+      await expect(nameToken.burn(account2, 10000, { from: account2 })).to.be
+        .reverted
 
       const balance2 = await nameToken.balanceOf(account2)
       assert.equal(balance2, 15000)
     })
 
     it('should burn 100.00', async () => {
-      await nameToken.mintToUser(account2, 15000)
+      await nameToken.mint(account2, 15000)
       const balance = await nameToken.balanceOf(account2)
       assert.equal(balance, 15000)
 
-      await nameToken.burnFromUser(account2, 10000)
+      await nameToken.burn(account2, 10000)
 
       const balance2 = await nameToken.balanceOf(account2)
       assert.equal(balance2, 5000)
@@ -82,14 +82,14 @@ contract('ERC20NameToken', function (accounts) {
 
   describe('approveFor', async () => {
     it('should not allow to approveFor if not from owner', async () => {
-      await nameToken.mintToUser(account, 15000)
+      await nameToken.mint(account, 15000)
       await expect(
         nameToken.approveFor(account, account2, 10000, { from: account2 }),
       ).to.be.reverted
     })
 
     it('should allow to approveFor', async () => {
-      await nameToken.mintToUser(account, 15000)
+      await nameToken.mint(account, 15000)
       await nameToken.approveFor(account, account2, 10000)
 
       const allowance = await nameToken.allowance(account, account2)

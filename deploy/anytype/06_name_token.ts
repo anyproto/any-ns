@@ -16,6 +16,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = deployments
   const { deployer, owner } = await getNamedAccounts()
 
+  /*
   // 1 - deploy fake USDC token contract
   if (network.name === 'sepolia') {
     // (anyone can mint it, so it's not a real USDC)
@@ -44,6 +45,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     // TODO: add a real USDC token
     throw new Error('Not implemented')
   }
+  */
 
   // 2 - deploy NameToken
   await deploy('ERC20NameToken', {
@@ -73,17 +75,18 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const popts = await c.paymentOptionsCount()
   console.log('Payment options count: ', popts.toNumber())
 
-  if (popts.toNumber() === 1) {
+  // TODO: change to 1 if FakeUSDC was deployed above
+  if (popts.toNumber() === 0) {
     console.log('Adding NameToken as a payment option...')
-    const usdcDecimals = 2
-    await c.addERC20UsdPaymentOption(nameToken.address, usdcDecimals)
+    const decimals = 6
+    await c.addERC20UsdPaymentOption(nameToken.address, decimals)
   } else {
     console.log('NameToken is already a payment option')
   }
 }
 
-func.id = 'anytype-fake-usdc'
-func.tags = ['anytype', 'FakeUSDC']
+func.id = 'anytype-name-token'
+func.tags = ['anytype', 'ERC20NameToken']
 
 func.dependencies = ['AnytypeRegistrarController']
 
