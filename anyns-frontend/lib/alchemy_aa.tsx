@@ -1,6 +1,6 @@
 import {
   SimpleSmartContractAccount,
-  SimpleSmartAccountOwner,
+  SmartAccountSigner,
   LocalAccountSigner,
   createPublicErc4337Client,
 } from '@alchemy/aa-core'
@@ -12,7 +12,7 @@ import { withAlchemyGasManager } from '@alchemy/aa-alchemy'
 import { type Chain } from 'viem'
 import { sepolia } from 'viem/chains'
 
-export async function createAlchemyAA(metamaskOwner: SimpleSmartAccountOwner) {
+export async function createAlchemyAA(metamaskOwner: SmartAccountSigner) {
   // This is an example of using a LOCAL private key instead of MetaMask
   //const owner = LocalAccountSigner.mnemonicToAccountSigner("group position stand sail vehicle miss floor prize slam dress skull alone");
   const owner = metamaskOwner
