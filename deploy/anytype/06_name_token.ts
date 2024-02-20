@@ -16,6 +16,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = deployments
   const { deployer, owner } = await getNamedAccounts()
 
+  // This Fake USDC token is used only for testing purposes:
+  // uncomment it if you need
+  //
   /*
   // 1 - deploy fake USDC token contract
   if (network.name === 'sepolia') {
@@ -63,8 +66,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const currentOwner = await nameToken.owner()
   console.log('NameToken current owner: ', currentOwner)
 
-  if (currentOwner !== '0x045F756F248799F4413a026100Ae49e5E7F2031E') {
-    const adminScw = '0x045F756F248799F4413a026100Ae49e5E7F2031E'
+  const adminSCW = process.env.ADMIN_SCW
+
+  if (currentOwner !== adminSCW) {
+    const adminScw = adminSCW
     console.log('Transferring ownership of NameToken to the admin SCW')
     await nameToken.transferOwnership(adminScw)
   } else {

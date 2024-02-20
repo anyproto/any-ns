@@ -20,7 +20,7 @@ import {
 } from '../../lib/anyns'
 
 const resolverJson = require('../../deployments/sepolia/AnytypeResolver.json')
-const erc20TokenJson = require('../../deployments/sepolia/FakeUSDC.json')
+const erc20usdcToken = require('../../deployments/sepolia/FakeUSDC.json')
 const registrarControllerJson = require('../../deployments/sepolia/AnytypeRegistrarController.json')
 
 // Access our wallet inside of our dapp
@@ -50,8 +50,8 @@ export default function RegisterPage() {
 
   const handleMint = async () => {
     const erc20Contract = new web3.eth.Contract(
-      erc20TokenJson.abi,
-      erc20TokenJson.address,
+      erc20usdcToken.abi,
+      erc20usdcToken.address,
     )
 
     const mintUsd = 100
@@ -116,10 +116,11 @@ export default function RegisterPage() {
     //router.reload()
   }
 
+  // mint Fake USDC tokens
   const handleMintAA = async () => {
     const erc20Contract = new web3.eth.Contract(
-      erc20TokenJson.abi,
-      erc20TokenJson.address,
+      erc20usdcToken.abi,
+      erc20usdcToken.address,
     )
 
     const mintUsd = 100
@@ -136,9 +137,9 @@ export default function RegisterPage() {
         // mint
         {
           from: smartAccountAddress,
-          to: erc20TokenJson.address,
+          to: erc20usdcToken.address,
           data: encodeFunctionData({
-            abi: erc20TokenJson.abi,
+            abi: erc20usdcToken.abi,
             functionName: 'mint',
             args: [mintMe, mintUsd * 1000000],
           }),
@@ -147,9 +148,9 @@ export default function RegisterPage() {
         // can also use approve if calling from the same account
         {
           from: smartAccountAddress,
-          to: erc20TokenJson.address,
+          to: erc20usdcToken.address,
           data: encodeFunctionData({
-            abi: erc20TokenJson.abi,
+            abi: erc20usdcToken.abi,
             functionName: 'approveFor',
             args: [mintMe, approveTo, mintUsd * 1000000],
           }),

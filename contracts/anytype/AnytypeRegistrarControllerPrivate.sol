@@ -57,6 +57,8 @@ contract AnytypeRegistrarControllerPrivate is
     ReverseRegistrar public immutable reverseRegistrar;
     INameWrapper public immutable nameWrapper;
 
+    address public immutable additionalOwner;
+
     mapping(bytes32 => uint256) public commitments;
 
     event NameRegistered(
@@ -67,13 +69,21 @@ contract AnytypeRegistrarControllerPrivate is
     );
     event NameRenewed(string name, bytes32 indexed label, uint256 expires);
 
+    function _checkOwner() internal view virtual override {
+        require(
+            owner() == _msgSender() || additionalOwner == _msgSender(),
+            "Ownable: caller is not the owner1 or owner2"
+        );
+    }
+
     constructor(
         AnytypeRegistrarImplementation _base,
         uint256 _minCommitmentAge,
         uint256 _maxCommitmentAge,
         ReverseRegistrar _reverseRegistrar,
         INameWrapper _nameWrapper,
-        ENS _ens
+        ENS _ens,
+        address _additionalOwner
     ) ReverseClaimer(_ens, msg.sender) {
         if (_maxCommitmentAge <= _minCommitmentAge) {
             revert MaxCommitmentAgeTooLow();
@@ -88,6 +98,7 @@ contract AnytypeRegistrarControllerPrivate is
         maxCommitmentAge = _maxCommitmentAge;
         reverseRegistrar = _reverseRegistrar;
         nameWrapper = _nameWrapper;
+        additionalOwner = _additionalOwner;
     }
 
     function valid(string memory name) public pure returns (bool) {

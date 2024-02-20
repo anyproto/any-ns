@@ -11,7 +11,8 @@
     "format": "prettier --write .",
     "prepublishOnly": "yarn build",
     "pub": "yarn publish --access public",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "gas-report": "export REPORT_GAS=true && hardhat test"
   },
   "files": [
     "build",
