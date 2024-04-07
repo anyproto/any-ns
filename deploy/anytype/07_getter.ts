@@ -21,7 +21,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   // 2.2 - transfer ownership of the token to the admin's SmartContractWallet
   // TODO: hardcode!!!
-  // 0x61d1eeE7FBF652482DEa98A1Df591C626bA09a60 -> 0x045F756F248799F4413a026100Ae49e5E7F2031E
+  // 0xb87bbe9f9a0866b942b6587d74b06ed98dc1efb9 -> 0x60d728bC91EB32B1B20d0249bF1D000b34975fa3
   const currentOwner = await nameToken.owner()
   console.log('NameToken current owner: ', currentOwner)
 
@@ -43,11 +43,23 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   } else {
     console.log('NameToken is already a payment option')
   }
+
+  // 2.4 - check minter acccount of PrivateController
+  const cp = await ethers.getContract(
+    'AnytypeRegistrarControllerPrivate',
+    deployer,
+  )
+  const minter = await cp.minterAccount()
+  console.log('PrivateController minter: ', minter)
 }
 
 func.id = 'anytype-name-token2'
 func.tags = ['anytype', 'GETTER']
 
-func.dependencies = ['AnytypeRegistrarController', 'ERC20NameToken']
+func.dependencies = [
+  'AnytypeRegistrarController',
+  'AnytypeRegistrarControllerPrivate',
+  'ERC20NameToken',
+]
 
 export default func

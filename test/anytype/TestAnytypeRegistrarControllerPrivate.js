@@ -82,7 +82,14 @@ contract('AnytypeRegistrarControllerPrivate', function () {
     signers = await ethers.getSigners()
     ownerAccount = await signers[0].getAddress()
     registrantAccount = await signers[1].getAddress()
-    accounts = [ownerAccount, registrantAccount, signers[2].getAddress()]
+    accounts = [
+      ownerAccount,
+      registrantAccount,
+      signers[2].getAddress(),
+      signers[3].getAddress(),
+      signers[4].getAddress(),
+      signers[5].getAddress(),
+    ]
 
     ens = await deploy('ENSRegistry')
 
@@ -125,6 +132,8 @@ contract('AnytypeRegistrarControllerPrivate', function () {
       reverseRegistrar.address,
       nameWrapper.address,
       ens.address,
+      accounts[3], // minter account
+      accounts[4], // minter scw
     )
 
     controller2 = controller.connect(signers[1])
@@ -187,6 +196,36 @@ contract('AnytypeRegistrarControllerPrivate', function () {
     // { poop } { poop } (emoji)
     '\ud83d\udca9\ud83d\udca9': false,
   }
+
+  it('should not permit to change minter if called not from admin', async () => {
+    await expect(
+      controller.changeMinters(
+        signers[4].getAddress(),
+        signers[5].getAddress(),
+        { from: accounts[1] },
+      ),
+    ).to.be.reverted
+
+    await expect(
+      controller.changeMinters(
+        signers[4].getAddress(),
+        signers[5].getAddress(),
+        // current minter also should not be able to change
+        { from: accounts[3] },
+      ),
+    ).to.be.reverted
+  })
+
+  it('should  permit to change minter if called from admin', async () => {
+    const tx = await controller.changeMinters(
+      signers[4].getAddress(),
+      signers[5].getAddress(),
+      {
+        from: accounts[0],
+      },
+    )
+    await expect(tx).to.emit(controller, 'MintersChanged')
+  })
 
   it('should report label validity', async () => {
     for (const label in checkLabels) {

@@ -99,7 +99,12 @@ contract('AnytypeRegistrarController', function () {
     signers = await ethers.getSigners()
     ownerAccount = await signers[0].getAddress()
     registrantAccount = await signers[1].getAddress()
-    accounts = [ownerAccount, registrantAccount, signers[2].getAddress()]
+    accounts = [
+      ownerAccount,
+      registrantAccount,
+      signers[2].getAddress(),
+      signers[3].getAddress(),
+    ]
 
     ens = await deploy('ENSRegistry')
 
@@ -177,7 +182,10 @@ contract('AnytypeRegistrarController', function () {
 
     // deploy ERC20 "stablecoin" stub contract with initial balance of 0 USD tokens
     stable1 = await deploy('ERC20StablecoinStub', 'Token1', 'USDCC', 18, 0)
-    nameToken = await deploy('ERC20NameToken')
+    nameToken = await deploy(
+      'ERC20NameToken',
+      accounts[3], // minter
+    )
 
     // add it as a payment option
     await controller.addERC20UsdPaymentOption(stable1.address, 18)

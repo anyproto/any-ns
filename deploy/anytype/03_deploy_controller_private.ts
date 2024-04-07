@@ -25,16 +25,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const reverseRegistrar = await ethers.getContract('ReverseRegistrar', owner)
   const nameWrapper = await ethers.getContract('AnytypeNameWrapper', owner)
 
-  // this is usually the admin's SCW (AccountAbstraction)
-  // so we can control this either directly from admin or from admin's SCW (AccountAbstraction)
-  const additionalOwner = process.env.ADMIN_SCW
-  if (!additionalOwner || additionalOwner === '') {
-    throw new Error('ADMIN_SCW is not set')
+  const minter = process.env.MINTER
+  const minterScw = process.env.MINTER_SCW
+  if (!minterScw || minterScw === '') {
+    throw new Error('MINTER_SCW is not set')
   }
-  console.log(
-    'WARNING: private controller additional owner is set to',
-    additionalOwner,
-  )
+  console.log('WARNING: private controller minter is set to', minterScw)
 
   const deployArgs = {
     from: deployer,
@@ -46,7 +42,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       reverseRegistrar.address,
       nameWrapper.address,
       registry.address,
-      additionalOwner,
+      minter,
+      minterScw,
     ],
     log: true,
   }

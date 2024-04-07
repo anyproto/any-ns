@@ -6,7 +6,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = deployments
   const { deployer } = await getNamedAccounts()
 
-  const defaultPrice = 10 * 100 // 10 USD
+  const defaultPrice = 75 * 100 // 75 USD
   await deploy('AnytypePriceOracle', {
     from: deployer,
     args: [

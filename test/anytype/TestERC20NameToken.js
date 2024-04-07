@@ -23,11 +23,15 @@ contract('ERC20NameToken', function (accounts) {
     signers = await ethers.getSigners()
     account = await signers[0].getAddress()
     account2 = await signers[1].getAddress()
+    minter = await signers[2].getAddress()
 
     assert.notEqual(account, account2)
 
     // 1 name token only to the owner
-    nameToken = await deploy('ERC20NameToken')
+    nameToken = await deploy(
+      'ERC20NameToken',
+      minter, // minter account
+    )
 
     assert.equal(await nameToken.name(), 'AnyNameToken')
   })
@@ -36,6 +40,21 @@ contract('ERC20NameToken', function (accounts) {
     it('should return 6', async () => {
       const d = await nameToken.decimals()
       assert.equal(d, 6)
+    })
+  })
+
+  describe('changeMinter', async () => {
+    it('should not permit to change minter if called not from admin', async () => {
+      await expect(
+        nameToken.changeMinter(signers[4].getAddress(), { from: accounts[1] }),
+      ).to.be.reverted
+    })
+
+    it('should  permit to change minter if called from admin', async () => {
+      const tx = await nameToken.changeMinter(signers[4].getAddress(), {
+        from: accounts[0],
+      })
+      await expect(tx).to.emit(controller, 'MintersChanged')
     })
   })
 

@@ -65,9 +65,10 @@ npm run test -- --grep "AnytypeRegistrarControllerPrivate"
 1. Define a **.env** file with 3 variables:
 
 ```
-PRIVATE_KEY=XXX
 DEPLOYER_KEY=XXX
 INFURA_API_KEY=YYY
+ADMIN_SCW=ZZZ
+MINTER_SCW=KKK
 ```
 
 2. (optional) Remove **deployments/sepolia** folder to reset all migrations:

@@ -16,10 +16,34 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
  *   User can use this token to buy/renew a name for 1 year
  */
 contract ERC20NameToken is Ownable, ERC20 {
-    constructor() ERC20("AnyNameToken", "ANT") {}
+    address public minterAccount;
+
+    event MinterChanged(address indexed oldMinter, address indexed newMinter);
+
+    constructor(address _minterAccount) ERC20("AnyNameToken", "ANT") {
+        minterAccount = _minterAccount;
+    }
+
+    function _checkOwner() internal view virtual override {
+        require(
+            owner() == _msgSender() || minterAccount == _msgSender(),
+            "Ownable: caller is not the owner1 or owner2"
+        );
+    }
 
     function decimals() public view virtual override returns (uint8) {
         return 6;
+    }
+
+    function changeMinter(address newMinter) external {
+        // this should not be called by minter
+        // if minter gets hacked -> admin can change the minter
+        require(owner() == _msgSender(), "Ownable: caller is not the owner");
+        require(newMinter != address(0), "Invalid minter address");
+
+        emit MinterChanged(minterAccount, newMinter);
+
+        minterAccount = newMinter;
     }
 
     function mint(address user_, uint amount_) public onlyOwner {

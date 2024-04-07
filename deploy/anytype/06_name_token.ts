@@ -50,10 +50,15 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   }
   */
 
+  const minterScw = process.env.MINTER_SCW
+  if (!minterScw || minterScw === '') {
+    throw new Error('MINTER_SCW is not set')
+  }
+
   // 2 - deploy NameToken
   await deploy('ERC20NameToken', {
     from: deployer,
-    args: [],
+    args: [minterScw],
     log: true,
   })
 

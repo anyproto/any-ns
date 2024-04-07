@@ -426,7 +426,6 @@ cp .env.org .env
 ### Set credentials
 
 ```
-PRIVATE_KEY=
 ETHERSCAN_API_KEY=
 INFURA_API_KEY=
 ```

@@ -57,7 +57,8 @@ contract AnytypeRegistrarControllerPrivate is
     ReverseRegistrar public immutable reverseRegistrar;
     INameWrapper public immutable nameWrapper;
 
-    address public immutable additionalOwner;
+    address public minterAccount;
+    address public minterAccount2;
 
     mapping(bytes32 => uint256) public commitments;
 
@@ -68,11 +69,18 @@ contract AnytypeRegistrarControllerPrivate is
         uint256 expires
     );
     event NameRenewed(string name, bytes32 indexed label, uint256 expires);
+    event MintersChanged(
+        address oldMinter,
+        address newMinter,
+        address newMinter2
+    );
 
     function _checkOwner() internal view virtual override {
         require(
-            owner() == _msgSender() || additionalOwner == _msgSender(),
-            "Ownable: caller is not the owner1 or owner2"
+            owner() == _msgSender() ||
+                minterAccount == _msgSender() ||
+                minterAccount2 == _msgSender(),
+            "Ownable: caller is not the owner1 or minter or minter2"
         );
     }
 
@@ -83,7 +91,8 @@ contract AnytypeRegistrarControllerPrivate is
         ReverseRegistrar _reverseRegistrar,
         INameWrapper _nameWrapper,
         ENS _ens,
-        address _additionalOwner
+        address _minterAccount,
+        address _minter2Account
     ) ReverseClaimer(_ens, msg.sender) {
         if (_maxCommitmentAge <= _minCommitmentAge) {
             revert MaxCommitmentAgeTooLow();
@@ -98,7 +107,21 @@ contract AnytypeRegistrarControllerPrivate is
         maxCommitmentAge = _maxCommitmentAge;
         reverseRegistrar = _reverseRegistrar;
         nameWrapper = _nameWrapper;
-        additionalOwner = _additionalOwner;
+        minterAccount = _minterAccount;
+        minterAccount2 = _minter2Account;
+    }
+
+    function changeMinters(address newMinter, address newMinter2) external {
+        // this should not be called by minter
+        // if minter gets hacked -> admin can change the minter
+        require(owner() == _msgSender(), "Ownable: caller is not the owner");
+        require(newMinter != address(0), "Invalid minter address");
+        require(newMinter2 != address(0), "Invalid minter2 address");
+
+        emit MintersChanged(minterAccount, newMinter, newMinter2);
+
+        minterAccount = newMinter;
+        minterAccount2 = newMinter2;
     }
 
     function valid(string memory name) public pure returns (bool) {
