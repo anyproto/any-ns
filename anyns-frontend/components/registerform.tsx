@@ -77,17 +77,27 @@ export default function RegisterForm({
   const onMint = async (e) => {
     e.preventDefault()
 
+    // show alert
+    alert('Functionality is currently switched off...')
+
+    /*
     setIsProcessingMint(true)
     await handleMintUsdcs()
     setIsProcessingMint(false)
+    */
   }
 
   const onMintAA = async (e) => {
     e.preventDefault()
 
+    // show alert
+    alert('Functionality is currently switched off...')
+
+    /*
     setIsProcessingMint(true)
     await handleMintUsdcsAA()
     setIsProcessingMint(false)
+    */
   }
 
   const onRegister = async (e) => {

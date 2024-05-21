@@ -56,7 +56,7 @@ export async function createAlchemyAA(metamaskOwner: SmartAccountSigner) {
   //
   // This smart contract will really OWN all names and NFTs
   const smartAccountAddress = await provider.getAddress()
-  console.log('My smart account address: ')
+  console.log('My Smart Contract Wallet (SCW): ')
   console.log(smartAccountAddress)
 
   const erc4337client = createPublicErc4337Client({

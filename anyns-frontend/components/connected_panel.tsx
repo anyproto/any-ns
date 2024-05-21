@@ -12,7 +12,7 @@ const web3 = new Web3(Web3.givenProvider)
 
 import WarningPanel from '../components/warning_panel'
 
-const usdcToken = require('../../deployments/sepolia/FakeUSDC.json')
+//const usdcToken = require('../../deployments/sepolia/FakeUSDC.json')
 const nameToken = require('../../deployments/sepolia/ERC20NameToken.json')
 
 export default function ConnectedPanel({ isAdminMode }) {
@@ -43,6 +43,7 @@ export default function ConnectedPanel({ isAdminMode }) {
     connectWalletOnPageLoad()
   }, [])
 
+  /*
   useEffect(() => {
     const loadTokenBalanceAsync = async (account) => {
       try {
@@ -69,8 +70,10 @@ export default function ConnectedPanel({ isAdminMode }) {
       loadTokenBalanceAsync(account)
     }
   }, [account])
+  */
 
   useEffect(() => {
+    /*
     const loadTokenBalanceAsync = async (account) => {
       try {
         const erc20Contract = new web3.eth.Contract(
@@ -86,6 +89,7 @@ export default function ConnectedPanel({ isAdminMode }) {
         console.log(ex)
       }
     }
+    */
 
     // name tokens
     const loadTokenBalance2Async = async (account) => {
@@ -110,7 +114,7 @@ export default function ConnectedPanel({ isAdminMode }) {
     }
 
     if (accountAA && typeof accountAA != 'undefined' && accountAA != '') {
-      loadTokenBalanceAsync(accountAA)
+      //loadTokenBalanceAsync(accountAA)
       loadTokenBalance2Async(accountAA)
     }
   }, [accountAA])

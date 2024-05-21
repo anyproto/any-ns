@@ -20,7 +20,7 @@ import {
 } from '../../lib/anyns'
 
 const resolverJson = require('../../deployments/sepolia/AnytypeResolver.json')
-const erc20usdcToken = require('../../deployments/sepolia/FakeUSDC.json')
+//const erc20usdcToken = require('../../deployments/sepolia/FakeUSDC.json')
 const registrarControllerJson = require('../../deployments/sepolia/AnytypeRegistrarController.json')
 
 // Access our wallet inside of our dapp
@@ -49,6 +49,7 @@ export default function RegisterPage() {
   }
 
   const handleMint = async () => {
+    /*
     const erc20Contract = new web3.eth.Contract(
       erc20usdcToken.abi,
       erc20usdcToken.address,
@@ -114,10 +115,12 @@ export default function RegisterPage() {
 
     // update screen
     //router.reload()
+    */
   }
 
   // mint Fake USDC tokens
   const handleMintAA = async () => {
+    /*
     const erc20Contract = new web3.eth.Contract(
       erc20usdcToken.abi,
       erc20usdcToken.address,
@@ -176,6 +179,7 @@ export default function RegisterPage() {
 
     // update screen
     //router.reload()
+    */
   }
 
   const verifyFullName = (nameFull) => {
