@@ -56,7 +56,7 @@ export default function Home() {
           />
 
           <div className="p-2">
-            <p>try: hello.any, test.any</p>
+            <p>try: tonykent.any</p>
           </div>
 
           <Navigator domainName={domainName} />

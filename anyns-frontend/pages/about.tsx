@@ -54,16 +54,17 @@ export default function ApiPage() {
           <h2 className="font-bold">Key outcomes</h2>
           <ol>
             <li>
-              References and links to users' data are immune to censorship
+              ✅︎ References and links to users' data are immune to censorship.
             </li>
             <li>
-              Users can leverage Anytype's user-friendly Account Abstraction
-              service
+              ✅︎ Users can leverage Anytype's user-friendly Account Abstraction
+              service.
             </li>
             <li>
-              In the event that Anytype discontinues this service or tries to
-              censor, users can seamlessly transition to an alternative Account
-              Abstraction service or engage directly with smart contracts.
+              ✅︎ In the event that Anytype discontinues this service or tries
+              to censor, users can seamlessly transition to an alternative
+              Account Abstraction service or engage directly with smart
+              contracts.
             </li>
           </ol>
         </p>

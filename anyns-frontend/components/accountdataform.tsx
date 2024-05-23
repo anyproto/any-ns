@@ -24,12 +24,21 @@ export default function AccountDataForm({
   const onOpenNFT = async (e) => {
     e.preventDefault()
 
+    let addr = accountScw
+    if (!addr || addr.length == 0) {
+      addr = account
+    }
+
     // TODO: this is for Sepolia only, rebuild for other networks
     // goto etherscan
     window.open(
-      `https://sepolia.etherscan.io/token/${nameWrapper.address}?a=${accountScw}`,
+      `https://sepolia.etherscan.io/token/${nameWrapper.address}?a=${addr}`,
       '_blank',
     )
+  }
+
+  const onTransferNft = async (e) => {
+    e.preventDefault()
   }
 
   const findNameReverse = async (addr) => {
@@ -224,33 +233,46 @@ export default function AccountDataForm({
         </div>
       </form>
 
-      {/*
-      {handlerRegister && (
-        <div>
-          <div className="text-center text-2xl font-bold m-2">
-            <LoadingButton
-              loading={isProcessing}
-              variant="outlined"
-              className="text-small my-button"
-              type="submit"
-              disabled={
-                isProcessing ||
-                !isAccountAdmin(account) ||
-                !isNameValid(anyName) ||
-                !isAddressValid(userAddress) ||
-                !isNameAvailable
-              }
-            >
-              Register on behalf of user
-            </LoadingButton>
-          </div>
+      <form
+        onSubmit={onTransferNft}
+        className="animate-in fade-in duration-700"
+      >
+        <div className="text-center text-2xl font-bold m-2">
+          <LoadingButton
+            loading={isProcessing}
+            variant="outlined"
+            className="text-small my-button"
+            type="submit"
+            disabled={true}
+          >
+            Transfer NFT
+          </LoadingButton>
 
-          <div className="text-center text-m m-2">
-            <p>Domain will be registered for: 364 days</p>
-          </div>
+          <span className="mx-2"></span>
+
+          <LoadingButton
+            loading={isProcessing}
+            variant="outlined"
+            className="text-small my-button"
+            type="submit"
+            disabled={true}
+          >
+            Transfer to different Any ID
+          </LoadingButton>
+
+          <span className="mx-2"></span>
+
+          <LoadingButton
+            loading={isProcessing}
+            variant="outlined"
+            className="text-small my-button"
+            type="submit"
+            disabled={true}
+          >
+            Renew
+          </LoadingButton>
         </div>
-      )}
-      */}
+      </form>
     </div>
   )
 }

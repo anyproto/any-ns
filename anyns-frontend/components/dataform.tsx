@@ -8,6 +8,7 @@ import Web3 from 'web3'
 const web3 = new Web3(Web3.givenProvider)
 
 import { concatenateWithTLD, removeTLD } from '../lib/anyns'
+const nameWrapper = require('../../deployments/sepolia/AnytypeNameWrapper.json')
 
 const tld = process.env.NEXT_PUBLIC_TLD_SUFFIX
 
@@ -22,8 +23,8 @@ export default function DataForm({
 }) {
   const [isProcessing, setIsProcessing] = useState(false)
 
-  const [domainName, setDomainName] = useState(domainNamePreselected)
-  const debouncedLookup = useDebounce(domainName, 1000)
+  const [anyName, setAnyName] = useState(domainNamePreselected)
+  const debouncedLookup = useDebounce(anyName, 1000)
 
   // if AA was used to register a domain name -> this is the address of the
   // AA smart wallet
@@ -53,9 +54,9 @@ export default function DataForm({
 
         setIsProcessing(true)
 
-        let regMe = domainName
-        if (!domainName.endsWith(tld)) {
-          regMe = domainName + tld
+        let regMe = anyName
+        if (!anyName.endsWith(tld)) {
+          regMe = anyName + tld
         }
 
         await getNameInfo(regMe)
@@ -85,14 +86,30 @@ export default function DataForm({
     return address === process.env.NEXT_PUBLIC_MAIN_ACCOUNT
   }
 
+  const onOpenNFT = async (e) => {
+    e.preventDefault()
+
+    let addr = userAddressAA
+    if (!addr || addr.length == 0) {
+      addr = userAddress
+    }
+
+    // TODO: this is for Sepolia only, rebuild for other networks
+    // goto etherscan
+    window.open(
+      `https://sepolia.etherscan.io/token/${nameWrapper.address}?a=${addr}`,
+      '_blank',
+    )
+  }
+
   const onRegister = async (e) => {
     e.preventDefault()
 
     // add .any suffix to the name if it is not there yet
     // @ts-ignore
-    let regMe = domainName
-    if (!domainName.endsWith(tld)) {
-      regMe = domainName + tld
+    let regMe = anyName
+    if (!anyName.endsWith(tld)) {
+      regMe = anyName + tld
     }
 
     setIsProcessing(true)
@@ -146,8 +163,6 @@ export default function DataForm({
 
       // check if AA was used to register name
       // can be ''
-      console.log('-->>> data.owner: ', data.owner)
-
       const realAaOwner = await tryGetAAOwner(data.owner)
       if (realAaOwner != '') {
         // swap them!
@@ -177,8 +192,8 @@ export default function DataForm({
               id="prompt-name"
               type="text"
               name="name"
-              value={domainName}
-              onChange={(e) => setDomainName(e.target.value)}
+              value={anyName}
+              onChange={(e) => setAnyName(e.target.value)}
               //onChange={(e) => dispatch({
               //        type: "SELECTED_NAME",
               //        payload: e.target.value
@@ -342,7 +357,7 @@ export default function DataForm({
                 disabled={
                   isProcessing ||
                   !isAccountAdmin(account) ||
-                  !isNameValid(domainName) ||
+                  !isNameValid(anyName) ||
                   !isAddressValid(userAddress) ||
                   !isNameAvailable
                 }
@@ -356,6 +371,20 @@ export default function DataForm({
             </div>
           </div>
         )}
+      </form>
+
+      <form onSubmit={onOpenNFT} className="animate-in fade-in duration-700">
+        <div className="text-center text-2xl font-bold m-2">
+          <LoadingButton
+            loading={isProcessing}
+            variant="outlined"
+            className="text-small my-button"
+            type="submit"
+            disabled={!anyName || !anyName.length}
+          >
+            See attached NFT
+          </LoadingButton>
+        </div>
       </form>
     </div>
   )
