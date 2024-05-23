@@ -1,7 +1,11 @@
+import Link from 'next/link'
+import { LoadingButton } from '@mui/lab'
 import { useState, useEffect } from 'react'
 
 import Web3 from 'web3'
 const web3 = new Web3(Web3.givenProvider)
+
+const nameWrapper = require('../../deployments/sepolia/AnytypeNameWrapper.json')
 
 export default function AccountDataForm({
   // can be null
@@ -11,11 +15,22 @@ export default function AccountDataForm({
   handleReverseLoookup,
 }) {
   const [isProcessing, setIsProcessing] = useState(false)
-  const [domainName, setDomainName] = useState()
+  const [anyName, setAnyName] = useState()
 
   const [contentHash, setContentHash] = useState('')
   const [spaceHash, setSpaceHash] = useState('')
   const [expirationDate, setExpirationDate] = useState('')
+
+  const onOpenNFT = async (e) => {
+    e.preventDefault()
+
+    // TODO: this is for Sepolia only, rebuild for other networks
+    // goto etherscan
+    window.open(
+      `https://sepolia.etherscan.io/token/${nameWrapper.address}?a=${accountScw}`,
+      '_blank',
+    )
+  }
 
   const findNameReverse = async (addr) => {
     const [isErr, data] = await handleReverseLoookup(addr)
@@ -24,14 +39,14 @@ export default function AccountDataForm({
     }
 
     if (isErr) {
-      setDomainName('Can not find name')
+      setAnyName('')
       return
     }
 
     if (!data || !data.name || isErr) {
-      setDomainName('No name found')
+      setAnyName('')
     } else {
-      setDomainName(data.name)
+      setAnyName(data.name)
     }
   }
 
@@ -70,8 +85,8 @@ export default function AccountDataForm({
   }, [accountScw])
 
   useEffect(() => {
-    getNameInfo(domainName)
-  }, [domainName])
+    getNameInfo(anyName)
+  }, [anyName])
 
   return (
     <div>
@@ -86,17 +101,11 @@ export default function AccountDataForm({
             type="text"
             name="address"
             value={account}
-            //onChange={(e) => dispatch({
-            //        type: "SELECTED_NAME",
-            //        payload: e.target.value
-            //    })}
             placeholder=""
             className={`block w-full input-with-no-button flex-grow${
               isProcessing ? ' rounded-md' : ' rounded-l-md'
             }`}
             disabled={true}
-            //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
-            required
           />
         </div>
       </div>
@@ -112,17 +121,11 @@ export default function AccountDataForm({
             type="text"
             name="addressAA"
             value={accountScw}
-            //onChange={(e) => dispatch({
-            //        type: "SELECTED_NAME",
-            //        payload: e.target.value
-            //    })}
             placeholder=""
             className={`block w-full input-with-no-button flex-grow${
               isProcessing ? ' rounded-md' : ' rounded-l-md'
             }`}
             disabled={true}
-            //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
-            required
           />
         </div>
       </div>
@@ -137,15 +140,12 @@ export default function AccountDataForm({
             id="prompt-name"
             type="text"
             name="name"
-            value={domainName}
+            value={anyName}
             placeholder=""
             className={`block w-full input-with-no-button flex-grow${
               isProcessing ? ' rounded-md' : ' rounded-l-md'
             }`}
             disabled={true}
-            autoFocus
-            //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
-            //required
           />
         </div>
       </div>
@@ -161,18 +161,11 @@ export default function AccountDataForm({
             type="text"
             name="content-hash"
             value={contentHash}
-            onChange={(e) => setContentHash(e.target.value)}
-            //onChange={(e) => dispatch({
-            //        type: "SELECTED_NAME",
-            //        payload: e.target.value
-            //    })}
             placeholder=""
             className={`block w-full input-with-no-button flex-grow${
               isProcessing ? ' rounded-md' : ' rounded-l-md'
             }`}
             disabled={true}
-            //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
-            required
           />
         </div>
       </div>
@@ -188,18 +181,11 @@ export default function AccountDataForm({
             type="text"
             name="space-hash"
             value={spaceHash}
-            onChange={(e) => setSpaceHash(e.target.value)}
-            //onChange={(e) => dispatch({
-            //        type: "SELECTED_NAME",
-            //        payload: e.target.value
-            //    })}
             placeholder=""
             className={`block w-full input-with-no-button flex-grow${
               isProcessing ? ' rounded-md' : ' rounded-l-md'
             }`}
             disabled={true}
-            //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
-            //required
           />
         </div>
       </div>
@@ -215,21 +201,28 @@ export default function AccountDataForm({
             type="text"
             name="exp-date"
             value={expirationDate}
-            onChange={(e) => setExpirationDate(e.target.value)}
-            //onChange={(e) => dispatch({
-            //        type: "SELECTED_NAME",
-            //        payload: e.target.value
-            //    })}
             placeholder=""
             className={`block w-full input-with-no-button flex-grow${
               isProcessing ? ' rounded-md' : ' rounded-l-md'
             }`}
             disabled={true}
-            //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
-            //required
           />
         </div>
       </div>
+
+      <form onSubmit={onOpenNFT} className="animate-in fade-in duration-700">
+        <div className="text-center text-2xl font-bold m-2">
+          <LoadingButton
+            loading={isProcessing}
+            variant="outlined"
+            className="text-small my-button"
+            type="submit"
+            disabled={!anyName || !anyName.length}
+          >
+            See attached NFT
+          </LoadingButton>
+        </div>
+      </form>
 
       {/*
       {handlerRegister && (
@@ -243,7 +236,7 @@ export default function AccountDataForm({
               disabled={
                 isProcessing ||
                 !isAccountAdmin(account) ||
-                !isNameValid(domainName) ||
+                !isNameValid(anyName) ||
                 !isAddressValid(userAddress) ||
                 !isNameAvailable
               }

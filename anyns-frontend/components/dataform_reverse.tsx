@@ -30,12 +30,12 @@ export default function DataFormReverse({ handleReverseLoookup }) {
     }
 
     if (isErr) {
-      setDomainName('Can not find name')
+      setDomainName('')
       return
     }
 
     if (!data || !data.name || isErr) {
-      setDomainName('No name found')
+      setDomainName('')
     } else {
       setDomainName(data.name)
     }
