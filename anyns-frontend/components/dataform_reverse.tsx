@@ -29,8 +29,6 @@ export default function DataFormReverse({ handleReverseLoookup }) {
       return
     }
 
-    console.log('Data: ', data)
-
     if (isErr) {
       setDomainName('Can not find name')
       return

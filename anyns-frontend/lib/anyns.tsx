@@ -125,6 +125,10 @@ export async function prepareCallData(contentHash, spaceID, nameFull) {
 }
 
 export async function handleReverseLoookup(addr) {
+  if (!addr) {
+    return [true, {}]
+  }
+
   console.log('Do reverse lookup...: ' + addr)
 
   const response = await fetch('/api/anyns/reverse/' + addr, {
@@ -134,13 +138,17 @@ export async function handleReverseLoookup(addr) {
     },
   })
 
-  const out = await response.json()
+  try {
+    const out = await response.json()
 
-  // [error, data]
-  if (response.status === 200) {
-    return [false, out]
-  } else if (response.status === 404) {
-    return [false, {}]
+    // [error, data]
+    if (response.status === 200) {
+      return [false, out]
+    } else if (response.status === 404) {
+      return [false, {}]
+    }
+  } catch (err) {
+    console.log('Can not do reverse lookup for ' + addr + '. Error: ' + err)
   }
 
   // error
@@ -177,6 +185,52 @@ export async function fetchRealOwnerOfSmartContractWallet(addr) {
 
   try {
     const owner = await scw.methods.owner().call()
+    return owner
+  } catch (err) {
+    console.log('Error: ' + err)
+    return ''
+  }
+}
+
+export async function getScwAsync(addr) {
+  const SCW_ABI = {
+    abi: [
+      {
+        constant: true,
+        inputs: [
+          {
+            internalType: 'address',
+            name: 'owner',
+            type: 'address',
+          },
+          {
+            internalType: 'uint256',
+            name: 'salt',
+            type: 'uint256',
+          },
+        ],
+        name: 'getAddress',
+        outputs: [
+          {
+            internalType: 'address',
+            name: '',
+            type: 'address',
+          },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+      },
+    ],
+  }
+
+  const factoryAddr = process.env.NEXT_PUBLIC_ALCHEMY_ACCOUNT_FACTORY_ADDR
+  console.log('Factory address: ' + factoryAddr)
+  console.log('Address: ' + addr)
+
+  const scw = new web3.eth.Contract(SCW_ABI.abi, factoryAddr)
+
+  try {
+    const owner = await scw.methods.getAddress(addr, 0).call()
     return owner
   } catch (err) {
     console.log('Error: ' + err)

@@ -122,8 +122,6 @@ export default function DataForm({
       return
     }
 
-    console.log('Data: ', data)
-
     if (data.contentID) {
       // convert hex data to string
       const contentID = web3.utils.hexToUtf8(data.contentID)
@@ -148,6 +146,8 @@ export default function DataForm({
 
       // check if AA was used to register name
       // can be ''
+      console.log('-->>> data.owner: ', data.owner)
+
       const realAaOwner = await tryGetAAOwner(data.owner)
       if (realAaOwner != '') {
         // swap them!

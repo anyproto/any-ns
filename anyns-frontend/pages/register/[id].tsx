@@ -263,7 +263,6 @@ export default function RegisterPage() {
 
     // this calldata will set spaceid + contenthash automatically
     const callData = await prepareCallData(contentHash, spaceID, nameFull)
-    console.log('Call data: ' + callData)
 
     // should be only called by owner!
     const commitment = await registrarController.methods

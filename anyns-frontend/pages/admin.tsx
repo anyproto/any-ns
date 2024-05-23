@@ -16,7 +16,6 @@ import DataForm from '../components/dataform'
 import ConnectedPanel from '../components/connected_panel'
 
 import Web3 from 'web3'
-const ethers = require('ethers')
 
 const resolverJson = require('../deployments/sepolia/AnytypeResolver.json')
 const privateRegistrarJson = require('../deployments/sepolia/AnytypeRegistrarControllerPrivate.json')
@@ -37,8 +36,7 @@ export default function Admin() {
   const [modalTitle, setModalTitle] = useState('Name availability')
   const [modalText, setModalText] = useState('Name is available!')
 
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [error, setError] = useState(null)
+  const [setIsProcessing] = useState(false)
 
   useEffect(() => {
     const connectWalletOnPageLoad = async () => {
@@ -139,7 +137,6 @@ export default function Admin() {
 
     // this calldata will set spaceid + contenthash automatically
     const callData = await prepareCallData(contentHash, spaceID, nameFull)
-    console.log('Call data: ' + callData)
 
     // should be only called by owner!
     const commitment = await registrarController.methods

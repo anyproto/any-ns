@@ -96,6 +96,7 @@ export default function InfoForm({
             //required
           />
 
+          {/*
           <LoadingButton
             loading={isProcessing}
             variant="outlined"
@@ -104,6 +105,16 @@ export default function InfoForm({
             disabled={isProcessing || !debouncedLookup}
           >
             {isNameAvailable ? 'Register' : 'Info'}
+          </LoadingButton>
+          */}
+          <LoadingButton
+            loading={isProcessing}
+            variant="outlined"
+            className="text-small inline-block p-3 flex-none my-button"
+            type="submit"
+            disabled={isProcessing || !debouncedLookup || isNameAvailable}
+          >
+            Info
           </LoadingButton>
         </div>
       </form>

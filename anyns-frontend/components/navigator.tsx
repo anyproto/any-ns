@@ -38,22 +38,32 @@ export default function Navigator({ domainName }) {
 
   return (
     <div className="text-center mt-16 text-l">
-      <button onClick={onGoToAdmin}>Admin</button>
+      {/*
+        <button onClick={onGoToAdmin}>Admin</button>
+
+        <span> | </span>
+
+        <button onClick={onGoToReverse}>Reverse Resolver</button>
+
+        <span> | </span>
+      */}
+
+      <Link href="/account">
+        <button>My Account</button>
+      </Link>
 
       <span> | </span>
 
-      <button onClick={onGoToReverse}>Reverse Resolver</button>
-
-      <span> | </span>
-
+      {/*
       <Link href="/help">
         <button>Help</button>
       </Link>
 
       <span> | </span>
+      */}
 
-      <Link href="/api-description">
-        <button>API</button>
+      <Link href="/about">
+        <button>About</button>
       </Link>
     </div>
   )

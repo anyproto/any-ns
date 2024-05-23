@@ -139,8 +139,6 @@ export default function RegisterForm({
       return
     }
 
-    console.log('Data: ', data)
-
     if (data.contentID) {
       // convert hex data to string
       const contentID = web3.utils.hexToUtf8(data.contentID)
