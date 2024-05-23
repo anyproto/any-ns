@@ -36,7 +36,7 @@ export default function Admin() {
   const [modalTitle, setModalTitle] = useState('Name availability')
   const [modalText, setModalText] = useState('Name is available!')
 
-  const [setIsProcessing] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
 
   useEffect(() => {
     const connectWalletOnPageLoad = async () => {

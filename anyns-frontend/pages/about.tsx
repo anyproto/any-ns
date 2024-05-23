@@ -50,27 +50,25 @@ export default function ApiPage() {
           provide similar functionality.
         </p>
 
-        <p className="mb-4">
-          <h2 className="font-bold">Key outcomes</h2>
-          <ol>
-            <li>
-              ✅︎ References and links to users' data are immune to censorship.
-            </li>
-            <li>
-              ✅︎ Users can leverage Anytype's user-friendly Account Abstraction
-              service.
-            </li>
-            <li>
-              ✅︎ In the event that Anytype discontinues this service or tries
-              to censor, users can seamlessly transition to an alternative
-              Account Abstraction service or engage directly with smart
-              contracts.
-            </li>
-          </ol>
-        </p>
+        <h2 className="font-bold">Key outcomes</h2>
+        <ol>
+          <li>
+            ✅︎ References and links to users' data are immune to censorship.
+          </li>
+          <li>
+            ✅︎ Users can leverage Anytype's user-friendly Account Abstraction
+            service.
+          </li>
+          <li>
+            ✅︎ In the event that Anytype discontinues this service or tries to
+            censor, users can seamlessly transition to an alternative Account
+            Abstraction service or engage directly with smart contracts.
+          </li>
+        </ol>
       </div>
 
       <hr />
+
       <div>
         <div className="mx-auto p-2 text-l">
           <h2>any-ns contracts:</h2>

@@ -15,7 +15,7 @@ export default function AccountDataForm({
   handleReverseLoookup,
 }) {
   const [isProcessing, setIsProcessing] = useState(false)
-  const [anyName, setAnyName] = useState()
+  const [anyName, setAnyName] = useState('')
 
   const [contentHash, setContentHash] = useState('')
   const [spaceHash, setSpaceHash] = useState('')
