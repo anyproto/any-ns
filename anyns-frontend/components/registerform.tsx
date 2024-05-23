@@ -162,183 +162,135 @@ export default function RegisterForm({
   }
 
   return (
-    <div>
-      <div className="singleDataLine">
-        <div className="flex mt-1">
-          <p>Name:</p>
+    <div className="card space-y-6">
+      <div className="space-y-4">
+        <div>
+          <label
+            htmlFor="prompt-name"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Domain Name
+          </label>
+          <div className="relative">
+            <input
+              id="prompt-name"
+              type="text"
+              name="name"
+              value={domainName}
+              onChange={(e) => setDomainName(e.target.value)}
+              placeholder="Enter your domain name"
+              className="input-base"
+              disabled={isProcessing}
+              autoFocus
+            />
+            {isProcessing && (
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-600"></div>
+              </div>
+            )}
+          </div>
+          {!isNameValid(domainName) && domainName && (
+            <p className="mt-1 text-sm text-red-600">
+              Name must be at least 3 characters long
+            </p>
+          )}
         </div>
 
         <div>
-          <input
-            id="prompt-name"
-            type="text"
-            name="name"
-            value={domainName}
-            onChange={(e) => setDomainName(e.target.value)}
-            //onChange={(e) => dispatch({
-            //        type: "SELECTED_NAME",
-            //        payload: e.target.value
-            //    })}
-            placeholder=""
-            className={`block w-full input-with-no-button flex-grow${
-              isProcessing ? ' rounded-md' : ' rounded-l-md'
-            }`}
-            disabled={isProcessing}
-            autoFocus
-            //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
-          />
-        </div>
-      </div>
-
-      <div className="singleDataLine">
-        <div className="flex mt-1">
-          <p>Anytype identity of Owner:</p>
-        </div>
-
-        <div>
+          <label
+            htmlFor="prompt-content-hash"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Anytype Identity of Owner
+          </label>
           <input
             id="prompt-content-hash"
             type="text"
             name="content-hash"
             value={contentHash}
             onChange={(e) => setContentHash(e.target.value)}
-            //onChange={(e) => dispatch({
-            //        type: "SELECTED_NAME",
-            //        payload: e.target.value
-            //    })}
-            placeholder=""
-            className={`block w-full input-with-no-button flex-grow${
-              isProcessing ? ' rounded-md' : ' rounded-l-md'
-            }`}
+            placeholder="Enter your Anytype identity"
+            className="input-base"
             disabled={isProcessing}
-            //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
           />
-        </div>
-      </div>
-
-      <div className="singleDataLine">
-        <div className="flex mt-1">
-          <p>Space hash/CID (optional):</p>
         </div>
 
         <div>
+          <label
+            htmlFor="prompt-space-hash"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Space Hash/CID (optional)
+          </label>
           <input
             id="prompt-space-hash"
             type="text"
             name="space-hash"
             value={spaceHash}
             onChange={(e) => setSpaceHash(e.target.value)}
-            //onChange={(e) => dispatch({
-            //        type: "SELECTED_NAME",
-            //        payload: e.target.value
-            //    })}
-            placeholder=""
-            className={`block w-full input-with-no-button flex-grow${
-              isProcessing ? ' rounded-md' : ' rounded-l-md'
-            }`}
+            placeholder="Enter space hash or CID"
+            className="input-base"
             disabled={isProcessing}
-            //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
-            //required
           />
         </div>
       </div>
 
-      {/*
-      <div className="text-center text-l font-bold m-2 p-2">
-        <p>Direct methods</p>
+      <div className="flex flex-col sm:flex-row gap-4">
+        <button
+          onClick={onRegister}
+          disabled={!isNameAvailable || isProcessingRegister}
+          className="button-primary flex-1"
+        >
+          {isProcessingRegister ? (
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+              Registering...
+            </div>
+          ) : (
+            'Register Domain'
+          )}
+        </button>
+
+        <button
+          onClick={onRegisterWithAA}
+          disabled={!isNameAvailable || isProcessingRegister}
+          className="button-secondary flex-1"
+        >
+          {isProcessingRegister ? (
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-600 mr-2"></div>
+              Registering...
+            </div>
+          ) : (
+            'Register with AA'
+          )}
+        </button>
       </div>
 
-      <form onSubmit={onMint} className="animate-in fade-in duration-700">
-        <div>
-          <div className="text-center text-2xl font-bold m-2">
-            <LoadingButton
-              loading={isProcessingMint}
-              variant="outlined"
-              className="text-small my-button"
-              type="submit"
-              disabled={
-                isProcessing || isProcessingMint || isProcessingRegister
-              }
-            >
-              Mint 100 USDC tokens
-            </LoadingButton>
+      {isNameAvailable && domainName && isNameValid(domainName) && (
+        <div className="rounded-md bg-green-50 p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg
+                className="h-5 w-5 text-green-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium text-green-800">
+                Domain name is available!
+              </p>
+            </div>
           </div>
         </div>
-      </form>
-
-      <form onSubmit={onRegister} className="animate-in fade-in duration-700">
-        <div>
-          <div className="text-center text-2xl font-bold m-2">
-            <LoadingButton
-              loading={isProcessingRegister}
-              variant="outlined"
-              className="text-small my-button"
-              type="submit"
-              disabled={
-                isProcessing ||
-                isProcessingMint ||
-                isProcessingRegister ||
-                !isNameValid(domainName) ||
-                !isNameAvailable
-              }
-            >
-              Pay 10 USDC tokens and register
-            </LoadingButton>
-          </div>
-        </div>
-      </form>
-      */}
-
-      <div className="text-center text-l font-bold m-2 p-2">
-        <p>We use AccountAbstraction (will pay for your gas!)</p>
-      </div>
-
-      <form onSubmit={onMintAA} className="animate-in fade-in duration-700">
-        <div>
-          <div className="text-center text-2xl font-bold m-2">
-            <LoadingButton
-              loading={isProcessingMint}
-              variant="outlined"
-              className="text-small my-button"
-              type="submit"
-              disabled={
-                isProcessing || isProcessingMint || isProcessingRegister
-              }
-            >
-              Mint 100 USDC tokens
-            </LoadingButton>
-          </div>
-        </div>
-      </form>
-
-      <form
-        onSubmit={onRegisterWithAA}
-        className="animate-in fade-in duration-700"
-      >
-        <div>
-          <div className="text-center text-2xl font-bold m-2">
-            <LoadingButton
-              loading={isProcessingRegister}
-              variant="outlined"
-              className="text-small my-button"
-              type="submit"
-              disabled={
-                isProcessing ||
-                isProcessingMint ||
-                isProcessingRegister ||
-                !isNameValid(domainName) ||
-                !isNameAvailable
-              }
-            >
-              Pay 10 USDC tokens to Register
-            </LoadingButton>
-          </div>
-        </div>
-      </form>
-
-      <div className="text-center text-m m-2">
-        <p>Domain will be registered for: 365 days</p>
-      </div>
+      )}
     </div>
   )
 }

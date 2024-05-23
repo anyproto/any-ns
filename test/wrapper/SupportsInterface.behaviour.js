@@ -124,9 +124,8 @@ function shouldSupportInterfaces(contractUnderTest, interfaces = []) {
           const fnSig = FN_SIGNATURES[fnName]
           describe(fnName, function () {
             it('has to be implemented', function () {
-              expect(
-                this.contractUnderTest.interface.getFunction(fnSig),
-              ).to.not.throw
+              expect(this.contractUnderTest.interface.getFunction(fnSig)).to.not
+                .throw
             })
           })
         }

@@ -23,7 +23,7 @@ export default function DataForm({
 }) {
   const [isProcessing, setIsProcessing] = useState(false)
 
-  const [anyName, setAnyName] = useState(domainNamePreselected)
+  const [anyName, setAnyName] = useState('')
   const debouncedLookup = useDebounce(anyName, 1000)
 
   // if AA was used to register a domain name -> this is the address of the
@@ -37,6 +37,23 @@ export default function DataForm({
   const [expirationDate, setExpirationDate] = useState('')
 
   const [isNameAvailable, setNameAvailable] = useState(false)
+
+  // Set initial name value when domainNamePreselected changes
+  useEffect(() => {
+    if (domainNamePreselected) {
+      setAnyName(domainNamePreselected)
+    }
+  }, [domainNamePreselected])
+
+  // Add initial load effect
+  useEffect(() => {
+    if (domainNamePreselected) {
+      setIsProcessing(true)
+      getNameInfo(domainNamePreselected).finally(() => {
+        setIsProcessing(false)
+      })
+    }
+  }, [domainNamePreselected])
 
   useEffect(() => {
     document.getElementById('prompt-name').focus()
@@ -194,18 +211,12 @@ export default function DataForm({
               name="name"
               value={anyName}
               onChange={(e) => setAnyName(e.target.value)}
-              //onChange={(e) => dispatch({
-              //        type: "SELECTED_NAME",
-              //        payload: e.target.value
-              //    })}
               placeholder=""
               className={`block w-full input-with-no-button flex-grow${
                 isProcessing ? ' rounded-md' : ' rounded-l-md'
               }`}
               disabled={isProcessing}
               autoFocus
-              //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
-              //required
             />
           </div>
         </div>
@@ -223,16 +234,11 @@ export default function DataForm({
               type="text"
               name="addressAA"
               value={userAddressAA}
-              //onChange={(e) => dispatch({
-              //        type: "SELECTED_NAME",
-              //        payload: e.target.value
-              //    })}
               placeholder=""
               className={`block w-full input-with-no-button flex-grow${
                 isProcessing ? ' rounded-md' : ' rounded-l-md'
               }`}
               disabled={true}
-              //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
               required
             />
           </div>
@@ -249,141 +255,112 @@ export default function DataForm({
               type="text"
               name="address"
               value={userAddress}
-              onChange={(e) => setUserAddress(e.target.value)}
-              //onChange={(e) => dispatch({
-              //        type: "SELECTED_NAME",
-              //        payload: e.target.value
-              //    })}
-              placeholder=""
-              className={`block w-full input-with-no-button flex-grow${
-                isProcessing ? ' rounded-md' : ' rounded-l-md'
-              }`}
-              disabled={isProcessing || !handlerRegister}
-              //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
-              required
-            />
-          </div>
-        </div>
-
-        <div className="singleDataLine">
-          <div className="flex mt-1">
-            <p>Anytype identity of Owner:</p>
-          </div>
-
-          <div>
-            <input
-              id="prompt-content-hash"
-              type="text"
-              name="content-hash"
-              value={contentHash}
-              onChange={(e) => setContentHash(e.target.value)}
-              //onChange={(e) => dispatch({
-              //        type: "SELECTED_NAME",
-              //        payload: e.target.value
-              //    })}
-              placeholder=""
-              className={`block w-full input-with-no-button flex-grow${
-                isProcessing ? ' rounded-md' : ' rounded-l-md'
-              }`}
-              disabled={isProcessing || !handlerRegister}
-              //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
-              required
-            />
-          </div>
-        </div>
-
-        <div className="singleDataLine">
-          <div className="flex mt-1">
-            <p>Space hash/CID (optional):</p>
-          </div>
-
-          <div>
-            <input
-              id="prompt-space-hash"
-              type="text"
-              name="space-hash"
-              value={spaceHash}
-              onChange={(e) => setSpaceHash(e.target.value)}
-              //onChange={(e) => dispatch({
-              //        type: "SELECTED_NAME",
-              //        payload: e.target.value
-              //    })}
-              placeholder=""
-              className={`block w-full input-with-no-button flex-grow${
-                isProcessing ? ' rounded-md' : ' rounded-l-md'
-              }`}
-              disabled={isProcessing || !handlerRegister}
-              //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
-              //required
-            />
-          </div>
-        </div>
-
-        <div className="singleDataLine">
-          <div className="flex mt-1">
-            <p>Expiration date:</p>
-          </div>
-
-          <div>
-            <input
-              id="prompt-exp-date"
-              type="text"
-              name="exp-date"
-              value={expirationDate}
-              onChange={(e) => setExpirationDate(e.target.value)}
-              //onChange={(e) => dispatch({
-              //        type: "SELECTED_NAME",
-              //        payload: e.target.value
-              //    })}
               placeholder=""
               className={`block w-full input-with-no-button flex-grow${
                 isProcessing ? ' rounded-md' : ' rounded-l-md'
               }`}
               disabled={true}
-              //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
-              //required
+              required
             />
           </div>
         </div>
 
-        {handlerRegister && (
-          <div>
-            <div className="text-center text-2xl font-bold m-2">
-              <LoadingButton
-                loading={isProcessing}
-                variant="outlined"
-                className="text-small my-button"
-                type="submit"
-                disabled={
-                  isProcessing ||
-                  !isAccountAdmin(account) ||
-                  !isNameValid(anyName) ||
-                  !isAddressValid(userAddress) ||
-                  !isNameAvailable
-                }
-              >
-                Register on behalf of user
-              </LoadingButton>
-            </div>
-
-            <div className="text-center text-m m-2">
-              <p>Domain will be registered for: 364 days</p>
-            </div>
+        <div className="singleDataLine">
+          <div className="flex mt-1">
+            <p>Content ID:</p>
           </div>
-        )}
-      </form>
 
-      <form onSubmit={onOpenNFT} className="animate-in fade-in duration-700">
-        <div className="text-center text-2xl font-bold m-2">
-          <LoadingButton
-            loading={isProcessing}
-            variant="outlined"
-            className="text-small my-button"
-            type="submit"
-            disabled={!anyName || !anyName.length}
-          >
-            See attached NFT
-          </LoadingButton>
+          <div>
+            <input
+              id="prompt-content"
+              type="text"
+              name="content"
+              value={contentHash}
+              placeholder=""
+              className={`block w-full input-with-no-button flex-grow${
+                isProcessing ? ' rounded-md' : ' rounded-l-md'
+              }`}
+              disabled={true}
+              required
+            />
+          </div>
+        </div>
+
+        <div className="singleDataLine">
+          <div className="flex mt-1">
+            <p>Space ID:</p>
+          </div>
+
+          <div>
+            <input
+              id="prompt-space"
+              type="text"
+              name="space"
+              value={spaceHash}
+              placeholder=""
+              className={`block w-full input-with-no-button flex-grow${
+                isProcessing ? ' rounded-md' : ' rounded-l-md'
+              }`}
+              disabled={true}
+              required
+            />
+          </div>
+        </div>
+
+        <div className="singleDataLine">
+          <div className="flex mt-1">
+            <p>Expiration Date:</p>
+          </div>
+
+          <div>
+            <input
+              id="prompt-expiration"
+              type="text"
+              name="expiration"
+              value={expirationDate}
+              placeholder=""
+              className={`block w-full input-with-no-button flex-grow${
+                isProcessing ? ' rounded-md' : ' rounded-l-md'
+              }`}
+              disabled={true}
+              required
+            />
+          </div>
+        </div>
+
+        <div className="singleDataLine">
+          <div className="flex mt-1">
+            <p>Status:</p>
+          </div>
+
+          <div>
+            <input
+              id="prompt-status"
+              type="text"
+              name="status"
+              value={isNameAvailable ? 'Available' : 'Registered'}
+              placeholder=""
+              className={`block w-full input-with-no-button flex-grow${
+                isProcessing ? ' rounded-md' : ' rounded-l-md'
+              }`}
+              disabled={true}
+              required
+            />
+          </div>
+        </div>
+
+        <div className="singleDataLine">
+          <div className="flex justify-center">
+            <LoadingButton
+              loading={isProcessing}
+              variant="contained"
+              className="flex-none px-4 py-2 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 h-[36px] min-w-[120px] flex items-center justify-center"
+              onClick={onOpenNFT}
+              disabled={isProcessing || !userAddress}
+            >
+              See Attached NFT
+            </LoadingButton>
+          </div>
         </div>
       </form>
     </div>

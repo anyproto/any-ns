@@ -4,8 +4,8 @@ const Web3 = require('web3')
 const web3 = new Web3()
 web3.setProvider(new Web3.providers.HttpProvider(process.env.INFURA_URL))
 
-const RegistryJson = require('deployments/sepolia/ENSRegistry.json')
-const ResolverJson = require('deployments/sepolia/AnytypeResolver.json')
+import RegistryJson from '../../../../deployments/sepolia/ENSRegistry.json'
+import ResolverJson from '../../../../deployments/sepolia/AnytypeResolver.json'
 
 async function getResolverForName(name) {
   const ensContract = new web3.eth.Contract(

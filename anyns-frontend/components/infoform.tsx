@@ -84,37 +84,24 @@ export default function InfoForm({
             name="name"
             value={domainName}
             onChange={(e) => onDomainChanged(e.target.value)}
-            //onChange={(e) => dispatch({
-            //        type: "SELECTED_NAME",
-            //        payload: e.target.value
-            //    })}
             placeholder="Name"
             className="block w-full input-with-no-button flex-grow"
             disabled={isProcessing}
             autoFocus
-            //pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
-            //required
           />
 
-          {/*
           <LoadingButton
             loading={isProcessing}
             variant="outlined"
-            className="text-small inline-block p-3 flex-none my-button"
-            type="submit"
-            disabled={isProcessing || !debouncedLookup}
-          >
-            {isNameAvailable ? 'Register' : 'Info'}
-          </LoadingButton>
-          */}
-          <LoadingButton
-            loading={isProcessing}
-            variant="outlined"
-            className="text-small inline-block p-3 flex-none my-button"
+            className="text-small inline-block p-3 flex-none my-button flex items-center justify-center h-[42px] min-w-[80px]"
             type="submit"
             disabled={isProcessing || !debouncedLookup || isNameAvailable}
           >
-            Info
+            {isProcessing ? (
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+            ) : (
+              'Info'
+            )}
           </LoadingButton>
         </div>
       </form>

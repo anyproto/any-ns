@@ -1,7 +1,6 @@
-import { InjectedConnector } from '@web3-react/injected-connector'
+import { MetaMask } from '@web3-react/metamask'
+import { initializeConnector } from '@web3-react/core'
 
-export const injected = new InjectedConnector({
-  // 137 - Polygon Mainnet
-  // 11155111 - Sepolia
-  supportedChainIds: [1, 137, 11155111],
-})
+export const [metaMask, hooks] = initializeConnector<MetaMask>(
+  (actions) => new MetaMask({ actions }),
+)

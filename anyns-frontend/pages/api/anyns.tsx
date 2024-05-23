@@ -2,10 +2,10 @@ const Web3 = require('web3')
 
 const { utils } = require('ethers')
 
-const RegistryJson = require('deployments/sepolia/ENSRegistry.json')
-const ABIResolver = require('deployments/sepolia/AnytypeResolver.json')
-const NameWrapperJson = require('deployments/sepolia/AnytypeNameWrapper.json')
-const RegistrarJson = require('deployments/sepolia/AnytypeRegistrarImplementation.json')
+const RegistryJson = require('../../deployments/sepolia/ENSRegistry.json')
+const ABIResolver = require('../../deployments/sepolia/AnytypeResolver.json')
+const NameWrapperJson = require('../../deployments/sepolia/AnytypeNameWrapper.json')
+const RegistrarJson = require('../../deployments/sepolia/AnytypeRegistrarImplementation.json')
 
 const web3 = new Web3()
 web3.setProvider(new Web3.providers.HttpProvider(process.env.INFURA_URL))

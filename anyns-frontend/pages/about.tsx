@@ -1,106 +1,250 @@
-import Layout from '../components/layout'
+import { useState } from 'react'
+import { useRouter } from 'next/router'
 
-export default function ApiPage() {
+export default function AboutPage() {
+  const router = useRouter()
+
   return (
-    <Layout>
-      <div className="mx-auto p-2 text-l">
-        <h2 className="font-bold">Any Naming System rationale</h2>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      {/* Header */}
+      <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center">
+              <a
+                href="/"
+                className="text-xl font-bold text-gray-900 hover:text-indigo-600"
+              >
+                any ns
+              </a>
+            </div>
+            <nav className="flex space-x-8">
+              <a
+                href="https://anytype.io"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-500 hover:text-gray-900"
+              >
+                Anytype
+              </a>
+              <a href="/about" className="text-gray-500 hover:text-gray-900">
+                About
+              </a>
+            </nav>
+          </div>
+        </div>
+      </header>
 
-        <p className="mb-4">
-          Incorporating a collaboration feature necessitates providing users
-          with the means to connect, search, and share their content
-          effectively. To enable efficient content search and referencing, a
-          global naming system must be implemented. This naming system would
-          allow users to refer to one another using names such as stacy or
-          denote their space as stacy_workspace1_public.
-        </p>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="max-w-3xl mx-auto">
+          <h1 className="text-4xl font-bold text-gray-900 mb-8">Anytype</h1>
 
-        <p className="mb-4">
-          Given that our project involves the creation of a distributed system,
-          the naming system becomes one of the key modules. Consequently, the
-          design of this naming system should be permissionlessness (i.e.:
-          “unstoppable” or “politically decentralized”), preventing Anytype from
-          censoring users' content and names.
-        </p>
+          <div className="space-y-6 text-gray-600">
+            <p>
+              Anytype is a local-first, peer-to-peer application that is built
+              around data privacy and autonomy. Any Naming System was developed
+              as a part of the Anytype project.
+            </p>
+          </div>
+        </div>
 
-        <p className="mb-4">
-          In our pursuit of establishing a permissionless naming system, we have
-          opted to leverage smart contracts built on the EVM chain, compatible
-          with the Ethereum Name Service (ENS). This compatibility facilitates
-          seamless integration with various existing tools and services. It can
-          help others to talk to us.
-        </p>
+        <div className="max-w-3xl mx-auto">
+          <h1 className="text-4xl font-bold text-gray-900 mb-8">
+            Any Naming System rationale
+          </h1>
 
-        <p className="mb-4">
-          However, interacting with smart contracts places a notable burden on
-          end users. They are required to (1) create wallets, (2) fund them, (3)
-          authorize each transaction with their signature, and (4) pay for gas.
-        </p>
+          <div className="space-y-6 text-gray-600">
+            <p>
+              Internally Any names are used in Anytype to identify and refer
+              users and spaces.
+            </p>
+          </div>
 
-        <p className="mb-4">
-          Fortunately, a concept known as "Account Abstraction" presents a
-          solution. Through this approach, Anytype can cover the gas fees on
-          behalf of the user. Notably, users retain full control over all
-          operations and maintain direct communication with the smart contracts.
-          Anytype's inability to censor or block user actions is a fundamental
-          aspect of this design. Furthermore, users have the flexibility to use
-          their Any names outside the Any ecosystem if they choose. They can
-          interact directly with the smart contract and cover gas costs
-          independently or utilize other Account Abstraction services that
-          provide similar functionality.
-        </p>
+          <div className="space-y-6 text-gray-600">
+            <p>
+              Incorporating a collaboration feature necessitates providing users
+              with the means to connect, search, and share their content
+              effectively. To enable efficient content search and referencing, a
+              global naming system must be implemented. This naming system would
+              allow users to refer to one another using names such as stacy or
+              denote their space as stacy_workspace1_public.
+            </p>
 
-        <p className="mb-4">
-          <h2 className="font-bold">Key outcomes</h2>
-          <ol>
-            <li>
-              ✅︎ References and links to users' data are immune to censorship.
+            <p>
+              Given that our project involves the creation of a distributed
+              system, the naming system becomes one of the key modules.
+              Consequently, the design of this naming system should be
+              permissionlessness (i.e.: "unstoppable" or "politically
+              decentralized"), preventing Anytype from censoring users' content
+              and names.
+            </p>
+
+            <p>
+              In our pursuit of establishing a permissionless naming system, we
+              have opted to leverage smart contracts built on the EVM chain,
+              compatible with the Ethereum Name Service (ENS). This
+              compatibility facilitates seamless integration with various
+              existing tools and services. It can help others to talk to us.
+            </p>
+
+            <p>
+              However, interacting with smart contracts places a notable burden
+              on end users. They are required to (1) create wallets, (2) fund
+              them, (3) authorize each transaction with their signature, and (4)
+              pay for gas.
+            </p>
+
+            <p>
+              Fortunately, a concept known as "Account Abstraction" presents a
+              solution. Through this approach, Anytype can cover the gas fees on
+              behalf of the user. Notably, users retain full control over all
+              operations and maintain direct communication with the smart
+              contracts. Anytype's inability to censor or block user actions is
+              a fundamental aspect of this design. Furthermore, users have the
+              flexibility to use their Any names outside the Any ecosystem if
+              they choose. They can interact directly with the smart contract
+              and cover gas costs independently or utilize other Account
+              Abstraction services that provide similar functionality.
+            </p>
+          </div>
+
+          <h2 className="text-2xl font-bold text-gray-900 mt-12 mb-6">
+            Key outcomes
+          </h2>
+          <ul className="space-y-4 text-gray-600">
+            <li className="flex items-start">
+              <span className="text-green-500 mr-2">✓</span>
+              <span>
+                References and links to users' data are immune to censorship.
+              </span>
             </li>
-            <li>
-              ✅︎ Users can leverage Anytype's user-friendly Account Abstraction
-              service.
+            <li className="flex items-start">
+              <span className="text-green-500 mr-2">✓</span>
+              <span>
+                Users can leverage Anytype's user-friendly Account Abstraction
+                service.
+              </span>
             </li>
-            <li>
-              ✅︎ In the event that Anytype discontinues this service or tries
-              to censor, users can seamlessly transition to an alternative
-              Account Abstraction service or engage directly with smart
-              contracts.
+            <li className="flex items-start">
+              <span className="text-green-500 mr-2">✓</span>
+              <span>
+                In the event that Anytype discontinues this service or tries to
+                censor, users can seamlessly transition to an alternative
+                Account Abstraction service or engage directly with smart
+                contracts.
+              </span>
             </li>
-          </ol>
-        </p>
+          </ul>
+
+          <div className="mt-12 space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900">Resources</h2>
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-medium text-gray-900">
+                  any-ns contracts:
+                </h3>
+                <a
+                  href="https://github.com/anyproto/any-ns"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-indigo-600 hover:text-indigo-500"
+                >
+                  https://github.com/anyproto/any-ns
+                </a>
+              </div>
+              <div>
+                <h3 className="text-lg font-medium text-gray-900">
+                  any-ns-node:
+                </h3>
+                <a
+                  href="https://github.com/anyproto/any-ns-node"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-indigo-600 hover:text-indigo-500"
+                >
+                  https://github.com/anyproto/any-ns-node
+                </a>
+              </div>
+              <div>
+                <h3 className="text-lg font-medium text-gray-900">
+                  gRPC proto files to access any-ns-node:
+                </h3>
+                <a
+                  href="https://github.com/anyproto/any-sync/tree/main/nameservice/nameserviceproto/protos"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-indigo-600 hover:text-indigo-500"
+                >
+                  https://github.com/anyproto/any-sync/tree/main/nameservice/nameserviceproto/protos
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <hr />
-      <div>
-        <div className="mx-auto p-2 text-l">
-          <h2>any-ns contracts:</h2>
-          <p>
-            <a href="https://github.com/anyproto/any-ns">
-              <strong>https://github.com/anyproto/any-ns</strong>
-            </a>
-          </p>
+      {/* Footer */}
+      <footer className="bg-white border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col items-end space-y-4">
+            <div className="flex space-x-6">
+              <a
+                href="https://github.com/anyproto/any-ns"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-gray-500"
+              >
+                <span className="sr-only">GitHub</span>
+                <svg
+                  className="h-6 w-6"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </a>
+              <a
+                href="https://x.com/AnytypeLabs"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-gray-500"
+              >
+                <span className="sr-only">Twitter</span>
+                <svg
+                  className="h-6 w-6"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+                </svg>
+              </a>
+              <a
+                href="https://t.me/anytype"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-gray-500"
+              >
+                <span className="sr-only">Telegram</span>
+                <svg
+                  className="h-6 w-6"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12a12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472c-.18 1.898-.962 6.502-1.36 8.627c-.168.9-.499 1.201-.82 1.23c-.696.065-1.225-.46-1.9-.902c-1.056-.693-1.653-1.124-2.678-1.8c-1.185-.78-.417-1.21.258-1.91c.177-.184 3.247-2.977 3.307-3.23c.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345c-.48.33-.913.49-1.302.48c-.428-.008-1.252-.241-1.865-.44c-.752-.245-1.349-.374-1.297-.789c.027-.216.325-.437.893-.663c3.498-1.524 5.83-2.529 6.998-3.014c3.332-1.386 4.025-1.627 4.476-1.635z" />
+                </svg>
+              </a>
+            </div>
+            <p className="text-sm text-gray-500">
+              Made by Any, a Swiss association
+            </p>
+          </div>
         </div>
-
-        <div className="mx-auto p-2 text-l">
-          <h2>any-ns-node:</h2>
-          <p>
-            <a href="https://github.com/anyproto/any-ns-node">
-              <strong>https://github.com/anyproto/any-ns-node</strong>
-            </a>
-          </p>
-        </div>
-
-        <div className="mx-auto p-2 text-l">
-          <h2>gRPC proto files to access any-ns-node:</h2>
-          <p>
-            <a href="https://github.com/anyproto/any-sync/tree/main/nameservice/nameserviceproto/protos">
-              <strong>
-                https://github.com/anyproto/any-sync/tree/main/nameservice/nameserviceproto/protos
-              </strong>
-            </a>
-          </p>
-        </div>
-      </div>
-    </Layout>
+      </footer>
+    </div>
   )
 }

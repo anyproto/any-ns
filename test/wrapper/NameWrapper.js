@@ -4691,9 +4691,8 @@ describe('Name Wrapper', () => {
       const [, fusesBefore] = await NameWrapper.getData(subWrappedTokenId)
       expect(fusesBefore).to.equal(PARENT_CANNOT_CONTROL)
       await NameWrapper2.unwrap(wrappedTokenId, subLabelHash, account2)
-      const [owner, fuses, expiry] = await NameWrapper.getData(
-        subWrappedTokenId,
-      )
+      const [owner, fuses, expiry] =
+        await NameWrapper.getData(subWrappedTokenId)
       expect(owner).to.equal(EMPTY_ADDRESS)
       expect(expiry).to.equal(parentExpiry.add(GRACE_PERIOD))
       expect(fuses).to.equal(PARENT_CANNOT_CONTROL)
@@ -4726,9 +4725,8 @@ describe('Name Wrapper', () => {
       const [, fusesBefore] = await NameWrapper.getData(subWrappedTokenId)
       expect(fusesBefore).to.equal(PARENT_CANNOT_CONTROL)
       await NameWrapper2.unwrap(wrappedTokenId, subLabelHash, account2)
-      const [owner, fuses, expiry] = await NameWrapper.getData(
-        subWrappedTokenId,
-      )
+      const [owner, fuses, expiry] =
+        await NameWrapper.getData(subWrappedTokenId)
 
       expect(owner).to.equal(EMPTY_ADDRESS)
       expect(expiry).to.equal(parentExpiry - DAY / 2)
@@ -4738,9 +4736,8 @@ describe('Name Wrapper', () => {
       await evm.advanceTime(DAY / 2 + 1)
       await evm.mine()
 
-      const [, fusesAfter, expiryAfter] = await NameWrapper.getData(
-        subWrappedTokenId,
-      )
+      const [, fusesAfter, expiryAfter] =
+        await NameWrapper.getData(subWrappedTokenId)
       expect(expiryAfter).to.equal(parentExpiry - DAY / 2)
       expect(fusesAfter).to.equal(0)
       await NameWrapper.setSubnodeOwner(
@@ -4756,9 +4753,8 @@ describe('Name Wrapper', () => {
       )
 
       const owner3 = await NameWrapper.ownerOf(subWrappedTokenId)
-      const [rawOwner, rawFuses, expiry2] = await NameWrapper.getData(
-        subWrappedTokenId,
-      )
+      const [rawOwner, rawFuses, expiry2] =
+        await NameWrapper.getData(subWrappedTokenId)
       const [, activeFuses] = await NameWrapper.getData(subWrappedTokenId)
       expect(activeFuses).to.equal(0)
       expect(rawFuses).to.equal(0)
@@ -4805,9 +4801,8 @@ describe('Name Wrapper', () => {
 
       const block = await ethers.provider.getBlock('latest')
 
-      const [owner, fuses, expiry] = await NameWrapper.getData(
-        subWrappedTokenId,
-      )
+      const [owner, fuses, expiry] =
+        await NameWrapper.getData(subWrappedTokenId)
 
       // subdomain is expired
       expect(owner).to.equal(EMPTY_ADDRESS)
@@ -4851,9 +4846,8 @@ describe('Name Wrapper', () => {
       // Unwrap to 0 to burn the name
       await NameWrapper2.unwrap(wrappedTokenId, subLabelHash, account2)
       await EnsRegistry2.setOwner(subWrappedTokenId, EMPTY_ADDRESS)
-      const [owner, fuses, expiry] = await NameWrapper.getData(
-        subWrappedTokenId,
-      )
+      const [owner, fuses, expiry] =
+        await NameWrapper.getData(subWrappedTokenId)
       const registryOwner = await EnsRegistry2.owner(subWrappedTokenId)
       const block = await ethers.provider.getBlock('latest')
       expect(owner).to.equal(EMPTY_ADDRESS)
@@ -5306,9 +5300,8 @@ describe('Name Wrapper', () => {
       expect(fusesBefore).to.equal(PARENT_CANNOT_CONTROL)
       expect(expiryBefore).to.equal(parentExpiry.add(GRACE_PERIOD))
       await NameWrapper2.unwrap(wrappedTokenId, subLabelHash, account2)
-      const [owner, fuses, expiry] = await NameWrapper.getData(
-        subWrappedTokenId,
-      )
+      const [owner, fuses, expiry] =
+        await NameWrapper.getData(subWrappedTokenId)
       expect(owner).to.equal(EMPTY_ADDRESS)
       expect(fuses).to.equal(PARENT_CANNOT_CONTROL)
       expect(expiry).to.equal(parentExpiry.add(GRACE_PERIOD))
@@ -5351,9 +5344,8 @@ describe('Name Wrapper', () => {
       expect(fusesBefore).to.equal(PARENT_CANNOT_CONTROL)
       await NameWrapper2.unwrap(wrappedTokenId, subLabelHash, account2)
 
-      const [owner, fuses, expiry] = await NameWrapper.getData(
-        subWrappedTokenId,
-      )
+      const [owner, fuses, expiry] =
+        await NameWrapper.getData(subWrappedTokenId)
       expect(owner).to.equal(EMPTY_ADDRESS)
       expect(expiry).to.equal(parentExpiry - DAY / 2)
       expect(fuses).to.equal(PARENT_CANNOT_CONTROL)
@@ -5362,9 +5354,8 @@ describe('Name Wrapper', () => {
       await evm.advanceTime(DAY / 2 + 1)
       await evm.mine()
 
-      const [, fusesAfter, expiryAfter] = await NameWrapper.getData(
-        subWrappedTokenId,
-      )
+      const [, fusesAfter, expiryAfter] =
+        await NameWrapper.getData(subWrappedTokenId)
       expect(expiryAfter).to.equal(parentExpiry - DAY / 2)
       expect(fusesAfter).to.equal(0)
 
@@ -5421,9 +5412,8 @@ describe('Name Wrapper', () => {
 
       const block = await ethers.provider.getBlock('latest')
 
-      const [owner, fuses, expiry] = await NameWrapper.getData(
-        subWrappedTokenId,
-      )
+      const [owner, fuses, expiry] =
+        await NameWrapper.getData(subWrappedTokenId)
 
       // subdomain is expired
       expect(owner).to.equal(EMPTY_ADDRESS)
@@ -5471,9 +5461,8 @@ describe('Name Wrapper', () => {
       // Unwrap to 0 to burn the name
       await NameWrapper2.unwrap(wrappedTokenId, subLabelHash, account2)
       await EnsRegistry2.setOwner(subWrappedTokenId, EMPTY_ADDRESS)
-      const [owner, fuses, expiry] = await NameWrapper.getData(
-        subWrappedTokenId,
-      )
+      const [owner, fuses, expiry] =
+        await NameWrapper.getData(subWrappedTokenId)
       const registryOwner = await EnsRegistry2.owner(subWrappedTokenId)
       const block = await ethers.provider.getBlock('latest')
       expect(owner).to.equal(EMPTY_ADDRESS)
@@ -6353,9 +6342,8 @@ describe('Name Wrapper', () => {
       //renew for less than the grace period
       await NameWrapper.renew(labelHash, 1 * DAY)
 
-      const [ownerAfter, fusesAfter, expiryAfter] = await NameWrapper.getData(
-        wrappedTokenId,
-      )
+      const [ownerAfter, fusesAfter, expiryAfter] =
+        await NameWrapper.getData(wrappedTokenId)
       expect(ownerAfter).to.equal(account)
       // fuses remain the same
       expect(fusesAfter).to.equal(

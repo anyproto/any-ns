@@ -13,9 +13,10 @@ export default function AccountDataForm({
   accountScw,
   handleFetchNameInfo,
   handleReverseLoookup,
+  handleDisconnect,
 }) {
   const [isProcessing, setIsProcessing] = useState(false)
-  const [anyName, setAnyName] = useState()
+  const [anyName, setAnyName] = useState('')
 
   const [contentHash, setContentHash] = useState('')
   const [spaceHash, setSpaceHash] = useState('')
@@ -42,26 +43,37 @@ export default function AccountDataForm({
   }
 
   const findNameReverse = async (addr) => {
+    if (typeof addr == 'undefined' || !addr || addr.length == 0) {
+      setAnyName('Not found')
+      return
+    }
+
     const [isErr, data] = await handleReverseLoookup(addr)
     if (isErr) {
+      setAnyName('Not found')
       return
     }
 
-    if (isErr) {
-      setAnyName('')
-      return
-    }
-
-    if (!data || !data.name || isErr) {
-      setAnyName('')
+    if (!data || !data.name) {
+      setAnyName('Not found')
     } else {
       setAnyName(data.name)
     }
   }
 
   const getNameInfo = async (nameFull) => {
+    if (!nameFull || nameFull.length == 0 || nameFull == 'Not found') {
+      setContentHash('Not found')
+      setSpaceHash('Not found')
+      setExpirationDate('Not found')
+      return
+    }
+
     const [isErr, data] = await handleFetchNameInfo(nameFull)
     if (isErr) {
+      setContentHash('Not found')
+      setSpaceHash('Not found')
+      setExpirationDate('Not found')
       return
     }
 
@@ -70,14 +82,14 @@ export default function AccountDataForm({
       const contentID = web3.utils.hexToUtf8(data.contentID)
       setContentHash(contentID)
     } else {
-      setContentHash('')
+      setContentHash('Not found')
     }
 
     if (data.spaceID) {
       const spaceID = web3.utils.hexToUtf8(data.spaceID)
       setSpaceHash(spaceID)
     } else {
-      setSpaceHash('')
+      setSpaceHash('Not found')
     }
 
     if (data.owner) {
@@ -85,7 +97,7 @@ export default function AccountDataForm({
       let date = new Date(data.expirationDate * 1000)
       setExpirationDate(date.toString())
     } else {
-      setExpirationDate('')
+      setExpirationDate('Not found')
     }
   }
 
@@ -94,8 +106,21 @@ export default function AccountDataForm({
   }, [accountScw])
 
   useEffect(() => {
+    console.log('getNameInfo for anyName: ', anyName)
+
     getNameInfo(anyName)
   }, [anyName])
+
+  const onDisconnect = async () => {
+    setIsProcessing(true)
+    try {
+      await handleDisconnect()
+    } catch (ex) {
+      console.log(ex)
+    } finally {
+      setIsProcessing(false)
+    }
+  }
 
   return (
     <div>
@@ -220,19 +245,20 @@ export default function AccountDataForm({
       </div>
 
       <form onSubmit={onOpenNFT} className="animate-in fade-in duration-700">
-        <div className="text-center text-2xl font-bold m-2">
+        <div className="flex justify-center m-2">
           <LoadingButton
             loading={isProcessing}
-            variant="outlined"
-            className="text-small my-button"
+            variant="contained"
+            className="flex-none px-6 py-3 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 h-[44px] min-w-[120px] flex items-center justify-center"
             type="submit"
-            disabled={!anyName || !anyName.length}
+            disabled={!anyName || !anyName.length || anyName === 'Not found'}
           >
             See attached NFT
           </LoadingButton>
         </div>
       </form>
 
+      {/*
       <form
         onSubmit={onTransferNft}
         className="animate-in fade-in duration-700"
@@ -273,6 +299,7 @@ export default function AccountDataForm({
           </LoadingButton>
         </div>
       </form>
+      */}
     </div>
   )
 }
