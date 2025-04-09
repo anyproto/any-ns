@@ -237,3 +237,42 @@ export async function getScwAsync(addr) {
     return ''
   }
 }
+
+export async function register(
+  name,
+  registrantAccount,
+  contentHash,
+  spaceHash,
+) {
+  const registrarControllerJson = require('../deployments/sepolia/AnytypeRegistrarController.json')
+  const registrarController = new web3.eth.Contract(
+    registrarControllerJson.abi,
+    registrarControllerJson.address,
+  )
+
+  // Prepare resolver call data for content hash and space ID
+  const callData = await prepareCallData(contentHash, spaceHash, name)
+
+  try {
+    // Get gas estimate for registration
+    const gas = await registrarController.methods
+      .register(name, registrantAccount, callData)
+      .estimateGas({
+        from: registrantAccount,
+      })
+
+    // Send registration transaction
+    const tx = await registrarController.methods
+      .register(name, registrantAccount, callData)
+      .send({
+        from: registrantAccount,
+        gas,
+      })
+
+    console.log('Registration transaction:', tx)
+    return [false, tx]
+  } catch (err) {
+    console.error('Registration failed:', err)
+    return [true, err]
+  }
+}

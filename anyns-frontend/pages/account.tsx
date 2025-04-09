@@ -5,23 +5,23 @@ import { useRouter } from 'next/router'
 
 import { getScwAsync, fetchNameInfo, handleReverseLoookup } from '../lib/anyns'
 import AccountDataForm from '../components/accountdataform'
-import { injected } from '../components/connectors'
+import { metaMask } from '../components/connectors'
 
 export default function AccountPage() {
   const router = useRouter()
-  const { account, active, activate } = useWeb3React()
+  const { account, isActive, connector } = useWeb3React()
   const [accountScw, setAccountScw] = useState('')
 
   useEffect(() => {
     const connectWalletOnPageLoad = async () => {
       try {
-        await activate(injected)
+        await connector.activate()
       } catch (ex) {
         console.log(ex)
       }
     }
     connectWalletOnPageLoad()
-  }, [])
+  }, [connector])
 
   useEffect(() => {
     const f = async () => {
@@ -36,7 +36,16 @@ export default function AccountPage() {
     e.preventDefault()
 
     try {
-      await activate(injected)
+      await connector.activate()
+    } catch (ex) {
+      console.log(ex)
+    }
+  }
+
+  const handleDisconnect = async () => {
+    try {
+      await connector.deactivate()
+      window.location.reload()
     } catch (ex) {
       console.log(ex)
     }
@@ -76,7 +85,7 @@ export default function AccountPage() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="max-w-3xl mx-auto">
-          {!active && (
+          {!isActive && (
             <div className="bg-white rounded-xl shadow-sm p-8 text-center">
               <p className="text-lg text-gray-900 mb-6">
                 Use Anytype Key (12-word seed phrase) to initialize your
@@ -97,13 +106,14 @@ export default function AccountPage() {
             </div>
           )}
 
-          {active && (
+          {isActive && (
             <div className="bg-white rounded-xl shadow-sm p-8">
               <AccountDataForm
                 account={account}
                 accountScw={accountScw}
                 handleFetchNameInfo={fetchNameInfo}
                 handleReverseLoookup={handleReverseLoookup}
+                handleDisconnect={handleDisconnect}
               />
             </div>
           )}

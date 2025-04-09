@@ -17,32 +17,49 @@ import {
   checkNameAvailability,
   removeTLD,
   prepareCallData,
+  getScwAsync,
+  register,
 } from '../../lib/anyns'
 
-const resolverJson = require('../../deployments/sepolia/AnytypeResolver.json')
-//const erc20usdcToken = require('../../deployments/sepolia/FakeUSDC.json')
-const registrarControllerJson = require('../../deployments/sepolia/AnytypeRegistrarController.json')
-
-// Access our wallet inside of our dapp
 import Web3 from 'web3'
 import { rpc } from 'viem/utils'
 import { create } from 'domain'
 const web3 = new Web3(Web3.givenProvider)
 
+const resolverJson = require('../../deployments/sepolia/AnytypeResolver.json')
+const registrarControllerJson = require('../../deployments/sepolia/AnytypeRegistrarController.json')
+
 export default function RegisterPage() {
-  const { active, account, library } = useWeb3React()
+  const { isActive, account, connector } = useWeb3React()
 
   const [isProcessing, setIsProcessing] = useState(false)
-
   const [showModal, setShowModal] = useState(false)
   const [modalTitle, setModalTitle] = useState('Name availability')
   const [modalText, setModalText] = useState('Name is available!')
+  const [error, setError] = useState('')
 
-  const [error, setError] = useState(null)
+  const [domainName, setDomainName] = useState('')
+  const [isNameAvailable, setIsNameAvailable] = useState(false)
+
+  const [contentHash, setContentHash] = useState('')
+  const [spaceHash, setSpaceHash] = useState('')
+
+  const [accountAA, setAccountAA] = useState('')
+  const [amountUsdcAA, setAmountUsdcAA] = useState(0.0)
+  const [amountNameTokensAA, setAmountNameTokensAA] = useState(0.0)
 
   const metamaskOwner = useMetaMaskAsSmartAccountOwner()
 
   const router = useRouter()
+
+  useEffect(() => {
+    const f = async () => {
+      const scw = await getScwAsync(account)
+      setAccountAA(scw)
+    }
+
+    f()
+  }, [account])
 
   const onModalClose = () => {
     setShowModal(false)
@@ -207,170 +224,37 @@ export default function RegisterPage() {
   }
 
   const handlerRegisterForUsdcs = async (
-    nameFull,
+    name,
     registrantAccount,
     contentHash,
-    spaceID,
+    spaceHash,
   ) => {
     // 0 - check if MM is installed
-    if (!active) {
+    if (!isActive) {
       setModalTitle('Metamask is not connected!')
       setModalText('Please install Metamask and connect it...')
       setShowModal(true)
       return
     }
 
-    // 1 - do a name check first
-    if (!verifyFullName(nameFull)) {
-      return
-    }
-
-    const [isErr, isAvail] = await checkNameAvailability(nameFull)
-    if (isErr) {
-      setModalTitle('Something went wrong!')
-      setModalText('Can not check your name availability...')
+    // 1 - validate if name has .any suffix
+    // @ts-ignore
+    if (!name.endsWith('.any')) {
+      setModalTitle('Name is invalid!')
+      setModalText('Name must end with .any suffix')
       setShowModal(true)
       return
     }
 
-    if (!isAvail) {
-      setModalTitle(nameFull + ' is not available!')
-      setModalText('Please choose another name...')
+    // 2 - validate if address is valid ETH address
+    if (!web3.utils.isAddress(registrantAccount)) {
+      setModalTitle('Address is invalid!')
+      setModalText('Please provide a valid ETH address')
       setShowModal(true)
       return
     }
 
-    // get only first part of the name
-    // (name should bear no .any suffix)
-    const nameFirstPart = removeTLD(nameFull)
-
-    // 2 - now commit
-    // Contract address of the deployed smart contract
-    const registrarController = new web3.eth.Contract(
-      registrarControllerJson.abi,
-      registrarControllerJson.address,
-    )
-
-    const DAY = 24 * 60 * 60
-    const REGISTRATION_TIME = 364 * DAY
-
-    // randomize secret
-    const secret = web3.utils.randomHex(32)
-    //const secret = "0x4323456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
-
-    const isReverseRecord = true
-    const ownerControlledFuses = 0
-
-    // this calldata will set spaceid + contenthash automatically
-    const callData = await prepareCallData(contentHash, spaceID, nameFull)
-
-    // should be only called by owner!
-    const commitment = await registrarController.methods
-      .makeCommitment(
-        nameFirstPart,
-        registrantAccount,
-        REGISTRATION_TIME,
-        secret,
-        resolverJson.address,
-        callData,
-        isReverseRecord,
-        ownerControlledFuses,
-      )
-      .call({
-        from: account,
-      })
-
-    console.log('Commitment value: ' + commitment)
-
-    try {
-      // Get permission to access user funds to pay for gas fees
-      const gas = await registrarController.methods
-        .commit(commitment)
-        .estimateGas({
-          from: account,
-        })
-
-      setIsProcessing(true)
-      const tx = await registrarController.methods.commit(commitment).send({
-        from: account,
-        gas,
-      })
-
-      console.log('Commit Transaction: ')
-      console.log(tx)
-    } catch (err) {
-      console.error('Can not commit!')
-      console.error(err)
-
-      setModalTitle('Something went wrong!')
-      setModalText('Can not send 1st <commit> transaction...')
-      setShowModal(true)
-
-      // do not continue
-      setIsProcessing(false)
-      return
-    }
-
-    // 2 - now register
-    console.log("Registering '" + nameFirstPart + "' to " + registrantAccount)
-
-    try {
-      // Get permission to access user funds to pay for gas fees
-      const gas = await registrarController.methods
-        .register(
-          nameFirstPart,
-          registrantAccount,
-          REGISTRATION_TIME,
-          secret,
-          resolverJson.address,
-          callData,
-          isReverseRecord,
-          ownerControlledFuses,
-        )
-        .estimateGas({
-          from: account,
-        })
-
-      console.log('GAS: ' + gas)
-
-      const tx = await registrarController.methods
-        .register(
-          nameFirstPart,
-          registrantAccount,
-          REGISTRATION_TIME,
-          secret,
-          resolverJson.address,
-          callData,
-          isReverseRecord,
-          ownerControlledFuses,
-        )
-        .send({
-          from: account,
-          gas,
-        })
-
-      console.log('Register Transaction: ')
-      console.log(tx)
-    } catch (err) {
-      console.error('Can not register!')
-      console.error(err)
-
-      setModalTitle('Something went wrong!')
-      setModalText('Can not send 2nd <register> transaction...')
-      setShowModal(true)
-
-      setIsProcessing(false)
-      return
-    }
-
-    setIsProcessing(false)
-
-    setModalTitle('All is good!')
-    setModalText(nameFirstPart + ' is registered!')
-    setShowModal(true)
-
-    // update screen
-    router.replace(router.asPath)
+    await register(name, registrantAccount, contentHash, spaceHash)
   }
 
   const handlerRegisterForUsdcsAA = async (
@@ -380,7 +264,7 @@ export default function RegisterPage() {
     spaceID,
   ) => {
     // 0 - check if MM is installed
-    if (!active) {
+    if (!isActive) {
       setModalTitle('Metamask is not connected!')
       setModalText('Please install Metamask and connect it...')
       setShowModal(true)

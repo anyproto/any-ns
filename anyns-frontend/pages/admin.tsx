@@ -9,7 +9,7 @@ import {
   prepareCallData,
 } from '../lib/anyns'
 
-import { injected } from '../components/connectors'
+import { metaMask } from '../components/connectors'
 import ModalDlg from '../components/modal'
 import Layout from '../components/layout'
 import DataForm from '../components/dataform'
@@ -25,8 +25,7 @@ const web3 = new Web3(Web3.givenProvider)
 
 export default function Admin() {
   const router = useRouter()
-  const { active, account, library, connector, activate, deactivate, chainId } =
-    useWeb3React()
+  const { isActive, account, connector, chainId } = useWeb3React()
 
   const [optionalDomainName, setOptionalDomainName] = useState(
     router.query['name'],
@@ -41,15 +40,13 @@ export default function Admin() {
   useEffect(() => {
     const connectWalletOnPageLoad = async () => {
       try {
-        await activate(injected)
-
-        //localStorage.setItem('isWalletConnected', true);
+        await connector.activate()
       } catch (ex) {
         console.log(ex)
       }
     }
     connectWalletOnPageLoad()
-  }, [])
+  }, [connector])
 
   const onModalClose = () => {
     setShowModal(false)
@@ -87,7 +84,7 @@ export default function Admin() {
     spaceID,
   ) => {
     // 0 - check if MM is installed
-    if (!active) {
+    if (!isActive) {
       setModalTitle('Metamask is not connected!')
       setModalText('Please install Metamask and connect it...')
       setShowModal(true)

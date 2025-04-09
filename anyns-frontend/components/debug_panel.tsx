@@ -9,7 +9,7 @@ const resolverJson = require('../../deployments/sepolia/AnytypeResolver.json')
 import { namehash } from '../lib/anyns'
 
 export default function DebugPanel({ id, setIsProcessing }) {
-  const { account, active } = useWeb3React()
+  const { account, isActive } = useWeb3React()
 
   const onDebug = async (e) => {
     e.preventDefault()
@@ -60,7 +60,7 @@ export default function DebugPanel({ id, setIsProcessing }) {
           variant="outlined"
           className="my-button"
           type="submit"
-          disabled={!active}
+          disabled={!isActive}
         >
           Debug: set a content ID
         </LoadingButton>

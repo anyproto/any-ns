@@ -16,7 +16,7 @@ import WarningPanel from '../components/warning_panel'
 const nameToken = require('../../deployments/sepolia/ERC20NameToken.json')
 
 export default function ConnectedPanel({ isAdminMode }) {
-  const { isActive, account, activate, chainId } = useWeb3React()
+  const { isActive, account, connector, chainId } = useWeb3React()
   const [amountUsdc, setAmountUsdc] = useState(0.0)
 
   const [accountAA, setAccountAA] = useState('')
@@ -33,7 +33,7 @@ export default function ConnectedPanel({ isAdminMode }) {
         // without this delay
         await new Promise((r) => setTimeout(r, 500))
 
-        await activate(metaMask)
+        await connector.activate()
       } catch (ex) {
         console.log(ex)
       }
@@ -41,7 +41,7 @@ export default function ConnectedPanel({ isAdminMode }) {
 
     console.log('Try to reconnect...')
     connectWalletOnPageLoad()
-  }, [])
+  }, [connector])
 
   /*
   useEffect(() => {
@@ -155,7 +155,7 @@ export default function ConnectedPanel({ isAdminMode }) {
     e.preventDefault()
 
     try {
-      await activate(metaMask)
+      await connector.activate()
     } catch (ex) {
       console.log(ex)
     }
