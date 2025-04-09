@@ -354,7 +354,7 @@ export default function DataForm({
             <LoadingButton
               loading={isProcessing}
               variant="contained"
-              className="flex-none px-4 py-2 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 h-[36px] min-w-[120px] flex items-center justify-center"
+              className="flex-none px-6 py-3 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 h-[50px] min-w-[120px] flex items-center justify-center"
               onClick={onOpenNFT}
               disabled={isProcessing || !userAddress}
             >

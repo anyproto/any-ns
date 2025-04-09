@@ -2,7 +2,7 @@ import { useWeb3React } from '@web3-react/core'
 import { LoadingButton } from '@mui/lab'
 import { useEffect, useState } from 'react'
 
-import { injected } from '../components/connectors'
+import { metaMask } from '../components/connectors'
 
 import { createAlchemyAA } from '../lib/alchemy_aa'
 import { useMetaMaskAsSmartAccountOwner } from '../lib/mmsigner'
@@ -16,7 +16,7 @@ import WarningPanel from '../components/warning_panel'
 const nameToken = require('../../deployments/sepolia/ERC20NameToken.json')
 
 export default function ConnectedPanel({ isAdminMode }) {
-  const { active, account, activate, chainId } = useWeb3React()
+  const { isActive, account, activate, chainId } = useWeb3React()
   const [amountUsdc, setAmountUsdc] = useState(0.0)
 
   const [accountAA, setAccountAA] = useState('')
@@ -33,7 +33,7 @@ export default function ConnectedPanel({ isAdminMode }) {
         // without this delay
         await new Promise((r) => setTimeout(r, 500))
 
-        await activate(injected)
+        await activate(metaMask)
       } catch (ex) {
         console.log(ex)
       }
@@ -155,7 +155,7 @@ export default function ConnectedPanel({ isAdminMode }) {
     e.preventDefault()
 
     try {
-      await activate(injected)
+      await activate(metaMask)
     } catch (ex) {
       console.log(ex)
     }
@@ -163,7 +163,7 @@ export default function ConnectedPanel({ isAdminMode }) {
 
   return (
     <div>
-      {!active && (
+      {!isActive && (
         <form onSubmit={onConnect} className="animate-in fade-in duration-700">
           <div className="text-center text-2xl font-bold m-2">
             <LoadingButton
@@ -190,7 +190,7 @@ export default function ConnectedPanel({ isAdminMode }) {
       */}
 
       <br></br>
-      {active && !isAdminMode && (
+      {isActive && !isAdminMode && (
         <div>
           <div>
             <span>
@@ -206,7 +206,7 @@ export default function ConnectedPanel({ isAdminMode }) {
         </div>
       )}
       <br></br>
-      {active && !isAdminMode && (
+      {isActive && !isAdminMode && (
         <div>
           <div>
             <span>

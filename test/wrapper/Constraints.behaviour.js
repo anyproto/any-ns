@@ -440,8 +440,9 @@ function shouldRespectConstraints(contracts, getSigners) {
       // force expiry
       await advanceTime(DAY * 2)
       await mine()
-      const [ownerAfter, fusesAfter, expiryAfter] =
-        await NameWrapper.getData(childNode)
+      const [ownerAfter, fusesAfter, expiryAfter] = await NameWrapper.getData(
+        childNode,
+      )
 
       const blockNumberAfter = await ethers.provider.getBlockNumber()
       const timestampAfter = (await ethers.provider.getBlock(blockNumberAfter))
