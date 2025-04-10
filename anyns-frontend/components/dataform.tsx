@@ -175,10 +175,7 @@ export default function DataForm({
         setExpirationDate(date.toString())
       }
 
-      console.log('>>> trying to get AA owner, data.owner: ', data.owner)
-
       const realAaOwner = await tryGetAAOwner(data.owner)
-      console.log('>>> realAaOwner: ', realAaOwner)
 
       if (realAaOwner !== '') {
         if (userAddressAA !== data.owner) {

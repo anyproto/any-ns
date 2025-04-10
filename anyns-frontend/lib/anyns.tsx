@@ -185,6 +185,7 @@ export async function fetchRealOwnerOfSmartContractWallet(addr) {
 
   try {
     const owner = await scw.methods.owner().call()
+
     return owner
   } catch (err) {
     console.log('Error: ' + err)

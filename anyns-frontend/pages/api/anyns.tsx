@@ -33,10 +33,10 @@ async function getOwner(name) {
     const owner = await ensContract.methods.owner(namehash(name)).call()
 
     if (owner === '0x0000000000000000000000000000000000000000') {
-      console.log(`AnyNS name '${name}' is available!`)
+      console.log(`Name '${name}' is available!`)
       return null
     } else {
-      console.log(`AnyNS name '${name}' is already owned by ${owner}`)
+      console.log(`Name '${name}' is already owned by ${owner}`)
       return owner
     }
   } catch (error) {
@@ -94,6 +94,9 @@ async function getRealOwner(name) {
     const realOwner = await nameWrapperContract.methods
       .ownerOf(namehash(name))
       .call()
+
+    console.log(`Name '${name}' real owner: ${realOwner}`)
+
     return realOwner
   } catch (error) {
     console.error('Error getting real owner from NameWrapper: ', error)
@@ -137,6 +140,8 @@ export default async function handler(req, res) {
     const name = req.body.name
     console.log('Getting name info: ', name)
 
+    // owner of any name can be the NameWrapper contract
+    // so we need to get the real owner of the name from NameWrapper (see below)
     const owner = await getOwner(name)
 
     if (owner === null) {
