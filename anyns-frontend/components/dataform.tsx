@@ -267,7 +267,7 @@ export default function DataForm({
 
         <div className="singleDataLine">
           <div className="flex mt-1">
-            <p>Content ID:</p>
+            <p>Anytype ID:</p>
           </div>
 
           <div>
