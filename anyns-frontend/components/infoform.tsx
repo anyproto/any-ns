@@ -8,13 +8,13 @@ import { concatenateWithTLD, removeTLD } from '../lib/anyns'
 const tld = process.env.NEXT_PUBLIC_TLD_SUFFIX
 
 export default function InfoForm({
-  domainNamePreselected,
+  anyNamePreselected,
   handlerDomainChanged,
   handlerVerify,
 }) {
   const [isProcessing, setIsProcessing] = useState(false)
   const [isNameAvailable, setNameAvailable] = useState(false)
-  const [domainName, setDomainName] = useState(domainNamePreselected)
+  const [domainName, setDomainName] = useState(anyNamePreselected)
   const debouncedLookup = useDebounce(domainName, 1000)
 
   const router = useRouter()

@@ -283,8 +283,7 @@ export default function Admin() {
         <ConnectedPanel isAdminMode={true} />
 
         <DataForm
-          account={account}
-          domainNamePreselected={optionalDomainName}
+          anyNamePreselected={optionalDomainName}
           handleFetchNameInfo={fetchNameInfo}
           handlerRegister={handlerRegister}
           fetchRealOwnerOfSmartContractWallet={null}

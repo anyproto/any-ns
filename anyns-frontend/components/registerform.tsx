@@ -13,7 +13,7 @@ import { concatenateWithTLD, removeTLD } from '../lib/anyns'
 const tld = process.env.NEXT_PUBLIC_TLD_SUFFIX
 
 export default function RegisterForm({
-  domainNamePreselected,
+  anyNamePreselected,
   handleFetchNameInfo,
   handlerRegister,
   handlerRegisterAA,
@@ -26,7 +26,7 @@ export default function RegisterForm({
   const [isProcessingMint, setIsProcessingMint] = useState(false)
   const [isProcessingRegister, setIsProcessingRegister] = useState(false)
 
-  const [domainName, setDomainName] = useState(domainNamePreselected)
+  const [domainName, setDomainName] = useState(anyNamePreselected)
   const debouncedLookup = useDebounce(domainName, 1000)
 
   const [contentHash, setContentHash] = useState('')

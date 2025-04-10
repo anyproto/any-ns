@@ -430,7 +430,7 @@ export default function RegisterPage() {
         <ConnectedPanel isAdminMode={false} />
 
         <RegisterForm
-          domainNamePreselected={router.query.id}
+          anyNamePreselected={router.query.id}
           handleFetchNameInfo={fetchNameInfo}
           handlerRegister={handlerRegisterForUsdcs}
           handlerRegisterAA={handlerRegisterForUsdcsAA}

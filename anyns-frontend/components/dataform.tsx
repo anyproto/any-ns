@@ -13,9 +13,7 @@ const nameWrapper = require('../../deployments/sepolia/AnytypeNameWrapper.json')
 const tld = process.env.NEXT_PUBLIC_TLD_SUFFIX
 
 export default function DataForm({
-  // can be null
-  account,
-  domainNamePreselected,
+  anyNamePreselected,
   handleFetchNameInfo,
   // if null is specified -> do not show "register" button
   handlerRegister,
@@ -40,26 +38,22 @@ export default function DataForm({
 
   const [isLoading, setIsLoading] = useState(false)
 
-  // Set initial name value and fetch info when domainNamePreselected changes
+  // Set initial name value and fetch info when anyNamePreselected changes
   useEffect(() => {
-    if (domainNamePreselected && !isLoading) {
-      setAnyName(domainNamePreselected)
+    if (anyNamePreselected && !isLoading) {
+      setAnyName(anyNamePreselected)
       setIsLoading(true)
-      getNameInfo(domainNamePreselected).finally(() => {
+      getNameInfo(anyNamePreselected).finally(() => {
         setIsLoading(false)
       })
     }
-  }, [domainNamePreselected])
-
-  useEffect(() => {
-    document.getElementById('prompt-name').focus()
-  }, [])
+  }, [anyNamePreselected])
 
   useEffect(() => {
     const verifyAsync = async () => {
       if (
         debouncedLookup &&
-        debouncedLookup !== domainNamePreselected &&
+        debouncedLookup !== anyNamePreselected &&
         !isLoading
       ) {
         const checkMe = concatenateWithTLD(debouncedLookup)
@@ -181,7 +175,11 @@ export default function DataForm({
         setExpirationDate(date.toString())
       }
 
+      console.log('>>> trying to get AA owner, data.owner: ', data.owner)
+
       const realAaOwner = await tryGetAAOwner(data.owner)
+      console.log('>>> realAaOwner: ', realAaOwner)
+
       if (realAaOwner !== '') {
         if (userAddressAA !== data.owner) {
           setUserAddressAA(data.owner)
@@ -203,6 +201,7 @@ export default function DataForm({
   return (
     <div>
       <form onSubmit={onRegister} className="animate-in fade-in duration-700">
+        {/*
         <div className="singleDataLine">
           <div className="flex mt-1">
             <p>Name:</p>
@@ -224,6 +223,7 @@ export default function DataForm({
             />
           </div>
         </div>
+        */}
 
         <div className="singleDataLine">
           <div className="flex mt-1">

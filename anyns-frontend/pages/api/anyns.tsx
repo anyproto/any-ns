@@ -135,7 +135,7 @@ export default async function handler(req, res) {
     // name must be fully qualified
     // e.g. "test.any"
     const name = req.body.name
-    console.log('Checking name availability: ', name)
+    console.log('Getting name info: ', name)
 
     const owner = await getOwner(name)
 

@@ -20,6 +20,7 @@ export default function DataFormReverse({ handleReverseLoookup }) {
     return address.length === 42 && address.startsWith('0x')
   }
 
+  // find name by address
   const findNameReverse = async (addr) => {
     const [isErr, data] = await handleReverseLoookup(addr)
     if (isErr) {
