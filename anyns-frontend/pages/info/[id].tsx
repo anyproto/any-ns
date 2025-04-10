@@ -10,29 +10,9 @@ import { fetchRealOwnerOfSmartContractWallet } from '../../lib/anyns'
 export default function NameInfoPage() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [error, setError] = useState(null)
-  const [domainInfo, setDomainInfo] = useState(null)
 
   const router = useRouter()
   const { id } = router.query
-
-  // Add initial load effect
-  useEffect(() => {
-    if (id) {
-      setIsProcessing(true)
-      fetchNameInfo(id)
-        .then(([isErr, data]) => {
-          if (!isErr && data) {
-            setDomainInfo(data)
-          }
-        })
-        .catch((err) => {
-          setError(err)
-        })
-        .finally(() => {
-          setIsProcessing(false)
-        })
-    }
-  }, [id])
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -81,12 +61,6 @@ export default function NameInfoPage() {
               }
             />
           </div>
-
-          {isProcessing && (
-            <div className="text-center mt-8">
-              <CircularProgress />
-            </div>
-          )}
 
           {error && (
             <div className="mt-4 p-4 bg-red-50 rounded-lg">

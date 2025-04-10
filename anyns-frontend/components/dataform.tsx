@@ -38,19 +38,15 @@ export default function DataForm({
 
   const [isNameAvailable, setNameAvailable] = useState(false)
 
-  // Set initial name value when domainNamePreselected changes
-  useEffect(() => {
-    if (domainNamePreselected) {
-      setAnyName(domainNamePreselected)
-    }
-  }, [domainNamePreselected])
+  const [isLoading, setIsLoading] = useState(false)
 
-  // Add initial load effect
+  // Set initial name value and fetch info when domainNamePreselected changes
   useEffect(() => {
-    if (domainNamePreselected) {
-      setIsProcessing(true)
+    if (domainNamePreselected && !isLoading) {
+      setAnyName(domainNamePreselected)
+      setIsLoading(true)
       getNameInfo(domainNamePreselected).finally(() => {
-        setIsProcessing(false)
+        setIsLoading(false)
       })
     }
   }, [domainNamePreselected])
@@ -61,7 +57,11 @@ export default function DataForm({
 
   useEffect(() => {
     const verifyAsync = async () => {
-      if (debouncedLookup) {
+      if (
+        debouncedLookup &&
+        debouncedLookup !== domainNamePreselected &&
+        !isLoading
+      ) {
         const checkMe = concatenateWithTLD(debouncedLookup)
 
         if (!isNameValid(checkMe)) {
@@ -69,7 +69,7 @@ export default function DataForm({
           return
         }
 
-        setIsProcessing(true)
+        setIsLoading(true)
 
         let regMe = anyName
         if (!anyName.endsWith(tld)) {
@@ -77,9 +77,7 @@ export default function DataForm({
         }
 
         await getNameInfo(regMe)
-        setIsProcessing(false)
-
-        document.getElementById('prompt-name').focus()
+        setIsLoading(false)
       }
     }
 
@@ -148,51 +146,57 @@ export default function DataForm({
   }
 
   const getNameInfo = async (nameFull) => {
-    const [isErr, data] = await handleFetchNameInfo(nameFull)
-    if (isErr) {
-      //setModalTitle('Something went wrong!')
-      //setModalText('Can not check your name availability...')
-      //setShowModal(true)
-      return
-    }
+    if (!nameFull || isLoading) return
 
+    const [isErr, data] = await handleFetchNameInfo(nameFull)
+    if (isErr) return
+
+    // Only update state if we have new data
     if (data.contentID) {
-      // convert hex data to string
       const contentID = web3.utils.hexToUtf8(data.contentID)
-      setContentHash(contentID)
-    } else {
+      if (contentID !== contentHash) {
+        setContentHash(contentID)
+      }
+    } else if (contentHash !== '') {
       setContentHash('')
     }
 
     if (data.spaceID) {
       const spaceID = web3.utils.hexToUtf8(data.spaceID)
-      setSpaceHash(spaceID)
-    } else {
+      if (spaceID !== spaceHash) {
+        setSpaceHash(spaceID)
+      }
+    } else if (spaceHash !== '') {
       setSpaceHash('')
     }
 
     if (data.owner) {
       setNameAvailable(false)
-      setUserAddress(data.owner)
-      // convert unixdate to string
-      let date = new Date(data.expirationDate * 1000)
-      setExpirationDate(date.toString())
+      if (userAddress !== data.owner) {
+        setUserAddress(data.owner)
+      }
 
-      // check if AA was used to register name
-      // can be ''
+      const date = new Date(data.expirationDate * 1000)
+      if (expirationDate !== date.toString()) {
+        setExpirationDate(date.toString())
+      }
+
       const realAaOwner = await tryGetAAOwner(data.owner)
-      if (realAaOwner != '') {
-        // swap them!
-        setUserAddressAA(data.owner)
-        setUserAddress(realAaOwner)
-      } else {
+      if (realAaOwner !== '') {
+        if (userAddressAA !== data.owner) {
+          setUserAddressAA(data.owner)
+        }
+        if (userAddress !== realAaOwner) {
+          setUserAddress(realAaOwner)
+        }
+      } else if (userAddressAA !== '') {
         setUserAddressAA('')
       }
     } else {
       setNameAvailable(true)
-      setUserAddress('')
-      setExpirationDate('')
-      setUserAddressAA('')
+      if (userAddress !== '') setUserAddress('')
+      if (expirationDate !== '') setExpirationDate('')
+      if (userAddressAA !== '') setUserAddressAA('')
     }
   }
 
