@@ -29,8 +29,4 @@ jobs:
 
       - name: Run container from image
         run: |
-          docker run -d --name anyns-frontend anyns-frontend
-
-      - name: Remove container
-        run: |
-          docker rm -f ${{ inputs.site_name }}
+          docker run -d -p 3000:3000 --name anyns-frontend anyns-frontend
