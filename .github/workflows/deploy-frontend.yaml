@@ -1,0 +1,36 @@
+name: Deploy anyns-frontend
+
+on:
+  push:
+    branches: master
+
+  workflow_dispatch:
+
+jobs:
+  deploy-anyns-frontend:
+    runs-on: [self-hosted, landing]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Write .env file
+        run: echo "${{ secrets.ANYNS_FRONTEND_DOTENV }}" > ./anyns-frontend/.env
+
+      - name: Build image
+        run: |
+          docker buildx build \
+            --tag anyns-frontend \
+            --file Dockerfile \
+            .
+
+      - name: Remove running container
+        run: |
+          docker rm -f anyns-frontend
+
+      - name: Run container from image
+        run: |
+          docker run -d --name anyns-frontend anyns-frontend
+
+      - name: Remove container
+        run: |
+          docker rm -f ${{ inputs.site_name }}
