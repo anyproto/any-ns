@@ -145,3 +145,4 @@ Thank you for your desire to develop Anytype together!
 Original files from ENS are licensed under [MIT](./LICENSE.txt).
 
 Additions, made by Any — a Swiss association 🇨🇭, are licensed under MIT (see `LICENSE.md` in `anyns-frontend` and `anytype` sub-folders).
+
