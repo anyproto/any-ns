@@ -23,7 +23,7 @@ Fortunately, a concept known as "Account Abstraction" presents a solution. Throu
 This repository contains 2 projects:
 
 - AnyNS smart contracts (**this** top-level folder)
-- AnyNS frontend (**anyns-frontend** sub-folder)
+- AnyNS frontend (**anyns-frontend** sub-folder, discontinued)
 
 ---
 
@@ -145,4 +145,3 @@ Thank you for your desire to develop Anytype together!
 Original files from ENS are licensed under [MIT](./LICENSE.txt).
 
 Additions, made by Any — a Swiss association 🇨🇭, are licensed under MIT (see `LICENSE.md` in `anyns-frontend` and `anytype` sub-folders).
-
