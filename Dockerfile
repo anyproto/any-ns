@@ -7,9 +7,9 @@ RUN npm ci
 # Stage 2: Build and start
 FROM node:18-alpine AS builder
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
 COPY anyns-frontend ./
 COPY deployments ../deployments
+COPY --from=deps /app/node_modules ./node_modules
 RUN ln -s ../deployments ./deployments && npm run build
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup

@@ -1,6 +1,7 @@
 Dockerfile
 .dockerignore
 node_modules
+anyns-frontend/node_modules
 README.md
 .next
 .git
