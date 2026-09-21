@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # Stage 1: Install dependencies
 FROM node:18-alpine AS deps
 WORKDIR /app
@@ -10,7 +11,9 @@ WORKDIR /app
 COPY anyns-frontend ./
 COPY deployments ../deployments
 COPY --from=deps /app/node_modules ./node_modules
-RUN ln -s ../deployments ./deployments && npm run build
+# .env is mounted only for the build step (NEXT_PUBLIC_* get inlined) and is not stored in the image
+RUN --mount=type=secret,id=dotenv,target=/app/.env,required=true \
+    ln -s ../deployments ./deployments && npm run build
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
