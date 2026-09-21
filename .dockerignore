@@ -5,3 +5,5 @@ anyns-frontend/node_modules
 README.md
 .next
 .git
+.env
+**/.env
